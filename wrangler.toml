@@ -7,5 +7,5 @@ compatibility_date = "2025-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "polylingo-db"
-database_id = "THAY_BANG_ID_CUA_D1"   # lấy từ lệnh: npx wrangler@3 d1 create polylingo-db
+database_id = "18d7d596-dbad-423f-820c-d12135746125"   # D1 polylingo-db (tài khoản Cloudflare giữ polylingo.pages.dev)
 migrations_dir = "migrations"
