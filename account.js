@@ -19,17 +19,20 @@
   const SYNC_INTERVAL_MS = 60 * 1000;
   const MAX_BYTES = 1800 * 1024; // giới hạn một dòng D1 ~2MB
   const API_AVAILABLE = /^https?:$/.test(location.protocol);
+  // Khóa chỉ giữ trên máy, không đồng bộ (video tự thêm kèm phụ đề có thể rất nặng; vẫn có trong file Xuất tiến độ).
+  const LOCAL_ONLY = /_videos_local$/;
 
   const icon = (n, size) => (window.PolyIcons ? window.PolyIcons.svg(n, { size: size || 18 }) : '');
 
   /* ---------------- Ảnh chụp tiến độ ---------------- */
   const Progress = {
-    collect() {
+    collect(forSync) {
       const data = {};
       try {
         for (let i = 0; i < localStorage.length; i++) {
           const k = localStorage.key(i);
           if (!k || k.startsWith(INTERNAL_PREFIX)) continue;
+          if (forSync && LOCAL_ONLY.test(k)) continue;
           data[k] = localStorage.getItem(k);
         }
       } catch (_) { /* localStorage bị chặn */ }
@@ -44,12 +47,12 @@
     isEmpty(data) {
       return !data || Object.keys(data).length === 0;
     },
-    apply(data) {
+    apply(data, fromSync) {
       if (!data || typeof data !== 'object') throw new Error('Dữ liệu không hợp lệ');
       const keep = {};
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
-        if (k && k.startsWith(INTERNAL_PREFIX)) keep[k] = localStorage.getItem(k);
+        if (k && (k.startsWith(INTERNAL_PREFIX) || (fromSync && LOCAL_ONLY.test(k)))) keep[k] = localStorage.getItem(k);
       }
       localStorage.clear();
       Object.keys(keep).forEach(k => localStorage.setItem(k, keep[k]));
@@ -150,13 +153,14 @@
     /** Sau khi đăng nhập / tải trang: so máy này với máy chủ. */
     async reconcile() {
       const remote = await api('/progress');
-      const local = Progress.collect();
+      const local = Progress.collect(true);
       const localStr = Progress.serialize(local);
       if (!remote.data) {
         // Máy chủ chưa có gì → đẩy máy này lên.
         await this.push(true);
         return;
       }
+      Object.keys(remote.data).forEach(k => { if (LOCAL_ONLY.test(k)) delete remote.data[k]; });
       const remoteStr = Progress.serialize(remote.data);
       if (remoteStr === localStr) {
         this.setVersion(remote.version);
@@ -180,7 +184,7 @@
     },
 
     applyRemote(remote) {
-      Progress.apply(remote.data);
+      Progress.apply(remote.data, true);
       this.setVersion(remote.version);
       localStorage.setItem(K_LAST, Progress.serialize(remote.data));
       UI.toast('Đã tải tiến độ từ tài khoản. Đang làm mới trang...');
@@ -189,11 +193,11 @@
 
     async push(force, keepalive) {
       if (!this.user || this.busy) return;
-      const data = Progress.collect();
+      const data = Progress.collect(true);
       const str = Progress.serialize(data);
       if (!force && localStorage.getItem(K_LAST) === str) return;
       if (str.length > MAX_BYTES) {
-        UI.setStatus('Tiến độ quá lớn để đồng bộ (thường do video tự thêm có phụ đề dài). Hãy dùng Xuất file.');
+        UI.setStatus('Tiến độ quá lớn để đồng bộ. Hãy dùng Xuất tiến độ ra file.');
         return;
       }
       this.busy = true;
@@ -282,6 +286,14 @@
       if (!this.modal) return;
       const body = this.modal.querySelector('.acc-body');
       const u = Sync.user;
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark' || document.body.classList.contains('dark');
+      const themeHtml = `
+        <section class="acc-section acc-theme-section">
+          <div class="acc-theme-row">
+            <h3>${icon(isDark ? 'moon' : 'sun', 18)} Giao diện</h3>
+            <button type="button" class="acc-btn" data-act="theme">${isDark ? 'Chuyển sang Sáng' : 'Chuyển sang Tối'}</button>
+          </div>
+        </section>`;
       const backupHtml = `
         <section class="acc-section">
           <h3>${icon('save', 18)} Sao lưu bằng file</h3>
@@ -294,20 +306,64 @@
           </div>
         </section>`;
 
-      if (u) {
+      if (u && mode === 'security') {
+        body.innerHTML = `
+          <h2 id="acc-title">Bảo mật tài khoản</h2>
+          <form class="acc-form" data-form="change">
+            <h3>${icon('lock', 18)} Đổi mật khẩu</h3>
+            <label>Mật khẩu hiện tại<input name="currentPassword" type="password" autocomplete="current-password" required></label>
+            <label>Mật khẩu mới (ít nhất 8 ký tự)<input name="newPassword" type="password" autocomplete="new-password" minlength="8" required></label>
+            <p class="acc-error" role="alert" aria-live="assertive"></p>
+            <button type="submit" class="acc-btn acc-primary">Đổi mật khẩu</button>
+          </form>
+          <form class="acc-form acc-section" data-form="recovery">
+            <h3>${icon('shield', 18)} Mã khôi phục</h3>
+            <p class="acc-muted">Dùng khi quên mật khẩu. Tạo mã mới thì mã cũ hết hiệu lực.${u.hasRecoveryCode === false ? ' <strong>Tài khoản của bạn chưa có mã, hãy tạo ngay.</strong>' : ''}</p>
+            <label>Mật khẩu<input name="password" type="password" autocomplete="current-password" required></label>
+            <p class="acc-error" role="alert" aria-live="assertive"></p>
+            <button type="submit" class="acc-btn">Tạo mã khôi phục mới</button>
+          </form>
+          <form class="acc-form acc-section" data-form="delete">
+            <h3>${icon('alert', 18)} Xóa tài khoản</h3>
+            <p class="acc-muted">Xóa vĩnh viễn tài khoản và tiến độ đã lưu trên máy chủ. Tiến độ trên máy này vẫn giữ nguyên. Không thể hoàn tác.</p>
+            <label>Nhập mật khẩu để xác nhận<input name="password" type="password" autocomplete="current-password" required></label>
+            <p class="acc-error" role="alert" aria-live="assertive"></p>
+            <button type="submit" class="acc-btn acc-danger">Xóa tài khoản vĩnh viễn</button>
+          </form>
+          <p class="acc-switch"><button type="button" class="acc-link" data-act="to-account">← Quay lại</button></p>`;
+        body.querySelectorAll('form[data-form]').forEach(f => f.addEventListener('submit', e => this.submitSecurity(e, f.getAttribute('data-form'))));
+      } else if (u) {
         body.innerHTML = `
           <h2 id="acc-title">Tài khoản của bạn</h2>
           <p class="acc-muted">Đăng nhập: <strong>${escapeHtml(u.email)}</strong></p>
+          ${u.hasRecoveryCode === false ? `<p class="acc-warn">Bạn chưa có mã khôi phục, nếu quên mật khẩu sẽ không lấy lại được tài khoản. <button type="button" class="acc-link" data-act="to-security">Tạo mã ngay</button></p>` : ''}
           <section class="acc-section">
             <h3>${icon('cloud', 18)} Đồng bộ tiến độ</h3>
             <p class="acc-muted">Tiến độ tự lưu lên tài khoản mỗi phút khi có thay đổi. Đăng nhập trên máy khác để học tiếp.</p>
             <p class="acc-status" id="acc-sync-status" aria-live="polite">${escapeHtml(this.statusText || '')}</p>
             <div class="acc-row">
               <button type="button" class="acc-btn acc-primary" data-act="sync">${icon('refresh', 16)} Đồng bộ ngay</button>
+              <button type="button" class="acc-btn" data-act="to-security">${icon('lock', 16)} Bảo mật</button>
               <button type="button" class="acc-btn" data-act="logout">Đăng xuất</button>
             </div>
           </section>
+          ${backupHtml}
+          ${themeHtml}`;
+      } else if (API_AVAILABLE && mode === 'reset') {
+        body.innerHTML = `
+          <form class="acc-form" novalidate>
+            <h2 id="acc-title">Quên mật khẩu</h2>
+            <p class="acc-muted">Nhập email và <strong>mã khôi phục</strong> (dạng XXXX-XXXX-XXXX-XXXX) bạn đã lưu khi đăng ký.</p>
+            <label>Email<input name="email" type="email" autocomplete="email" required></label>
+            <label>Mã khôi phục<input name="recoveryCode" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" required></label>
+            <label>Mật khẩu mới (ít nhất 8 ký tự)<input name="newPassword" type="password" autocomplete="new-password" minlength="8" required></label>
+            <p class="acc-error" role="alert" aria-live="assertive"></p>
+            <button type="submit" class="acc-btn acc-primary acc-wide">Đặt lại mật khẩu</button>
+            <p class="acc-muted acc-small">Mất cả mã khôi phục? Tiến độ trên máy này vẫn còn: hãy Xuất tiến độ, tạo tài khoản mới rồi Nhập lại.</p>
+            <p class="acc-switch"><button type="button" class="acc-link" data-act="to-login">← Quay lại đăng nhập</button></p>
+          </form>
           ${backupHtml}`;
+        body.querySelector('form').addEventListener('submit', e => this.submitReset(e));
       } else {
         const isRegister = mode === 'register';
         const formHtml = API_AVAILABLE ? `
@@ -316,7 +372,8 @@
             <p class="acc-muted">${isRegister ? 'Lưu tiến độ lên mây để học tiếp trên mọi thiết bị.' : 'Học tiếp đúng chỗ đã dừng, trên mọi thiết bị.'}</p>
             ${isRegister ? `<label>Tên hiển thị<input name="name" autocomplete="nickname" maxlength="40"></label>` : ''}
             <label>Email<input name="email" type="email" autocomplete="email" required></label>
-            <label>Mật khẩu<input name="password" type="password" autocomplete="${isRegister ? 'new-password' : 'current-password'}" minlength="8" required></label>
+            <label>Mật khẩu${isRegister ? ' (ít nhất 8 ký tự)' : ''}<input name="password" type="password" autocomplete="${isRegister ? 'new-password' : 'current-password'}" minlength="8" required></label>
+            ${isRegister ? '<div class="acc-turnstile"></div>' : '<p class="acc-forgot"><button type="button" class="acc-link" data-act="to-reset">Quên mật khẩu?</button></p>'}
             <p class="acc-error" role="alert" aria-live="assertive"></p>
             <button type="submit" class="acc-btn acc-primary acc-wide">${isRegister ? 'Đăng ký' : 'Đăng nhập'}</button>
             <p class="acc-switch">${isRegister ? 'Đã có tài khoản?' : 'Chưa có tài khoản?'}
@@ -324,9 +381,10 @@
           </form>` : `
           <h2 id="acc-title">Sao lưu tiến độ</h2>
           <p class="acc-muted">Bạn đang mở trang trực tiếp từ máy (file://), nên chưa dùng được tài khoản. Vẫn có thể sao lưu bằng file bên dưới.</p>`;
-        body.innerHTML = formHtml + backupHtml;
+        body.innerHTML = formHtml + backupHtml + themeHtml;
         const form = body.querySelector('form');
         if (form) form.addEventListener('submit', e => this.submitAuth(e, isRegister));
+        if (isRegister) Turnstile.mount(body.querySelector('.acc-turnstile'));
       }
 
       body.querySelectorAll('[data-act]').forEach(el => {
@@ -343,6 +401,14 @@
       if (act === 'export') Progress.exportFile();
       if (act === 'to-register') this.renderBody('register');
       if (act === 'to-login') this.renderBody('login');
+      if (act === 'to-reset') this.renderBody('reset');
+      if (act === 'to-security') this.renderBody('security');
+      if (act === 'to-account') this.renderBody();
+      if (act === 'theme') {
+        const t = document.getElementById('btn-theme-toggle');
+        if (t) t.click();
+        this.renderBody();
+      }
       if (act === 'sync') {
         this.setStatus('Đang đồng bộ...');
         try { await Sync.reconcile(); if (!this.statusText.startsWith('Đã')) this.setStatus('Đã đồng bộ.'); }
@@ -353,6 +419,55 @@
         try { await api('/auth/logout', { method: 'POST', body: {} }); } catch (_) { /* bỏ qua */ }
         Sync.setUser(null);
         this.renderBody('login');
+      }
+    },
+
+    /** Hiện mã khôi phục một lần; chỉ đồng bộ (có thể tải lại trang) sau khi người học bấm "Đã lưu". */
+    showRecoveryCode(code, afterSave) {
+      if (!this.modal) this.open();
+      const body = this.modal.querySelector('.acc-body');
+      body.innerHTML = `
+        <h2 id="acc-title">Lưu mã khôi phục</h2>
+        <p class="acc-muted">Nếu quên mật khẩu, bạn cần <strong>email + mã này</strong> để lấy lại tài khoản. Mã chỉ hiện <strong>một lần</strong>. Hãy chép lại, chụp màn hình hoặc tải file.</p>
+        <p class="acc-code" aria-label="Mã khôi phục">${escapeHtml(code)}</p>
+        <div class="acc-row">
+          <button type="button" class="acc-btn" data-c="copy">${icon('clipboard', 16)} Sao chép</button>
+          <button type="button" class="acc-btn" data-c="file">${icon('arrow-down', 16)} Tải file</button>
+        </div>
+        <button type="button" class="acc-btn acc-primary acc-wide acc-mt" data-c="done">Tôi đã lưu mã</button>`;
+      body.querySelector('[data-c=copy]').addEventListener('click', async (e) => {
+        try { await navigator.clipboard.writeText(code); e.currentTarget.textContent = 'Đã sao chép'; } catch (_) { /* bỏ qua */ }
+      });
+      body.querySelector('[data-c=file]').addEventListener('click', () => {
+        const u = Sync.user || {};
+        const text = `Polylingo - mã khôi phục tài khoản\nEmail: ${u.email || ''}\nMã: ${code}\nTạo lúc: ${new Date().toLocaleString('vi-VN')}\n\nDùng ở: Đăng nhập → Quên mật khẩu. Giữ kín, không gửi cho ai.\n`;
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain' }));
+        a.download = 'polylingo-ma-khoi-phuc.txt';
+        document.body.appendChild(a); a.click();
+        setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+      });
+      body.querySelector('[data-c=done]').addEventListener('click', () => {
+        if (Sync.user) Sync.user.hasRecoveryCode = true;
+        this.renderBody();
+        if (afterSave) afterSave();
+      });
+    },
+
+    async afterLogin(user, recoveryCode) {
+      Sync.setUser(user);
+      const sync = async () => {
+        this.setStatus('Đang so tiến độ với tài khoản...');
+        try {
+          await Sync.reconcile();
+          if (this.statusText.startsWith('Đang')) this.setStatus('Đã đồng bộ.');
+        } catch (e) { this.setStatus('Chưa đồng bộ được: ' + e.message); }
+      };
+      if (recoveryCode) {
+        this.showRecoveryCode(recoveryCode, sync);
+      } else {
+        this.renderBody();
+        await sync();
       }
     },
 
@@ -370,17 +485,77 @@
       btn.disabled = true;
       try {
         const body = { email, password };
-        if (isRegister) body.name = String(fd.get('name') || '').trim();
+        if (isRegister) {
+          body.name = String(fd.get('name') || '').trim();
+          body.turnstileToken = String(fd.get('cf-turnstile-response') || '');
+        }
         const res = await api(isRegister ? '/auth/register' : '/auth/login', { method: 'POST', body });
-        Sync.setUser(res.user);
-        this.renderBody();
-        this.setStatus('Đang so tiến độ với tài khoản...');
-        await Sync.reconcile();
-        if (this.statusText.startsWith('Đang')) this.setStatus('Đã đồng bộ.');
+        await this.afterLogin(res.user, res.recoveryCode);
+      } catch (ex) {
+        err.textContent = ex.message;
+        if (isRegister) Turnstile.reset();
+      } finally {
+        btn.disabled = false;
+      }
+    },
+
+    async submitReset(e) {
+      e.preventDefault();
+      const form = e.target;
+      const err = form.querySelector('.acc-error');
+      const btn = form.querySelector('button[type=submit]');
+      const fd = new FormData(form);
+      const body = {
+        email: String(fd.get('email') || '').trim(),
+        recoveryCode: String(fd.get('recoveryCode') || ''),
+        newPassword: String(fd.get('newPassword') || '')
+      };
+      err.textContent = '';
+      if (body.newPassword.length < 8) { err.textContent = 'Mật khẩu mới cần ít nhất 8 ký tự.'; return; }
+      btn.disabled = true;
+      try {
+        const res = await api('/auth/reset', { method: 'POST', body });
+        await this.afterLogin(res.user, res.recoveryCode);
       } catch (ex) {
         err.textContent = ex.message;
       } finally {
         btn.disabled = false;
+      }
+    },
+
+    async submitSecurity(e, kind) {
+      e.preventDefault();
+      const form = e.target;
+      const err = form.querySelector('.acc-error');
+      const btn = form.querySelector('button[type=submit]');
+      const fd = new FormData(form);
+      err.textContent = '';
+      btn.disabled = true;
+      try {
+        if (kind === 'change') {
+          const newPassword = String(fd.get('newPassword') || '');
+          if (newPassword.length < 8) throw new Error('Mật khẩu mới cần ít nhất 8 ký tự.');
+          await api('/auth/change-password', { method: 'POST', body: { currentPassword: String(fd.get('currentPassword') || ''), newPassword } });
+          form.reset();
+          err.textContent = 'Đã đổi mật khẩu. Các thiết bị khác đã được đăng xuất.';
+        } else if (kind === 'recovery') {
+          const res = await api('/auth/recovery-code', { method: 'POST', body: { password: String(fd.get('password') || '') } });
+          this.showRecoveryCode(res.recoveryCode);
+        } else if (kind === 'delete') {
+          await Sync.push(false).catch(() => {});
+          Sync.stop();
+          await api('/auth/delete', { method: 'POST', body: { password: String(fd.get('password') || '') } });
+          localStorage.removeItem(K_VERSION);
+          localStorage.removeItem(K_LAST);
+          Sync.setUser(null);
+          this.renderBody('login');
+          this.toast('Đã xóa tài khoản. Tiến độ trên máy này vẫn còn.');
+        }
+      } catch (ex) {
+        err.textContent = ex.message;
+        if (kind === 'delete' && Sync.user) Sync.start();
+      } finally {
+        if (btn.isConnected) btn.disabled = false;
       }
     },
 
@@ -441,6 +616,47 @@
         </div>`;
       body.querySelector('[data-c=ok]').addEventListener('click', onOk);
       body.querySelector('[data-c=cancel]').addEventListener('click', () => this.renderBody());
+    }
+  };
+
+  /* ---------------- Cloudflare Turnstile (chỉ bật khi máy chủ có TURNSTILE_SITE_KEY) ---------------- */
+  const Turnstile = {
+    siteKey: undefined,
+    widgetId: null,
+    async key() {
+      if (this.siteKey !== undefined) return this.siteKey;
+      try { this.siteKey = (await api('/config')).turnstileSiteKey || null; } catch (_) { this.siteKey = null; }
+      return this.siteKey;
+    },
+    loadScript() {
+      if (window.turnstile) return Promise.resolve();
+      if (this._p) return this._p;
+      this._p = new Promise((resolve, reject) => {
+        const el = document.createElement('script');
+        el.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+        el.async = true;
+        el.onload = () => resolve();
+        el.onerror = () => { this._p = null; reject(new Error('Không tải được bước chống máy tự động.')); };
+        document.head.appendChild(el);
+      });
+      return this._p;
+    },
+    async mount(container) {
+      if (!container) return;
+      const key = await this.key();
+      if (!key) return;
+      try {
+        await this.loadScript();
+        if (!container.isConnected) return;
+        this.widgetId = window.turnstile.render(container, { sitekey: key, language: 'vi', theme: 'auto' });
+      } catch (e) {
+        container.textContent = e.message;
+      }
+    },
+    reset() {
+      if (window.turnstile && this.widgetId !== null) {
+        try { window.turnstile.reset(this.widgetId); } catch (_) { /* bỏ qua */ }
+      }
     }
   };
 

@@ -65,3 +65,29 @@
 .acc-switch { margin: 12px 0 0; font-size: 0.9rem; text-align: center; }
 .acc-link { border: 0; background: none; color: var(--primary); font: inherit; font-weight: 600; cursor: pointer; padding: 4px; text-decoration: underline; }
 .acc-status { font-size: 0.88rem; color: var(--text-sub, #4b5563); min-height: 1.2em; margin: 0 0 10px; }
+
+/* Điện thoại (<=480px): header không đủ chỗ cho 7 nút.
+   Dùng logo thu gọn, nút Tài khoản tròn 40px; nút Sáng/Tối chuyển vào hộp Tài khoản. */
+@media (max-width: 480px) {
+  .brand-logo { display: none !important; }
+  .brand-logo-mark { display: block !important; height: 28px !important; width: 28px !important; }
+  #btn-theme-toggle { display: none !important; }
+  .btn-account {
+    width: 40px !important; min-width: 40px !important; height: 40px !important;
+    padding: 0 !important; border-radius: 50% !important;
+    display: inline-flex !important; align-items: center !important; justify-content: center !important;
+    box-sizing: border-box !important;
+  }
+}
+@media (max-width: 360px) {
+  .btn-account { width: 36px !important; min-width: 36px !important; height: 36px !important; }
+}
+.acc-theme-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+@media (min-width: 481px) { .acc-theme-section { display: none; } }
+.acc-warn { background: var(--warning-light, #fffbeb); color: #92400e; border: 1px solid #f59e0b; border-radius: 10px; padding: 8px 10px; font-size: 0.88rem; margin: 0 0 10px; }
+.acc-code { font: 700 1.25rem/1.4 ui-monospace, "Cascadia Mono", Consolas, monospace; letter-spacing: 0.06em; text-align: center; padding: 14px; border-radius: 12px; border: 2px dashed var(--primary); background: var(--bg-elevated, #f1f5f9); user-select: all; margin: 0 0 12px; word-break: break-all; }
+.acc-mt { margin-top: 12px; }
+.acc-danger { background: var(--danger, #dc2626); border-color: var(--danger, #dc2626); color: #fff; }
+.acc-forgot { margin: -6px 0 6px; text-align: right; font-size: 0.88rem; }
+.acc-turnstile:not(:empty) { margin: 4px 0 10px; min-height: 65px; }
+.acc-form h3 { margin-top: 0; }

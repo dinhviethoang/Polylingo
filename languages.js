@@ -59,7 +59,7 @@ const LANGUAGES = [
     accentColor: '#B3261E',
     accentColor2: '#C9A227',
     description: 'Phát âm Pinyin, 150 từ vựng HSK1 cốt lõi, tập viết chữ Hán và đàm thoại thực tế.',
-    totalWords: 150,
+    totalWords: 521, // cập nhật tự động trong data/zh/vocab-merge.js
     sections: [
       { id: 'home', iconName: 'home', label: 'Tổng quan', desc: 'Bảng theo dõi tiến độ và lộ trình bài bản' },
       { id: 'learn', iconName: 'learn', label: 'Lộ trình', desc: 'Lộ trình bài học HSK 3.0 chuẩn hóa theo từng chặng' },
@@ -68,7 +68,7 @@ const LANGUAGES = [
       { id: 'speak', iconName: 'speak', label: 'Luyện phát âm', desc: 'Luyện đọc thanh điệu, cặp âm dễ nhầm và câu giao tiếp' },
       { id: 'talk', iconName: 'talk', label: 'Luyện nói', desc: 'Luyện nói từng từ và đàm thoại nhập vai tình huống thực tế' },
       { id: 'videos', iconName: 'videos', label: 'Video giải trí', desc: 'Xem video vừa học phụ đề song ngữ, tra từ và nói theo' },
-      { id: 'vocab', iconName: 'vocab', label: 'Từ vựng HSK1', desc: '150 từ vựng cốt lõi phân loại theo chủ đề đời sống' },
+      { id: 'vocab', iconName: 'vocab', label: 'Từ vựng HSK1', desc: 'Hơn 500 từ HSK1 (chung với Lộ trình) phân loại theo chủ đề' },
       { id: 'flashcards', iconName: 'flashcards', label: 'Thẻ ghi nhớ', desc: 'Thuật toán ngắt quãng SM-2 chống quên từ vựng' },
       { id: 'writing', iconName: 'writing', label: 'Chữ viết (Hán tự)', desc: 'Tập viết từng nét thuận bút chữ Hán chuẩn mực' },
       { id: 'quiz', iconName: 'quiz', label: 'Kiểm tra', desc: '10 câu trắc nghiệm ngẫu nhiên đánh giá phản xạ' },

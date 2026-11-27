@@ -46,8 +46,8 @@
     bar.id = 'voice-missing-banner';
     bar.setAttribute('role', 'alert');
     bar.style.cssText = [
-      'position:fixed', 'left:50%', 'bottom:16px', 'transform:translateX(-50%)', 'z-index:10000',
-      'max-width:min(560px,calc(100vw - 24px))', 'background:#2b2118', 'color:#fff7ea',
+      'position:fixed', 'left:12px', 'right:12px', 'bottom:16px', 'margin:0 auto', 'z-index:10000',
+      'max-width:560px', 'box-sizing:border-box', 'background:#2b2118', 'color:#fff7ea',
       'border:1px solid #e0a84f', 'border-radius:14px', 'padding:12px 44px 12px 14px',
       'box-shadow:0 10px 30px rgba(0,0,0,.35)', 'font:500 14px/1.5 "Be Vietnam Pro",system-ui,sans-serif'
     ].join(';');

@@ -1158,7 +1158,7 @@ class ChineseApp {
             <span style="font-size: 0.88rem; color: var(--muted); font-weight: 500;">${window.langFlag ? window.langFlag('zh', 12) : ''} Tiếng Trung Cơ Bản • 中文</span>
           </div>
           <h2>Xin chào bạn! 你好！</h2>
-          <p>Học phát âm chuẩn Pinyin, tích lũy 150 từ vựng cốt lõi theo phương pháp SM-2, tập viết chữ Hán thuận bút và phản xạ giao tiếp tự tin.</p>
+          <p>Học phát âm chuẩn Pinyin, tích lũy hơn 500 từ vựng HSK1 theo phương pháp SM-2, tập viết chữ Hán thuận bút và phản xạ giao tiếp tự tin.</p>
         `;
       }
     }

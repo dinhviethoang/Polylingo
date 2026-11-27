@@ -15,7 +15,9 @@ Tài khoản (đăng ký, đăng nhập, đồng bộ tiến độ giữa các m
 
 - Mật khẩu băm PBKDF2-SHA256 100.000 vòng, không lưu mật khẩu gốc.
 - Phiên đăng nhập là cookie HttpOnly/Secure 30 ngày; D1 chỉ lưu mã băm của cookie.
-- Sai mật khẩu 10 lần trong 15 phút thì khóa tạm email đó.
+- Sai mật khẩu 10 lần trong 15 phút thì khóa tạm email đó. Mỗi IP chỉ tạo được 5 tài khoản/giờ.
+- **Quên mật khẩu**: không cần email. Khi đăng ký, web hiện một **mã khôi phục** (XXXX-XXXX-XXXX-XXXX) một lần; người học lưu lại, sau này vào Đăng nhập → Quên mật khẩu, nhập email + mã để đặt mật khẩu mới (mã cũ hết hạn, cấp mã mới).
+- Trong hộp Tài khoản → **Bảo mật**: đổi mật khẩu (đăng xuất các máy khác), tạo mã khôi phục mới, xóa tài khoản.
 - Tiến độ = toàn bộ localStorage của web (từ đã học SM-2, lộ trình, ví xu, vườn...). Tự đẩy lên mỗi phút khi có thay đổi và khi rời trang. Nếu máy này và tài khoản khác nhau, web hỏi giữ bản nào.
 
 ## Làm một lần (trên máy Windows, PowerShell, trong thư mục dự án)
@@ -50,6 +52,19 @@ Tài khoản (đăng ký, đăng nhập, đồng bộ tiến độ giữa các m
    - `CLOUDFLARE_API_TOKEN` = token vừa tạo
    - `CLOUDFLARE_ACCOUNT_ID` = Account ID
 4. Từ đó mỗi lần đẩy lên nhánh `main`: GitHub chạy toàn bộ test → đóng gói → cập nhật bảng D1 → đăng lên polylingo.pages.dev (giữ nguyên địa chỉ cũ). Xem kết quả ở tab **Actions** của repo.
+
+## Cập nhật bảng khi có migration mới
+
+Mỗi file mới trong `migrations/` (ví dụ `0002_recovery.sql`) cần chạy một lần:
+```powershell
+npx.cmd wrangler@3 d1 migrations apply polylingo-db --remote
+```
+
+## (Tùy chọn) Bật Cloudflare Turnstile chống bot khi đăng ký
+
+1. dash.cloudflare.com → Turnstile → Add widget, tên miền `polylingo.pages.dev`, chế độ Managed → lấy **Site Key** và **Secret Key**.
+2. Workers & Pages → polylingo → Settings → Variables and Secrets → thêm `TURNSTILE_SITE_KEY` (Text) và `TURNSTILE_SECRET_KEY` (Secret) cho môi trường Production.
+3. Đăng lại web. Form đăng ký sẽ tự hiện ô kiểm tra; chưa đặt 2 biến này thì đăng ký vẫn chạy bình thường.
 
 ## Kiểm tra API
 
