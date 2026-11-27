@@ -1,6 +1,6 @@
 # Polylingo — Gieo chữ mỗi ngày, nói cùng thế giới
 
-Ứng dụng web tĩnh đa ngôn ngữ hỗ trợ người Việt mới bắt đầu học ngoại ngữ (Tiếng Trung 🇨🇳, Tiếng Anh 🇬🇧, Tiếng Nhật 🇯🇵, Tiếng Nga 🇷🇺). "Học tiếng Anh, Trung, Nhật, Nga — từng bài nhỏ, mỗi ngày." Chạy 100% bằng HTML/CSS/JS thuần, mở trực tiếp bằng cách bấm đúp `index.html` (giao thức `file://`), không cần server hay bước build phức tạp.
+Ứng dụng web tĩnh đa ngôn ngữ hỗ trợ người Việt mới bắt đầu học ngoại ngữ (Tiếng Trung 🇨🇳, Tiếng Anh 🇬🇧, Tiếng Nhật 🇯🇵, Tiếng Đức 🇩🇪, Tiếng Nga 🇷🇺). "Học tiếng Anh, Trung, Nhật, Nga — từng bài nhỏ, mỗi ngày." Chạy 100% bằng HTML/CSS/JS thuần, mở trực tiếp bằng cách bấm đúp `index.html` (giao thức `file://`), không cần server hay bước build phức tạp.
 
 > 🎨 Xem hệ thống nhận diện thương hiệu chi tiết tại [assets/brand.html](assets/brand.html).
 
@@ -28,8 +28,9 @@
    - Tự động ẩn sidebar để trải nghiệm xem tổng quan toàn màn hình.
 
 5. **Tiếng Nhật (`#ja/...`)**: `japanese.js` + `japanese.css` vẽ Tổng quan, Lộ trình 35 bài, Bảng chữ Kana, Từ vựng N5 (703 từ), Kanji (103 chữ có âm Hán Việt), Thẻ ghi nhớ, Tập viết (nét KanjiVG), Luyện gõ, Kiểm tra; Luyện nói và Hội thoại dùng chung `talk.js`/`app.js`. Dữ liệu ở `data/ja/`, lõi xử lý `data/ja/ja-core.js`, chỉ tải khi vào tiếng Nhật. Test: `node tests/ja.test.js`.
+6. **Tiếng Đức (`#de/...`)**: `german.js` + `german.css` vẽ Tổng quan, Lộ trình 30 bài A1, Phát âm (bảng chữ cái, ä/ö/ü, ch, cặp âm), Từ vựng A1 (704 từ, tô màu der/die/das), Ngữ pháp (13 bảng), Thẻ ghi nhớ, Luyện gõ (có phím ä ö ü ß, gõ ae/oe/ue/ss cũng được), Kiểm tra (nghĩa, nghe, mạo từ, số nhiều, chia động từ, nghe chép); Luyện nói, Hội thoại, tra từ dùng chung `talk.js`/`app.js`/`boost.js`. Dữ liệu ở `data/de/`, lõi `data/de/de-core.js`, chỉ tải khi vào tiếng Đức. Test: `node tests/de.test.js`.
 
-6. **Trang Sắp Ra Mắt (`#ru/...`)**:
+7. **Trang Sắp Ra Mắt (`#ru/...`)**:
    - Sidebar hiển thị danh sách mục dự kiến dưới dạng làm mờ (dimmed).
    - Trang nội dung "Sắp ra mắt" đẹp mắt kèm nút chuyển nhanh sang "Học tiếng Trung trước".
 

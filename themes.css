@@ -119,6 +119,44 @@
 }
 
 /* --------------------------------------------------------------------------
+   2b. CHỦ ĐỀ NƯỚC ĐỨC (de)
+   Đỏ sẫm #9B1C1C, vàng #D4A017 (màu cờ), nền đá xám ấm #F8F7F4
+   Họa tiết khung gỗ Fachwerk mảnh; Font PT Serif
+   Tối: Đêm than #121212
+   -------------------------------------------------------------------------- */
+[data-lang="de"] {
+  --accent: #9b1c1c;
+  --accent-2: #d4a017;
+  --accent-hover: #7f1414;
+  --accent-light: rgba(155, 28, 28, 0.08);
+  --bg: #f8f7f4;
+  --surface: #ffffff;
+  --surface-2: #f1efea;
+  --text: #18181b;
+  --muted: #52525b;
+  --border: #e4e0d8;
+  --border-focus: #9b1c1c;
+  --font-display: "PT Serif", Georgia, serif;
+  --watermark-char: "Lernen";
+  --pattern: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%239b1c1c' stroke-width='0.8' stroke-opacity='0.05'%3E%3Cpath d='M0 0h40v40H0z M0 0l40 40 M40 0L0 40 M20 0v40'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+[data-theme="dark"][data-lang="de"] {
+  --accent: #f87171;
+  --accent-2: #facc15;
+  --accent-hover: #fca5a5;
+  --accent-light: rgba(248, 113, 113, 0.14);
+  --bg: #121212;
+  --surface: #1c1c1e;
+  --surface-2: #26262a;
+  --text: #f5f5f5;
+  --muted: #a1a1aa;
+  --border: #2f2f34;
+  --border-focus: #f87171;
+  --pattern: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23f87171' stroke-width='0.8' stroke-opacity='0.05'%3E%3Cpath d='M0 0h40v40H0z M0 0l40 40 M40 0L0 40 M20 0v40'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* --------------------------------------------------------------------------
    3. CHỦ ĐỀ ANH QUỐC (en)
    Navy #14213D, vàng đồng #B08D57, nền kem #FBF8F1
    Họa tiết kẻ ô sách cổ điển; Font Playfair Display

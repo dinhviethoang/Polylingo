@@ -270,7 +270,7 @@
    */
   function diagnose(expectedChar, heardChar, map) {
     // Tiếng Nhật: chưa có bảng chẩn đoán âm, chỉ chấm theo độ khớp ký tự.
-    if (typeof TalkPractice !== 'undefined' && TalkPractice.lang === 'ja') {
+    if (typeof TalkPractice !== 'undefined' && (TalkPractice.lang === 'ja' || TalkPractice.lang === 'de')) {
       return { type: 'ok', advice: '' };
     }
     if (!expectedChar) {
@@ -702,6 +702,28 @@
       };
     }
 
+    // Tiếng Đức: so theo từ (không phân biệt hoa thường, ä = ae…), lấy câu mẫu khớp nhất.
+    const isDe = (typeof TalkPractice !== 'undefined' && TalkPractice.lang === 'de') ||
+      candidateList.some(item => item && typeof item === 'object' && item.de);
+    if (isDe && typeof window !== 'undefined' && window.DeCore) {
+      let best = { score: -1, item: null, perWord: [] };
+      for (const item of candidateList) {
+        const target = typeof item === 'string' ? item : (item.de || item.zh || item.hanzi || '');
+        const r = window.DeCore.compareWords(target, transcript);
+        if (r.score > best.score) best = { score: r.score, item, perWord: r.perWord };
+      }
+      const bestText = best.item ? (typeof best.item === 'string' ? best.item : (best.item.de || best.item.zh || '')) : '';
+      return {
+        score: Math.max(0, best.score),
+        bestAnswer: best.item || candidateList[0] || null,
+        perChar: best.perWord.map(w => ({ ch: w.word, ok: w.ok })),
+        perWord: best.perWord,
+        advice: window.DeCore.pronunciationTips(bestText),
+        transcript,
+        matched: best.score >= 60
+      };
+    }
+
     const isEn = candidateList.some(item => {
       const s = typeof item === 'string' ? item : (item.en || item.zh || item.hanzi || '');
       return /[a-zA-Z]/.test(s) && !/[\u4e00-\u9fa5]/.test(s);
@@ -895,7 +917,7 @@
 
     /** Mã ngôn ngữ cho nhận diện giọng nói và giọng đọc */
     speechCode() {
-      return this.lang === 'en' ? 'en-US' : this.lang === 'ja' ? 'ja-JP' : 'zh-CN';
+      return this.lang === 'en' ? 'en-US' : this.lang === 'ja' ? 'ja-JP' : this.lang === 'de' ? 'de-DE' : 'zh-CN';
     },
 
     /**
@@ -1026,7 +1048,7 @@
      */
     toggleListening() {
       if (!this.speechAvailable || !this.recognition) {
-        this.promptTypingModal(`Trình duyệt chưa hỗ trợ nhận diện giọng nói ${this.lang === 'en' ? 'tiếng Anh' : this.lang === 'ja' ? 'tiếng Nhật' : 'tiếng Trung'}.`);
+        this.promptTypingModal(`Trình duyệt chưa hỗ trợ nhận diện giọng nói ${this.lang === 'en' ? 'tiếng Anh' : this.lang === 'ja' ? 'tiếng Nhật' : this.lang === 'de' ? 'tiếng Đức' : 'tiếng Trung'}.`);
         return;
       }
 
@@ -1111,6 +1133,37 @@
           hanzi: w.word, word: w.word, zh: w.word, ja: w.word, kana: w.kana,
           py: w.kanji ? `${w.kana} · ${w.romaji}` : w.romaji,
           vi: w.vi || '', hv: w.hanViet || '', topic: w.topic || ''
+        }));
+        s.currentIndex = 0;
+        s.attempts = 0;
+        s.history = [];
+        s.passedCount = 0;
+        s.isFinished = false;
+        return;
+      }
+
+      if (this.lang === 'de') {
+        const dd = (typeof window !== 'undefined' && window.DeCore) ? window.DeCore.load() : null;
+        let deWords = dd ? dd.words.filter(w => w.pos !== 'exp' || w.word.split(' ').length <= 3) : [];
+        if (s.scope === 'learned') {
+          const done = new Set();
+          try {
+            const prog = JSON.parse(localStorage.getItem('de_learn_progress_v1') || '{}');
+            Object.entries((prog && prog.lessons) || {}).forEach(([id, r]) => { if (r && r.completed) done.add(id); });
+          } catch (e) {}
+          const ids = new Set(dd ? dd.lessons.filter(l => done.has(l.id)).flatMap(l => l.wordIds) : []);
+          const learned = deWords.filter(w => ids.has(w.id));
+          deWords = learned.length ? learned.slice(0, 30) : deWords.slice(0, 20);
+        } else if (s.scope === 'all') {
+          deWords = deWords.slice().sort(() => Math.random() - 0.5).slice(0, 30);
+        } else {
+          const byTopic = s.topic ? deWords.filter(w => w.topic === s.topic) : [];
+          deWords = byTopic.length ? byTopic : deWords.slice(0, 15);
+        }
+        s.wordList = deWords.map(w => ({
+          hanzi: w.display, word: w.display, zh: w.display, de: w.display,
+          py: w.plural ? `số nhiều: ${w.plural}` : (w.pos === 'v' && w.forms && w.forms.er ? `er ${w.forms.er}` : w.posLabel),
+          vi: w.vi || '', hv: '', topic: w.topic || ''
         }));
         s.currentIndex = 0;
         s.attempts = 0;
@@ -1261,7 +1314,9 @@
       const target = current.hanzi || current.zh || '';
       const turnScore = this.lang === 'ja'
         ? scoreTurn(recognizedTranscripts[0] || '', [{ zh: target, kana: current.kana || '' }])
-        : scoreTurn(recognizedTranscripts[0] || '', [{ zh: target }]);
+        : this.lang === 'de'
+          ? scoreTurn(recognizedTranscripts[0] || '', [{ zh: target, de: target }])
+          : scoreTurn(recognizedTranscripts[0] || '', [{ zh: target }]);
       const score = turnScore.score;
       const heard = turnScore.transcript || '';
 
@@ -1283,6 +1338,7 @@
 
       s.attempts++;
       const isPass = score >= 70;
+      if (this.lang === 'de' && !isPass && turnScore.advice) charAdvices.push(turnScore.advice);
 
       if (isPass) {
         s.passedCount++;
@@ -1329,7 +1385,9 @@
         ? ((typeof window !== 'undefined' && (window.TALK_SCENARIOS_EN || window.EN_TALK_SCENARIOS)) || [])
         : this.lang === 'ja'
           ? ((typeof window !== 'undefined' && (window.JA_TALK_SCENARIOS || window.TALK_SCENARIOS_JA)) || [])
-          : ((typeof window !== 'undefined' && window.TALK_SCENARIOS) || []);
+          : this.lang === 'de'
+            ? ((typeof window !== 'undefined' && (window.DE_TALK_SCENARIOS || window.TALK_SCENARIOS_DE)) || [])
+            : ((typeof window !== 'undefined' && window.TALK_SCENARIOS) || []);
       const sc = scenarios.find(item => item.id === scenarioId) || scenarios[0];
       if (!sc) return;
 
@@ -1644,7 +1702,7 @@
       const cur = s.wordList[s.currentIndex];
       if (!cur) return '<div class="talk-empty-box">Không có từ vựng nào để luyện tập.</div>';
 
-      const pySyllables = this.lang === 'ja' ? Array.from(cur.kana || cur.hanzi || '') : splitPinyin(cur.py || '');
+      const pySyllables = this.lang === 'ja' ? Array.from(cur.kana || cur.hanzi || '') : this.lang === 'de' ? String(cur.de || cur.hanzi || '').split(/\s+/).filter(Boolean) : splitPinyin(cur.py || '');
 
       return `
         <div class="talk-words-container">
@@ -1654,7 +1712,7 @@
               <label>Phạm vi luyện tập:</label>
               <select id="talk-scope-select" class="form-select">
                 <option value="learned" ${s.scope === 'learned' ? 'selected' : ''}>Từ đã học trong Lộ trình</option>
-                <option value="all" ${s.scope === 'all' ? 'selected' : ''}>${this.lang === 'ja' ? 'Ngẫu nhiên 30 từ N5' : this.lang === 'en' ? 'Toàn bộ từ vựng' : 'Toàn bộ từ vựng HSK1'}</option>
+                <option value="all" ${s.scope === 'all' ? 'selected' : ''}>${this.lang === 'ja' ? 'Ngẫu nhiên 30 từ N5' : this.lang === 'de' ? 'Ngẫu nhiên 30 từ A1' : this.lang === 'en' ? 'Toàn bộ từ vựng' : 'Toàn bộ từ vựng HSK1'}</option>
               </select>
             </div>
             <div class="talk-progress-badge">
@@ -1798,7 +1856,9 @@
         ? ((typeof window !== 'undefined' && (window.TALK_SCENARIOS_EN || window.EN_TALK_SCENARIOS)) || [])
         : this.lang === 'ja'
           ? ((typeof window !== 'undefined' && (window.JA_TALK_SCENARIOS || window.TALK_SCENARIOS_JA)) || [])
-          : ((typeof window !== 'undefined' && window.TALK_SCENARIOS) || []);
+          : this.lang === 'de'
+            ? ((typeof window !== 'undefined' && (window.DE_TALK_SCENARIOS || window.TALK_SCENARIOS_DE)) || [])
+            : ((typeof window !== 'undefined' && window.TALK_SCENARIOS) || []);
       const historyKey = `${this.lang || 'zh'}_talk_history`;
       const rawHistory = typeof localStorage !== 'undefined' ? localStorage.getItem(historyKey) : null;
       const history = rawHistory ? JSON.parse(rawHistory) : {};
@@ -2015,7 +2075,7 @@
       const card = this.container.querySelector('#talk-active-word-card');
       const cur = this.wordState.wordList[this.wordState.currentIndex];
       if (card && cur) {
-        const pySyllables = this.lang === 'ja' ? Array.from(cur.kana || cur.hanzi || '') : splitPinyin(cur.py || '');
+        const pySyllables = this.lang === 'ja' ? Array.from(cur.kana || cur.hanzi || '') : this.lang === 'de' ? String(cur.de || cur.hanzi || '').split(/\s+/).filter(Boolean) : splitPinyin(cur.py || '');
         card.innerHTML = this.renderWordCardInner(cur, pySyllables);
         this.bindWordCardEvents();
       }
@@ -2045,6 +2105,17 @@
        ========================================================================== */
 
     getRoleAbDialogues() {
+      if (this.lang === 'de') {
+        const deBase = (typeof window !== 'undefined' && (window.DE_DIALOGUES || window.DIALOGUES_DE)) || [];
+        return deBase.map(d => ({
+          id: d.id,
+          title: d.title,
+          scene: d.scene || `Tình huống giao tiếp cơ bản theo chủ đề "${d.title}".`,
+          roleA: d.roleA || { name: 'Người A', char: 'A', avatar: '' },
+          roleB: d.roleB || { name: 'Người B', char: 'B', avatar: '' },
+          sentences: (d.lines || []).map(line => ({ who: line.who || 'A', zh: line.de, de: line.de, py: '', vi: line.vi || '' }))
+        }));
+      }
       if (this.lang === 'ja') {
         const jaTalk = (typeof window !== 'undefined' && (window.JA_TALK_DIALOGUES || window.TALK_DIALOGUES_JA)) || [];
         const jaBase = (typeof window !== 'undefined' && (window.JA_DIALOGUES || window.DIALOGUES_JA)) || [];

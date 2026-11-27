@@ -1,7 +1,7 @@
 /**
- * Danh sách 4 ngôn ngữ hỗ trợ trên nền tảng Polylingo
- * Thứ tự chuẩn: Anh (en), Trung (zh), Nhật (ja), Nga (ru)
- * zh, en, ja: Sẵn sàng học (ready: true)
+ * Danh sách 5 ngôn ngữ hỗ trợ trên nền tảng Polylingo
+ * Thứ tự chuẩn: Anh (en), Trung (zh), Nhật (ja), Đức (de), Nga (ru)
+ * zh, en, ja, de: Sẵn sàng học (ready: true)
  * ru: Đang biên soạn (ready: false) có chủ đề văn hóa riêng đầy đủ
  */
 const LANGUAGES = [
@@ -116,6 +116,40 @@ const LANGUAGES = [
     ]
   },
   {
+    id: 'de',
+    name: 'Tiếng Đức',
+    shortName: 'Đức',
+    native: 'Deutsch',
+    flag: '🇩🇪',
+    greeting: 'Hallo',
+    greetingPhonetic: 'Hallo • Xin chào',
+    firstWord: {
+      word: 'Guten Tag',
+      phonetic: 'gu-tơn ták',
+      meaning: 'Xin chào (lời chào lịch sự ban ngày)'
+    },
+    watermark: 'Lernen',
+    ready: true,
+    font: 'PT Serif',
+    tts: 'de-DE',
+    accentColor: '#9B1C1C',
+    accentColor2: '#D4A017',
+    description: 'Phát âm cho người Việt, 704 từ A1 có mạo từ và câu ví dụ, ngữ pháp tra nhanh và lộ trình 30 bài.',
+    totalWords: 704,
+    sections: [
+      { id: 'home', iconName: 'home', label: 'Tổng quan', desc: 'Lộ trình tiếng Đức A1 từ con số 0' },
+      { id: 'learn', iconName: 'learn', label: 'Lộ trình', desc: '30 bài: 3 bài phát âm và 27 bài A1' },
+      { id: 'alphabet', iconName: 'phonics', label: 'Phát âm', desc: 'Bảng chữ cái, Ä Ö Ü, ch, sch và luyện nghe' },
+      { id: 'vocab', iconName: 'vocab', label: 'Từ vựng A1', desc: '704 từ có mạo từ, số nhiều, bảng chia động từ, câu ví dụ' },
+      { id: 'grammar', iconName: 'reading', label: 'Ngữ pháp', desc: 'Mạo từ, cách, chia động từ, trật tự từ, Perfekt' },
+      { id: 'dialogues', iconName: 'dialogues', label: 'Hội thoại', desc: '10 hội thoại đời sống ở Đức' },
+      { id: 'flashcards', iconName: 'flashcards', label: 'Thẻ ghi nhớ', desc: 'Ôn ngắt quãng SM-2, danh từ luôn kèm mạo từ' },
+      { id: 'quiz', iconName: 'quiz', label: 'Kiểm tra', desc: 'Trắc nghiệm nghĩa, nghe, der/die/das' },
+      { id: 'typing', iconName: 'typing', label: 'Luyện gõ', desc: 'Gõ từ, số nhiều, chia động từ, nghe chép câu' },
+      { id: 'talk', iconName: 'talk', label: 'Luyện nói', desc: 'Nói từng từ, nhập vai 6 tình huống, đóng vai A–B' }
+    ]
+  },
+  {
     id: 'ru',
     name: 'Tiếng Nga',
     shortName: 'Nga',
@@ -155,6 +189,7 @@ const LANG_FLAG_SVG = {
   en: '<rect width="30" height="20" fill="#012169"/><path d="M0 0l30 20M30 0L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0l30 20M30 0L0 20" stroke="#C8102E" stroke-width="1.6"/><path d="M15 0v20M0 10h30" stroke="#fff" stroke-width="6"/><path d="M15 0v20M0 10h30" stroke="#C8102E" stroke-width="3.4"/>',
   zh: '<rect width="30" height="20" fill="#DE2910"/><path fill="#FFDE00" d="M5 2.4l1.06 3.26h3.43l-2.77 2.02 1.06 3.26L5 8.92l-2.78 2.02 1.06-3.26L.5 5.66h3.43z"/><circle cx="10.5" cy="2.5" r=".9" fill="#FFDE00"/><circle cx="12.5" cy="4.6" r=".9" fill="#FFDE00"/><circle cx="12.5" cy="7.4" r=".9" fill="#FFDE00"/><circle cx="10.5" cy="9.5" r=".9" fill="#FFDE00"/>',
   ja: '<rect width="30" height="20" fill="#fff"/><circle cx="15" cy="10" r="6" fill="#BC002D"/>',
+  de: '<rect width="30" height="6.67" fill="#000"/><rect y="6.67" width="30" height="6.67" fill="#DD0000"/><rect y="13.33" width="30" height="6.67" fill="#FFCE00"/>',
   ru: '<rect width="30" height="20" fill="#fff"/><rect y="6.67" width="30" height="6.67" fill="#0039A6"/><rect y="13.33" width="30" height="6.67" fill="#D52B1E"/>'
 };
 function langFlag(langOrId, size) {
