@@ -27,16 +27,18 @@
    - Lời chào mừng và lưới thẻ ngôn ngữ (cờ lớn, tên Việt + bản ngữ, mô tả 1 dòng, thanh tiến độ, nút Bắt đầu học).
    - Tự động ẩn sidebar để trải nghiệm xem tổng quan toàn màn hình.
 
-5. **Trang Sắp Ra Mắt (`#en/...`, `#ja/...`, `#ko/...`)**:
+5. **Tiếng Nhật (`#ja/...`)**: `japanese.js` + `japanese.css` vẽ Tổng quan, Lộ trình 35 bài, Bảng chữ Kana, Từ vựng N5 (703 từ), Kanji (103 chữ có âm Hán Việt), Thẻ ghi nhớ, Tập viết (nét KanjiVG), Luyện gõ, Kiểm tra; Luyện nói và Hội thoại dùng chung `talk.js`/`app.js`. Dữ liệu ở `data/ja/`, lõi xử lý `data/ja/ja-core.js`, chỉ tải khi vào tiếng Nhật. Test: `node tests/ja.test.js`.
+
+6. **Trang Sắp Ra Mắt (`#ru/...`)**:
    - Sidebar hiển thị danh sách mục dự kiến dưới dạng làm mờ (dimmed).
    - Trang nội dung "Sắp ra mắt" đẹp mắt kèm nút chuyển nhanh sang "Học tiếng Trung trước".
 
-6. **Định Tuyến SPA (Hash Router)**:
+7. **Định Tuyến SPA (Hash Router)**:
    - Định dạng chuẩn: `#{langId}/{sectionId}?{params}` (ví dụ: `#zh/vocab`, `#zh/writing?char=你`).
    - Tự động chuyển tiếp thông minh từ các hash cũ (`#vocab` &rarr; `#zh/vocab`).
    - Ghi nhớ ngôn ngữ và phân hệ học cuối cùng trong `localStorage` qua `try/catch`.
 
-7. **Font Chữ & Giọng Đọc**:
+8. **Font Chữ & Giọng Đọc**:
    - Giao diện người dùng sử dụng font chuẩn tiếng Việt **Be Vietnam Pro** qua Google Fonts.
    - Font chữ Hán **Noto Sans SC** được áp dụng riêng biệt cho phần hiển thị chữ Hán.
    - Giọng đọc Web Speech API (`SpeechSynthesis`) tự động chọn theo cấu hình TTS của từng ngôn ngữ.

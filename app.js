@@ -7,6 +7,9 @@
 /* --- Tải dữ liệu theo nhu cầu (giữ chạy được với file://: dùng thẻ script, không dùng fetch) --- */
 const ZH_HEAVY_DATA = ['data/zh/char-decomp.js', 'data/zh/examples-extra.js'];
 const LAZY_DATA_SECTIONS = ['learn'];
+// Tiếng Nhật (~0,5MB) chỉ tải khi người dùng vào mục tiếng Nhật.
+const JA_DATA = ['data/ja/kana.js', 'data/ja/words-a.js', 'data/ja/words-b.js', 'data/ja/kanji.js', 'data/ja/curriculum.js',
+  'data/ja/dialogues.js', 'data/ja/talk-scenarios.js', 'data/ja/talk-dialogues.js', 'data/ja/ja-core.js', 'japanese.js'];
 const lazyScriptPromises = {};
 function loadLazyScript(src) {
   if (!lazyScriptPromises[src]) {
@@ -24,7 +27,7 @@ function loadLazyScript(src) {
 function loadLazyData(list) {
   return Promise.all(list.map(loadLazyScript));
 }
-if (typeof window !== 'undefined') window.PolyLazy = { loadLazyData, ZH_HEAVY_DATA };
+if (typeof window !== 'undefined') window.PolyLazy = { loadLazyData, ZH_HEAVY_DATA, JA_DATA };
 
 const ic = (n, opts) => (typeof window !== 'undefined' && window.PolyIcons ? window.PolyIcons.svg(n, opts) : (typeof PolyIcons !== 'undefined' ? PolyIcons.svg(n, opts) : ''));
 
@@ -340,18 +343,22 @@ class ChineseApp {
 
   /* --- Multi-language Helpers & Storage Keys --- */
   getSm2Key(lang = this.currentLang) {
+    if (lang === 'ja') return 'ja_sm2_data';
     return lang === 'en' ? 'en_sm2_data' : 'hsk_sm2_data';
   }
 
   getStreakKey(lang = this.currentLang) {
+    if (lang === 'ja') return 'ja_streak';
     return lang === 'en' ? 'en_streak' : 'hsk_streak';
   }
 
   getDailyTargetKey(lang = this.currentLang) {
+    if (lang === 'ja') return 'ja_daily_target';
     return lang === 'en' ? 'en_daily_target' : 'hsk_daily_target';
   }
 
   getQuizWrongsKey(lang = this.currentLang) {
+    if (lang === 'ja') return 'ja_quiz_wrongs';
     return lang === 'en' ? 'en_quiz_wrongs' : 'hsk_quiz_wrongs';
   }
 
@@ -380,6 +387,9 @@ class ChineseApp {
   }
 
   getCurrentDialogues() {
+    if (this.currentLang === 'ja') {
+      return (typeof window !== 'undefined' && (window.JA_DIALOGUES || window.DIALOGUES_JA)) || [];
+    }
     if (this.currentLang === 'en') {
       return (typeof window !== 'undefined' && (window.EN_DIALOGUES || window.DIALOGUES_EN || [])) || [];
     }
@@ -632,7 +642,7 @@ class ChineseApp {
     if (navEl) {
       // Gom mục thành 3 nhóm để người mới không bị ngợp trước một danh sách dài.
       const SECTION_GROUPS = [
-        { id: 'hoc', label: 'Học', ids: ['home', 'learn', 'pinyin', 'phonics', 'kana', 'cyrillic', 'vocab', 'writing', 'dialogues'] },
+        { id: 'hoc', label: 'Học', ids: ['home', 'learn', 'pinyin', 'phonics', 'kana', 'cyrillic', 'vocab', 'kanji', 'writing', 'dialogues'] },
         { id: 'luyen', label: 'Luyện tập', ids: ['flashcards', 'quiz', 'typing', 'speak', 'talk'] },
         { id: 'giaitri', label: 'Giải trí', ids: ['videos', 'games'] }
       ];
@@ -716,6 +726,9 @@ class ChineseApp {
 
   handleTabLeave(prevTab) {
     if (!prevTab) return;
+    if (this.currentLang === 'ja' && window.JaStudio && typeof window.JaStudio.hide === 'function') {
+      window.JaStudio.hide();
+    }
     if (prevTab === 'farm' && window.Farm && typeof window.Farm.onHide === 'function') {
       window.Farm.onHide();
     } else if (prevTab === 'phonics' && window.PhonicsEn && typeof window.PhonicsEn.onHide === 'function') {
@@ -928,6 +941,11 @@ class ChineseApp {
           await loadLazyData(ZH_HEAVY_DATA);
           if (window.location.hash !== hashAtStart) return; // người dùng đã chuyển trang khác
         }
+        if (langId === 'ja' && !window.JaStudio) {
+          const hashAtStart = window.location.hash;
+          try { await loadLazyData(JA_DATA); } catch (e) { this.showToast('Không tải được dữ liệu tiếng Nhật, hãy thử tải lại trang.', 'error'); }
+          if (window.location.hash !== hashAtStart) return;
+        }
         this.activateTab(sectionId, params, langId);
       }
     };
@@ -943,7 +961,9 @@ class ChineseApp {
 
   activateTab(tabId, params = new URLSearchParams(), langId = 'zh') {
     const validTabs = ['home', 'learn', 'phonics', 'pinyin', 'typing', 'speak', 'talk', 'videos', 'vocab', 'flashcards', 'writing', 'quiz', 'games', 'dialogues'];
-    if (!validTabs.includes(tabId)) tabId = 'home';
+    // Tiếng Nhật: các mục do japanese.js (window.JaStudio) vẽ, gồm cả mục riêng 'kana', 'kanji'.
+    const jaStudioTabs = (langId === 'ja' && window.JaStudio) ? window.JaStudio.SECTIONS : [];
+    if (!validTabs.includes(tabId) && !jaStudioTabs.includes(tabId)) tabId = 'home';
 
     if (this.currentTab && this.currentTab !== tabId) {
       this.handleTabLeave(this.currentTab);
@@ -970,9 +990,15 @@ class ChineseApp {
     this.renderSidebar(langId, tabId);
 
     // Toggle view sections
+    const useJaStudio = jaStudioTabs.includes(tabId);
     document.querySelectorAll('.tab-pane').forEach(el => {
-      el.classList.toggle('active', el.id === `tab-${tabId}`);
+      el.classList.toggle('active', useJaStudio ? el.id === 'tab-ja' : el.id === `tab-${tabId}`);
     });
+    if (useJaStudio) {
+      this.audio.stopAll();
+      window.JaStudio.show(document.getElementById('tab-ja'), tabId, params);
+      return;
+    }
 
     // Stop continuous audio when leaving dialogues
     if (tabId !== 'dialogues') {
@@ -2462,7 +2488,7 @@ class ChineseApp {
     const toggleVi = document.getElementById('toggle-vi');
 
     if (togglePy && togglePy.nextElementSibling) {
-      togglePy.nextElementSibling.textContent = this.currentLang === 'en' ? 'Hiện IPA' : 'Hiện Pinyin';
+      togglePy.nextElementSibling.textContent = this.currentLang === 'en' ? 'Hiện IPA' : this.currentLang === 'ja' ? 'Hiện cách đọc' : 'Hiện Pinyin';
     }
 
     if (titleEl) titleEl.textContent = dia.title || 'Hội thoại';
@@ -2472,9 +2498,10 @@ class ChineseApp {
 
     if (linesContainer) {
       linesContainer.innerHTML = (dia.lines || []).map((line, idx) => {
-        const text = line.en || line.zh;
+        const isJa = this.currentLang === 'ja';
+        const text = isJa ? (line.ja || line.zh) : (line.en || line.zh);
         const safeText = text.replace(/'/g, "\\'");
-        const phonetic = line.ipa || line.py || '';
+        const phonetic = isJa ? [line.kana, line.romaji].filter(Boolean).join(' · ') : (line.ipa || line.py || '');
         return `
         <div class="dia-line-row" id="dia-line-${idx}">
           <div class="dia-speaker-tag speaker-${line.who || 'A'}">${line.who || 'A'}</div>
@@ -2503,7 +2530,7 @@ class ChineseApp {
 
     this.audio.isDialoguePlaying = true;
     let lineIdx = 0;
-    const ttsLang = this.currentLang === 'en' ? 'en-US' : 'zh-CN';
+    const ttsLang = this.currentLang === 'en' ? 'en-US' : this.currentLang === 'ja' ? 'ja-JP' : 'zh-CN';
 
     const playNext = () => {
       if (!this.audio.isDialoguePlaying || lineIdx >= dia.lines.length) {
@@ -2518,7 +2545,7 @@ class ChineseApp {
       });
 
       const line = dia.lines[lineIdx];
-      const lineText = line.en || line.zh;
+      const lineText = this.currentLang === 'ja' ? (line.ja || line.zh) : (line.en || line.zh);
       this.audio.speak(lineText, null, () => {
         lineIdx++;
         this.audio.currentDialogueTimer = setTimeout(playNext, 600);

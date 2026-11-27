@@ -719,6 +719,14 @@
     }
     const enPct = Math.min(100, Math.max(Math.round((enCompletedCount / 30) * 100), Math.round((enWordsLearned / totalEnWords) * 100)));
 
+    // Tiến độ tiếng Nhật: số bài đã qua trong 35 bài (japanese.js lưu ở ja_learn_progress_v1)
+    let jaDone = 0;
+    try {
+      const jaProg = JSON.parse(localStorage.getItem('ja_learn_progress_v1') || '{}');
+      jaDone = Object.values((jaProg && jaProg.lessons) || {}).filter(r => r && r.completed).length;
+    } catch (e) { jaDone = 0; }
+    const jaPct = Math.min(100, Math.round((jaDone / 35) * 100));
+
     // Số liệu Nông trại
     const plots = (ecoState.farm && Array.isArray(ecoState.farm.plots)) ? ecoState.farm.plots : [];
     let plotsPlanted = 0;
@@ -1001,7 +1009,7 @@
           </a>
 
           <!-- 2. Tiếng Nhật (ja) -->
-          <a href="#ja/home" class="hp-poster" data-lang="ja" aria-label="Xem trước Tiếng Nhật">
+          <a href="#ja/learn" class="hp-poster" data-lang="ja" aria-label="Học Tiếng Nhật">
             ${renderSvgJapan()}
             <div class="hp-poster-overlay">
               <div class="hp-poster-top">
@@ -1010,9 +1018,20 @@
               <div class="hp-poster-bottom">
                 <div class="hp-poster-title-row">
                   <h3 class="hp-poster-name">Tiếng Nhật</h3>
-                  <span class="hp-poster-badge coming">Sắp ra mắt</span>
+                  <span class="hp-poster-badge ready">
+                    <span class="hp-dot"></span> Đang học
+                  </span>
                 </div>
                 <p class="hp-poster-greeting">こんにちは · Konnichiwa (Xin chào)</p>
+                <div class="hp-poster-progress">
+                  <div class="hp-poster-prog-text">
+                    <span>Tiến độ bài học</span>
+                    <span class="hp-tabular">${jaPct}%</span>
+                  </div>
+                  <div class="hp-poster-prog-track">
+                    <div class="hp-poster-prog-fill" style="width: ${jaPct}%"></div>
+                  </div>
+                </div>
               </div>
             </div>
           </a>

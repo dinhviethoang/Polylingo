@@ -1,8 +1,8 @@
 /**
  * Danh sách 4 ngôn ngữ hỗ trợ trên nền tảng Polylingo
  * Thứ tự chuẩn: Anh (en), Trung (zh), Nhật (ja), Nga (ru)
- * zh: Sẵn sàng học (ready: true)
- * en, ja, ru: Đang biên soạn (ready: false) có chủ đề văn hóa riêng đầy đủ
+ * zh, en, ja: Sẵn sàng học (ready: true)
+ * ru: Đang biên soạn (ready: false) có chủ đề văn hóa riêng đầy đủ
  */
 const LANGUAGES = [
   {
@@ -90,20 +90,25 @@ const LANGUAGES = [
       meaning: 'Xin chào (lời chào lịch sự ban ngày)'
     },
     watermark: '学ぶ',
-    ready: false,
+    ready: true,
     font: 'Shippori Mincho',
     tts: 'ja-JP',
     accentColor: '#1E3A5F',
     accentColor2: '#E59BB0',
-    description: 'Bảng chữ Hiragana & Katakana, chữ Kanji vỡ lòng và từ vựng sơ cấp JLPT N5.',
-    totalWords: 200,
+    description: 'Hiragana & Katakana, 703 từ vựng JLPT N5, 103 Kanji có âm Hán Việt và lộ trình 35 bài.',
+    totalWords: 703,
     sections: [
       { id: 'home', iconName: 'home', label: 'Tổng quan', desc: 'Lộ trình chinh phục tiếng Nhật sơ cấp từ con số 0' },
-      { id: 'kana', iconName: 'phonics', label: 'Bảng chữ Kana', desc: 'Nắm trọn bảng chữ mềm Hiragana và chữ cứng Katakana' },
-      { id: 'vocab', iconName: 'vocab', label: 'Từ vựng N5', desc: '200 từ vựng sơ cấp JLPT N5 thiết yếu nhất' },
+      { id: 'learn', iconName: 'learn', label: 'Lộ trình', desc: '35 bài: 6 bài Kana và 29 bài JLPT N5' },
+      { id: 'kana', iconName: 'kana', label: 'Bảng chữ Kana', desc: 'Hiragana, Katakana, âm đục, âm ghép và luyện nhận chữ' },
+      { id: 'vocab', iconName: 'vocab', label: 'Từ vựng N5', desc: '703 từ N5 có romaji, Hán Việt và câu ví dụ' },
+      { id: 'kanji', iconName: 'writing', label: 'Kanji', desc: '103 chữ Kanji N5 có âm Hán Việt, On, Kun' },
+      { id: 'writing', iconName: 'writing', label: 'Tập viết', desc: 'Thứ tự nét Kanji và Kana theo dữ liệu KanjiVG' },
+      { id: 'dialogues', iconName: 'dialogues', label: 'Hội thoại', desc: '10 hội thoại đời thường N5' },
       { id: 'flashcards', iconName: 'flashcards', label: 'Thẻ ghi nhớ', desc: 'Ôn tập ngắt quãng thông minh không lo quên chữ' },
-      { id: 'writing', iconName: 'writing', label: 'Tập viết Kanji', desc: 'Luyện từng nét thuận bút chữ Hán theo chuẩn Nhật' },
-      { id: 'quiz', iconName: 'quiz', label: 'Kiểm tra', desc: 'Trắc nghiệm nhận diện mặt chữ, Romaji và ý nghĩa' }
+      { id: 'quiz', iconName: 'quiz', label: 'Kiểm tra', desc: 'Trắc nghiệm nghĩa, cách đọc, nghe và Kanji' },
+      { id: 'typing', iconName: 'typing', label: 'Luyện gõ', desc: 'Gõ romaji ra kana, chia động từ' },
+      { id: 'talk', iconName: 'talk', label: 'Luyện nói', desc: 'Nói từng từ, nhập vai 8 tình huống, đóng vai A–B' }
     ]
   },
   {
