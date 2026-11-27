@@ -727,6 +727,14 @@
     } catch (e) { jaDone = 0; }
     const jaPct = Math.min(100, Math.round((jaDone / 35) * 100));
 
+    // Tiến độ tiếng Nga: số bài đã qua trong 35 bài (russian.js lưu ở ru_learn_progress_v1)
+    let ruDone = 0;
+    try {
+      const ruProg = JSON.parse(localStorage.getItem('ru_learn_progress_v1') || '{}');
+      ruDone = Object.values((ruProg && ruProg.lessons) || {}).filter(r => r && r.completed).length;
+    } catch (e) { ruDone = 0; }
+    const ruPct = Math.min(100, Math.round((ruDone / 35) * 100));
+
     // Số liệu Nông trại
     const plots = (ecoState.farm && Array.isArray(ecoState.farm.plots)) ? ecoState.farm.plots : [];
     let plotsPlanted = 0;
@@ -1065,7 +1073,7 @@
           </a>
 
           <!-- 4. Tiếng Nga (ru) -->
-          <a href="#ru/home" class="hp-poster" data-lang="ru" aria-label="Xem trước Tiếng Nga">
+          <a href="#ru/learn" class="hp-poster" data-lang="ru" aria-label="Học Tiếng Nga">
             ${renderSvgRussia()}
             <div class="hp-poster-overlay">
               <div class="hp-poster-top">
@@ -1074,9 +1082,20 @@
               <div class="hp-poster-bottom">
                 <div class="hp-poster-title-row">
                   <h3 class="hp-poster-name">Tiếng Nga</h3>
-                  <span class="hp-poster-badge coming">Sắp ra mắt</span>
+                  <span class="hp-poster-badge ready">
+                    <span class="hp-dot"></span> Đang học
+                  </span>
                 </div>
                 <p class="hp-poster-greeting">Привет · Privet (Xin chào)</p>
+                <div class="hp-poster-progress">
+                  <div class="hp-poster-prog-text">
+                    <span>Tiến độ bài học</span>
+                    <span class="hp-tabular">${ruPct}%</span>
+                  </div>
+                  <div class="hp-poster-prog-track">
+                    <div class="hp-poster-prog-fill" style="width: ${ruPct}%"></div>
+                  </div>
+                </div>
               </div>
             </div>
           </a>
