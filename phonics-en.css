@@ -1,0 +1,690 @@
+/* ==========================================================================
+   PHONICS-EN.CSS — Giao diện Ngữ âm IPA tiếng Anh chuẩn Hoàng Gia
+   Chủ đề: Navy #14213D, Vàng đồng #B08D57, Nền kem sang trọng #FBF8F1
+   ========================================================================== */
+
+.phonics-en-wrap {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  font-family: inherit;
+}
+
+/* Header */
+.phonics-en-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.phonics-badge-royal {
+  display: inline-block;
+  padding: 0.35rem 1rem;
+  border-radius: 9999px;
+  background: rgba(176, 141, 87, 0.15);
+  color: #B08D57;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  border: 1px solid rgba(176, 141, 87, 0.3);
+}
+
+.phonics-main-title {
+  font-family: var(--font-display, "Playfair Display", Georgia, serif);
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--accent, #14213D);
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.02em;
+}
+
+.phonics-main-desc {
+  max-width: 680px;
+  margin: 0 auto;
+  color: var(--text-muted, #4B5563);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Subtabs Nav */
+.phonics-nav-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid rgba(20, 33, 61, 0.1);
+  margin-bottom: 2rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  scrollbar-width: none;
+}
+.phonics-nav-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.phonics-tab-btn {
+  padding: 0.75rem 1.25rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted, #4B5563);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.phonics-tab-btn:hover {
+  color: var(--accent, #14213D);
+}
+
+.phonics-tab-btn.active {
+  color: var(--accent, #14213D);
+  border-bottom-color: var(--accent-2, #B08D57);
+}
+
+/* Filter Bar */
+.phonics-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted, #4B5563);
+}
+
+.filter-chips {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-chip {
+  padding: 0.4rem 0.85rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(20, 33, 61, 0.15);
+  background: var(--surface, #FFFFFF);
+  color: var(--text, #1F2937);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-chip:hover {
+  border-color: var(--accent-2, #B08D57);
+}
+
+.filter-chip.active {
+  background: var(--accent, #14213D);
+  color: #FFFFFF;
+  border-color: var(--accent, #14213D);
+}
+
+/* 44 Sounds Grid */
+.phonics-sounds-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 1rem;
+}
+
+.phonics-sound-card {
+  background: var(--surface, #FFFFFF);
+  border: 1px solid rgba(20, 33, 61, 0.12);
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.phonics-sound-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-2, #B08D57);
+  box-shadow: 0 8px 20px rgba(20, 33, 61, 0.1);
+}
+
+.sound-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.sound-group-pill {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(176, 141, 87, 0.12);
+  color: #B08D57;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.sound-audio-mini-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  padding: 0.2rem;
+  opacity: 0.8;
+  transition: transform 0.15s;
+}
+
+.sound-audio-mini-btn:hover {
+  transform: scale(1.2);
+  opacity: 1;
+}
+
+.sound-ipa-display {
+  font-family: var(--font-display, "Playfair Display", Georgia, serif);
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: var(--accent, #14213D);
+  margin: 0.25rem 0;
+}
+
+.sound-name-display {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text, #1F2937);
+  margin-bottom: 0.5rem;
+}
+
+.sound-samples-preview {
+  font-size: 0.8rem;
+  color: var(--text-muted, #4B5563);
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.sound-card-action {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 1px dashed rgba(20, 33, 61, 0.08);
+}
+
+.action-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-2, #B08D57);
+}
+
+/* Modal Chi Tiết Âm */
+.phonics-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 20, 31, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.phonics-modal-card {
+  background: var(--surface, #FFFFFF);
+  border-radius: 16px;
+  max-width: 620px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(176, 141, 87, 0.3);
+  padding: 1.75rem;
+  position: relative;
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.phonics-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: var(--text-muted, #4B5563);
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.phonics-modal-close:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text, #1F2937);
+}
+
+.modal-sound-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(20, 33, 61, 0.1);
+  flex-wrap: wrap;
+}
+
+.modal-ipa-badge {
+  font-family: var(--font-display, "Playfair Display", Georgia, serif);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--accent, #14213D);
+  background: rgba(20, 33, 61, 0.06);
+  padding: 0.25rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(20, 33, 61, 0.15);
+}
+
+.modal-title-box {
+  flex: 1;
+}
+
+.modal-sound-title {
+  margin: 0;
+  font-size: 1.35rem;
+  color: var(--text, #1F2937);
+}
+
+.modal-sound-subgroup {
+  font-size: 0.85rem;
+  color: #B08D57;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.modal-sound-listen-btn {
+  background: var(--accent-2, #B08D57);
+  color: #FFFFFF;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-sound-listen-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.modal-content-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modal-info-block {
+  background: var(--surface-2, #F4EFE6);
+  padding: 1rem;
+  border-radius: 10px;
+  border-left: 4px solid var(--accent, #14213D);
+}
+
+.modal-info-block.block-mouth { border-left-color: #3B82F6; }
+.modal-info-block.block-compare { border-left-color: #10B981; }
+.modal-info-block.block-errors { border-left-color: #F59E0B; }
+.modal-info-block.block-examples { border-left-color: var(--accent-2, #B08D57); }
+
+.block-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text, #1F2937);
+  margin: 0 0 0.4rem;
+}
+
+.block-text {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text, #1F2937);
+  margin: 0;
+}
+
+.modal-examples-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.modal-example-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--surface, #FFFFFF);
+  padding: 0.6rem 0.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.2s;
+}
+
+.modal-example-row:hover {
+  border-color: var(--accent-2, #B08D57);
+  background: rgba(176, 141, 87, 0.05);
+}
+
+.ex-audio-btn {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.ex-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.ex-word {
+  font-weight: 700;
+  color: var(--accent, #14213D);
+  font-size: 1.05rem;
+}
+
+.ex-ipa {
+  color: var(--text-muted, #4B5563);
+  font-family: monospace;
+}
+
+.ex-vi {
+  color: var(--text, #1F2937);
+  font-size: 0.9rem;
+}
+
+.modal-actions-footer {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Subtab 2: Minimal Pairs Game */
+.pairs-game-card {
+  background: var(--surface, #FFFFFF);
+  border-radius: 16px;
+  border: 1px solid rgba(20, 33, 61, 0.12);
+  padding: 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.pairs-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.pairs-pair-badge {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent, #14213D);
+  background: rgba(20, 33, 61, 0.08);
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+}
+
+.pairs-score-chip {
+  font-size: 0.9rem;
+  color: var(--text-muted, #4B5563);
+}
+
+.pairs-game-title {
+  font-size: 1.4rem;
+  color: var(--text, #1F2937);
+  margin: 0 0 0.5rem;
+}
+
+.pairs-game-hint {
+  font-size: 0.95rem;
+  color: var(--text-muted, #4B5563);
+  margin: 0 0 1.5rem;
+}
+
+.pairs-audio-area {
+  margin-bottom: 2rem;
+}
+
+.pairs-play-audio-btn {
+  background: var(--accent, #14213D);
+  color: #FFFFFF;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(20, 33, 61, 0.2);
+}
+
+.pairs-play-audio-btn:hover {
+  background: #0B1320;
+  transform: translateY(-2px);
+}
+
+.pairs-options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.pair-choice-btn {
+  background: var(--surface-2, #F4EFE6);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 1.25rem 1rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.2s;
+}
+
+.pair-choice-btn:hover:not(:disabled) {
+  border-color: var(--accent-2, #B08D57);
+  background: #FFFFFF;
+  transform: translateY(-2px);
+}
+
+.pair-choice-btn.correct {
+  background: #ECFDF5;
+  border-color: #10B981;
+}
+
+.pair-choice-btn.wrong {
+  background: #FEF2F2;
+  border-color: #EF4444;
+}
+
+.choice-sound {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #B08D57;
+}
+
+.choice-word {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent, #14213D);
+}
+
+.choice-ipa {
+  font-size: 0.9rem;
+  color: var(--text-muted, #4B5563);
+  font-family: monospace;
+}
+
+.choice-vi {
+  font-size: 0.85rem;
+  color: var(--text, #1F2937);
+}
+
+.pair-feedback-box {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.pair-tip-box {
+  background: rgba(176, 141, 87, 0.1);
+  padding: 0.85rem;
+  border-radius: 8px;
+  color: var(--text, #1F2937);
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+  text-align: left;
+}
+
+.btn-next-pair {
+  width: 100%;
+}
+
+/* Subtabs 3 & 4: Rules Cards */
+.phonics-section-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.rules-card-box {
+  background: var(--surface, #FFFFFF);
+  border-radius: 14px;
+  border: 1px solid rgba(20, 33, 61, 0.12);
+  padding: 1.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.rules-box-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.rules-badge {
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: rgba(176, 141, 87, 0.15);
+  color: #B08D57;
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.rules-box-header h2 {
+  font-size: 1.35rem;
+  color: var(--accent, #14213D);
+  margin: 0;
+}
+
+.rules-box-intro {
+  font-size: 0.95rem;
+  color: var(--text-muted, #4B5563);
+  margin: 0 0 1.25rem;
+  line-height: 1.6;
+}
+
+.rules-list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.rule-detail-card {
+  background: var(--surface-2, #F4EFE6);
+  border-radius: 10px;
+  padding: 1.15rem;
+  border-top: 3px solid var(--accent, #14213D);
+}
+
+.rule-ipa-head {
+  font-size: 1.15rem;
+  color: var(--accent, #14213D);
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.rule-condition {
+  font-size: 0.88rem;
+  color: var(--text, #1F2937);
+  margin-bottom: 0.5rem;
+  line-height: 1.45;
+}
+
+.rule-mnemonic {
+  font-size: 0.82rem;
+  color: #B08D57;
+  margin-bottom: 0.75rem;
+}
+
+.rule-words-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.rule-word-chip {
+  background: var(--surface, #FFFFFF);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.15s;
+}
+
+.rule-word-chip:hover {
+  border-color: var(--accent-2, #B08D57);
+  background: rgba(176, 141, 87, 0.08);
+  transform: translateY(-1px);
+}
+
+.phrase-chip {
+  font-size: 0.88rem;
+  padding: 0.4rem 0.75rem;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .phonics-main-title {
+    font-size: 1.75rem;
+  }
+  .phonics-sounds-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+  .phonics-sound-card {
+    padding: 0.75rem;
+  }
+  .pairs-options-grid {
+    grid-template-columns: 1fr;
+  }
+  .rules-list-grid {
+    grid-template-columns: 1fr;
+  }
+}

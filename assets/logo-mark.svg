@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" fill="none" role="img" aria-label="Polylingo Mark">
+  <title>Polylingo Mark</title>
+  <!-- Polylingo Brand Mark - 4 Flat Geometric Petals with Clear Negative Space + Seamless Dialogue Tail -->
+  <!-- Top-Left: Trung Vermilion #E63946 -->
+  <path d="M 46 42.5 L 46 17.5 C 46 14 43 11.5 39.5 13 C 26 18 17.5 26.5 13 40 C 11.8 43.5 14.5 46.5 18 46.5 L 42 46.5 C 44.2 46.5 46 44.7 46 42.5 Z" fill="#E63946" />
+  <!-- Top-Right: Nhat Sakura Pink #F28AA0 -->
+  <path d="M 54 42.5 L 54 17.5 C 54 14 57 11.5 60.5 13 C 74 18 82.5 26.5 87 40 C 88.2 43.5 85.5 46.5 82 46.5 L 58 46.5 C 55.8 46.5 54 44.7 54 42.5 Z" fill="#F28AA0" />
+  <!-- Bottom-Right: Nga Emerald Teal #18A999 -->
+  <path d="M 54 49.5 L 54 74.5 C 54 78 57 80.5 60.5 79 C 74 74 82.5 65.5 87 52 C 88.2 48.5 85.5 45.5 82 45.5 L 58 45.5 C 55.8 45.5 54 47.3 54 49.5 Z" fill="#18A999" />
+  <!-- Bottom-Left (with Unified Speech Bubble Pointer): Anh Royal Navy Blue #2A6FDB -->
+  <path d="M 46 49.5 L 46 74 C 46 77.5 43 79.5 39.5 78 C 31.5 74.5 24 67.5 19 60.5 C 16.5 67 12 76.5 8.5 81 C 7 83.5 4 82 5 79 C 7.5 71 9.5 61 10.5 52.5 C 11.2 48 13.8 45.5 18 45.5 L 42 45.5 C 44.2 45.5 46 47.3 46 49.5 Z" fill="#2A6FDB" />
+  <!-- Center: Sunshine Yellow Solid Circle (Diameter 22 = 29% of symbol, No thin stroke) -->
+  <circle cx="50" cy="46" r="11" fill="#FFC83D" />
+</svg>

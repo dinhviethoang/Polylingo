@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi" data-lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Polylingo — Lộ trình Học tiếng Trung chuẩn HSK 3.0 • Demo</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  
+  <!-- CSS hệ thống -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="themes.css">
+  <link rel="stylesheet" href="typing.css">
+  <link rel="stylesheet" href="learn.css">
+
+  <style>
+    /* Thanh công cụ phụ trợ cho trang Demo */
+    .demo-bar {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: var(--surface, #ffffff);
+      border-bottom: 1px solid var(--border, #e6ddce);
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    .demo-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .demo-title {
+      font-weight: bold;
+      font-size: 0.95rem;
+      color: var(--accent, #b3261e);
+      font-family: var(--font-display, "Noto Serif SC", serif);
+    }
+    .demo-economy-pills {
+      display: flex;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .demo-pill {
+      background: var(--surface-2, #f4efe3);
+      border: 1px solid var(--border, #e6ddce);
+      padding: 0.25rem 0.6rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .demo-bar-right {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .demo-btn {
+      background: var(--surface-2, #f4efe3);
+      border: 1px solid var(--border, #e6ddce);
+      color: var(--text, #1f1a17);
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .demo-btn:hover {
+      background: var(--accent-light, rgba(179, 38, 30, 0.08));
+      border-color: var(--accent, #b3261e);
+      color: var(--accent, #b3261e);
+    }
+    /* Toast thông báo kinh tế */
+    #demo-toast-box {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+    .demo-toast {
+      background: var(--surface, #ffffff);
+      border: 1px solid var(--accent-2, #c9a227);
+      color: var(--text, #1f1a17);
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+      font-size: 0.9rem;
+      font-weight: 600;
+      animation: toastIn 0.3s ease;
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Thanh công cụ điều khiển Demo -->
+  <aside class="demo-bar">
+    <div class="demo-bar-left">
+      <a href="index.html#/" style="display:flex;align-items:center;gap:6px;text-decoration:none;color:inherit;" title="Về trang chủ Polylingo">
+        <img src="assets/favicon.svg" width="20" height="20" alt="Polylingo">
+        <strong style="font-size:0.95rem;font-family:'Baloo 2',sans-serif;">Polylingo</strong>
+      </a>
+      <span class="demo-title" style="margin-left:6px;">🏮 Lộ Trình HSK</span>
+      <div class="demo-economy-pills">
+        <span class="demo-pill">🪙 <span id="eco-coins">100</span> Xu</span>
+        <span class="demo-pill">⚡ <span id="eco-xp">50</span> XP</span>
+        <span class="demo-pill">💧 <span id="eco-water">10</span> Nước</span>
+      </div>
+    </div>
+    <div class="demo-bar-right">
+      <button class="demo-btn" id="btn-toggle-theme">🌓 Đổi Giao Diện</button>
+      <button class="demo-btn" id="btn-reset-prog">🔄 Xóa Tiến Độ</button>
+      <a href="#zh/learn" class="demo-btn">🗺️ Bản Đồ</a>
+      <a href="#zh/learn?lesson=intro-u1-l1" class="demo-btn">🚀 Bài 1</a>
+      <a href="#zh/learn?lesson=hsk1-u1-l1" class="demo-btn">📚 HSK 1</a>
+    </div>
+  </aside>
+
+  <!-- Vùng chứa ứng dụng Lộ trình -->
+  <main id="learn-root"></main>
+
+  <div id="demo-toast-box"></div>
+
+  <!-- Nạp các dữ liệu và script thuần theo yêu cầu đề bài -->
+  <script src="data/zh/curriculum.js"></script>
+  <script src="data/zh/vocab.js"></script>
+  <script src="data/zh/hsk1-words-a.js" onerror="console.warn('hsk1-words-a.js chưa có hoặc đang được tạo')"></script>
+  <script src="data/zh/hsk1-words-b.js" onerror="console.warn('hsk1-words-b.js chưa có hoặc đang được tạo')"></script>
+  <script src="typing.js"></script>
+  <script src="learn.js"></script>
+
+  <script>
+    // Giả lập Mock Economy nếu chưa có file game/economy.js
+    if (!window.Economy) {
+      window.Economy = {
+        state: { coins: 100, xp: 50, water: 10 },
+        REWARDS: {
+          lessonStep: { xp: 5, water: 1 },
+          lessonDone: { coins: 20, xp: 20 },
+          lessonPerfect: { coins: 10 },
+          checkpointPass: { coins: 50, xp: 50 }
+        },
+        reward(key) {
+          const r = this.REWARDS[key] || { coins: 5, xp: 5 };
+          this.earn(key, r);
+          this.showToast(`Phần thưởng: +${r.coins || 0} Xu, +${r.xp || 0} XP, +${r.water || 0} Nước`);
+          return r;
+        },
+        earn(source, { coins = 0, xp = 0, water = 0 } = {}) {
+          this.state.coins += coins;
+          this.state.xp += xp;
+          this.state.water += water;
+          this.updateUI();
+          window.dispatchEvent(new CustomEvent('economy:change', { detail: this.state }));
+        },
+        getState() { return this.state; },
+        showToast(msg) {
+          const box = document.getElementById('demo-toast-box');
+          if (!box) return;
+          const t = document.createElement('div');
+          t.className = 'demo-toast';
+          t.innerHTML = `🎉 ${msg}`;
+          box.appendChild(t);
+          setTimeout(() => t.remove(), 2500);
+        },
+        updateUI() {
+          const elC = document.getElementById('eco-coins');
+          const elX = document.getElementById('eco-xp');
+          const elW = document.getElementById('eco-water');
+          if (elC) elC.textContent = this.state.coins;
+          if (elX) elX.textContent = this.state.xp;
+          if (elW) elW.textContent = this.state.water;
+        }
+      };
+    }
+
+    // Khởi tạo gắn kết module
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('learn-root');
+      if (window.LearnPath && container) {
+        window.LearnPath.mount(container);
+
+        const handleHash = () => {
+          const hash = window.location.hash || '';
+          const queryPart = hash.includes('?') ? hash.split('?')[1] : '';
+          const params = new URLSearchParams(queryPart || window.location.search);
+          window.LearnPath.onShow(params);
+        };
+
+        window.addEventListener('hashchange', handleHash);
+        handleHash();
+      }
+
+      // Nút đổi theme Sáng / Tối
+      const toggleThemeBtn = document.getElementById('btn-toggle-theme');
+      if (toggleThemeBtn) {
+        toggleThemeBtn.addEventListener('click', () => {
+          const html = document.documentElement;
+          const current = html.getAttribute('data-theme');
+          if (current === 'dark') {
+            html.removeAttribute('data-theme');
+          } else {
+            html.setAttribute('data-theme', 'dark');
+          }
+        });
+      }
+
+      // Nút xóa tiến độ để test lại từ đầu
+      const resetBtn = document.getElementById('btn-reset-prog');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          if (confirm('Xóa sạch dữ liệu bài học đã hoàn thành để thử nghiệm lại?')) {
+            localStorage.removeItem('zh_learn_progress_v1');
+            window.location.hash = '#zh/learn';
+            window.location.reload();
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

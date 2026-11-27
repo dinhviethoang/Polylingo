@@ -1,0 +1,9 @@
+1
+00:00:01,000 --> 00:00:04,500
+Hello, nice to meet you!
+Xin chào, rất vui được gặp bạn!
+
+2
+00:00:05,000 --> 00:00:08,200
+What is your name?
+Bạn tên là gì?

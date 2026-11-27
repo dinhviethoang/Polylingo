@@ -1,0 +1,9 @@
+dist/
+node_modules/
+.wrangler/
+.dev.vars
+.env
+*.local
+.chrome_profile/
+_anh-kiem-tra/
+wrangler.jsonc

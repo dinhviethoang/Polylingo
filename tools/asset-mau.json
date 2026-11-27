@@ -1,0 +1,32 @@
+[
+  {
+    "id": "dao_nen",
+    "kieu": "nen",
+    "prompt": "16:9 widescreen landscape game background scene. A tiny cozy circular floating island surrounded by calm sparkling turquoise ocean, viewed from 3/4 top-down isometric perspective. Soft golden sandy beach framing the island edge, lush soft vibrant green grass meadow in the center, gentle curving stone pebble paths, exactly 5 to 6 distinct flat empty cleared building dirt and grass plots waiting for construction, a cute small rustic wooden pier boat dock extending into the sea, gentle ripples in water, soft fluffy white clouds floating in clear pastel sky. Clean empty environment, absolutely NO houses, NO shops, NO buildings, NO characters on the island."
+  },
+  {
+    "id": "nha_go",
+    "kieu": "vat",
+    "prompt": "A tiny cozy cute Asian-style wooden cottage house, charming curved red tiled roof, circular round wooden window with soft warm glowing light inside, blooming flower boxes under windows, cute wooden front door with round bronze handle, gentle wooden texture. 3/4 top-down isometric game asset."
+  },
+  {
+    "id": "quan_tra",
+    "kieu": "vat",
+    "prompt": "A cute small outdoor village tea and pastry stall booth, cozy cream and pastel green striped fabric awning canopy, hanging mini red festive paper lanterns, rustic wooden counter with a tiny ceramic teapot and teacups, a small hanging blank wooden sign with no words and no letters. 3/4 top-down isometric game asset."
+  },
+  {
+    "id": "luong_rau",
+    "kieu": "vat",
+    "prompt": "A neat rectangular raised wooden garden vegetable patch bed, rich dark tilled soil with rows of cute healthy growing vegetables: fresh round green cabbages, plump ripe red tomatoes climbing small wooden stakes, juicy red strawberries with little green leaves. 3/4 top-down isometric game asset."
+  },
+  {
+    "id": "cu_dan",
+    "kieu": "vat",
+    "prompt": "Original cute chibi island resident character: an adorable young Vietnamese girl with sweet rounded chibi proportions, wearing a soft pastel yellow-green traditional ao ba ba with rolled sleeves, wearing a small cute conical palm leaf hat non la, carrying a small woven bamboo basket on one arm, happily smiling and waving one hand. Standing pose, 3/4 view game asset."
+  },
+  {
+    "id": "linh_thu_cao",
+    "kieu": "vat",
+    "prompt": "Original cute chibi spirit companion animal: an adorable tiny fluffy orange fox sitting gently, giant extra fluffy bushy tail curled around its side, big sparkling warm curious eyes, soft creamy white belly and chest, cute perky fox ears with dark brown tips. 3/4 view game asset."
+  }
+]

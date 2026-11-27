@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light" data-lang="farm">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vườn Treo Tri Thức - Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="../themes.css">
+  <link rel="stylesheet" href="farm.css">
+  <style>
+    /* Thanh công cụ Demo hỗ trợ xem thử */
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .demo-topbar {
+      flex-shrink: 0;
+      background: #FFF8EC;
+      border-bottom: 3px solid #7A4B2A;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(122, 75, 42, 0.12);
+    }
+    [data-theme="dark"] .demo-topbar {
+      background: #231C38;
+      border-bottom: 3px solid #4A2B14;
+    }
+
+    .demo-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-family: 'Baloo 2', cursive, sans-serif;
+      font-size: 16px;
+      color: #7A4B2A;
+    }
+    [data-theme="dark"] .demo-brand {
+      color: #FFFDF8;
+    }
+
+    .demo-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .demo-btn {
+      background: #FFFDF8;
+      color: #7A4B2A;
+      border: 2px solid #7A4B2A;
+      border-radius: 9999px;
+      box-shadow: 0 3px 0 #7A4B2A;
+      padding: 4px 12px;
+      font-family: 'Baloo 2', cursive, sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .demo-btn:hover {
+      background: #FFF0F5;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 0 #7A4B2A;
+    }
+
+    .demo-btn:active {
+      transform: translateY(2px) scale(0.96);
+      box-shadow: 0 1px 0 #7A4B2A;
+    }
+
+    [data-theme="dark"] .demo-btn {
+      background: #2B2347;
+      color: #FFFDF8;
+      border-color: #4A2B14;
+      box-shadow: 0 3px 0 #1A1024;
+    }
+    [data-theme="dark"] .demo-btn:hover {
+      background: #3B3160;
+    }
+
+    #farm-root {
+      flex: 1 1 auto;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      position: relative;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Thanh điều khiển Demo -->
+  <header class="demo-topbar">
+    <div class="demo-brand">
+      <span>☁️ Vườn Treo Tri Thức</span>
+      <span style="font-weight:600; font-size:12px; opacity:0.65;">(Bản xem thử Demo)</span>
+    </div>
+
+    <!-- Widget hiển thị trạng thái Kinh tế ở Header -->
+    <div id="demo-header-widget"></div>
+
+    <div class="demo-actions">
+      <button class="demo-btn" id="btn-toggle-theme" title="Chuyển đổi giao diện sáng/tối">
+        🌓 Sáng / Tối
+      </button>
+      <button class="demo-btn" id="btn-sim-lesson" title="Mô phỏng hoàn thành 1 bài học">
+        📖 +1 Bài (+20🪙, +20KN)
+      </button>
+      <button class="demo-btn" id="btn-sim-speak" title="Mô phỏng phát âm đạt chuẩn">
+        🎙️ +Phát âm (+1💧, +4KN)
+      </button>
+      <button class="demo-btn" id="btn-sim-coins" title="Thêm xu để mua chậu & hạt giống">
+        🪙 +200 Xu
+      </button>
+      <button class="demo-btn" id="btn-sim-materials" title="Thêm nguyên liệu nâng cấp chậu">
+        🧱 +Vật liệu nâng cấp
+      </button>
+      <button class="demo-btn" id="btn-cheat-grow" title="Làm cây chín ngay để thử thu hoạch">
+        ⚡ Cây chín ngay
+      </button>
+      <button class="demo-btn" id="btn-sim-pets" title="Mở khóa và kích hoạt Linh thú đồng hành">
+        🐾 +8 Linh thú
+      </button>
+      <button class="demo-btn" id="btn-reset-data" style="color:#ef4444;" title="Khôi phục trạng thái ban đầu">
+        🔄 Reset
+      </button>
+    </div>
+  </header>
+
+  <!-- Vùng chứa Nông Trại Farm Mount -->
+  <div id="farm-root"></div>
+
+  <!-- Nạp scripts -->
+  <script src="sprites.js"></script>
+  <script src="economy.js"></script>
+  <script src="farm.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Gắn Widget kinh tế lên header
+      if (window.Economy) {
+        window.Economy.mountWidget('#demo-header-widget');
+      }
+
+      // 2. Gắn Farm vào container
+      if (window.Farm) {
+        window.Farm.mount('#farm-root');
+      }
+
+      // 3. Xử lý nút bật/tắt Theme
+      const btnTheme = document.getElementById('btn-toggle-theme');
+      if (btnTheme) {
+        btnTheme.onclick = () => {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', nextTheme);
+        };
+      }
+
+      // 4. Các nút mô phỏng nhanh
+      const btnSimLesson = document.getElementById('btn-sim-lesson');
+      if (btnSimLesson) {
+        btnSimLesson.onclick = () => {
+          if (window.Economy) window.Economy.reward('lessonDone');
+        };
+      }
+
+      const btnSimSpeak = document.getElementById('btn-sim-speak');
+      if (btnSimSpeak) {
+        btnSimSpeak.onclick = () => {
+          if (window.Economy) window.Economy.reward('speakPass');
+        };
+      }
+
+      const btnSimCoins = document.getElementById('btn-sim-coins');
+      if (btnSimCoins) {
+        btnSimCoins.onclick = () => {
+          if (window.Economy) window.Economy.earn('demo', { coins: 200 });
+        };
+      }
+
+      const btnSimMats = document.getElementById('btn-sim-materials');
+      if (btnSimMats) {
+        btnSimMats.onclick = () => {
+          if (window.Economy) {
+            const state = window.Economy.getState();
+            if (state && state.farm) {
+              state.farm.materials.clay = (state.farm.materials.clay || 0) + 5;
+              state.farm.materials.glaze = (state.farm.materials.glaze || 0) + 3;
+              state.farm.materials.jadePowder = (state.farm.materials.jadePowder || 0) + 2;
+              state.farm.materials.goldLeaf = (state.farm.materials.goldLeaf || 0) + 1;
+              state.farm.fertilizer = (state.farm.fertilizer || 0) + 2;
+              window.Economy.saveState();
+              window.Economy.showToast('🧱 Đã thêm nguyên liệu nâng cấp chậu & phân bón!');
+            }
+          }
+        };
+      }
+
+      const btnCheatGrow = document.getElementById('btn-cheat-grow');
+      if (btnCheatGrow) {
+        btnCheatGrow.onclick = () => {
+          if (window.Economy) {
+            const state = window.Economy.getState();
+            let count = 0;
+            if (state.farm && state.farm.slots) {
+              state.farm.slots.forEach(slot => {
+                if (slot && slot.pot && slot.pot.crop) {
+                  slot.pot.crop.watered = true;
+                  slot.pot.crop.lastWateredAt = Date.now() - 3600000;
+                  slot.pot.crop.accumulatedGrowthMs = 3600000;
+                  count++;
+                }
+              });
+              window.Economy.saveState();
+              if (count > 0) {
+                window.Economy.showToast(`⚡ Đã làm chín ${count} cây trồng!`);
+              } else {
+                window.Economy.showToast('Gieo hạt vào chậu trước khi dùng nút này!');
+              }
+            }
+          }
+        };
+      }
+
+      const btnSimPets = document.getElementById('btn-sim-pets');
+      if (btnSimPets) {
+        btnSimPets.onclick = () => {
+          if (window.Economy) {
+            const state = window.Economy.getState();
+            state.pets = [
+              { id: 'panda', type: 'panda', name: 'Gấu trúc', isEgg: false, level: 3, xp: 140, satiety: 100 },
+              { id: 'dragon', type: 'dragon', name: 'Rồng con', isEgg: false, level: 2, xp: 85, satiety: 90 },
+              { id: 'maneki_neko', type: 'maneki_neko', name: 'Mèo thần tài', isEgg: false, level: 1, xp: 45, satiety: 95 },
+              { id: 'kitsune', type: 'kitsune', name: 'Hồ ly chín đuôi', isEgg: true, eggXpProgress: 70, eggXpNeeded: 100 },
+              { id: 'lion', type: 'lion', name: 'Sư tử hoàng gia', isEgg: false, level: 2, xp: 60, satiety: 80 },
+              { id: 'owl', type: 'owl', name: 'Cú mèo học giả', isEgg: false, level: 4, xp: 210, satiety: 100 },
+              { id: 'misha', type: 'misha', name: 'Gấu Misha', isEgg: false, level: 1, xp: 30, satiety: 85 },
+              { id: 'firebird', type: 'firebird', name: 'Chim lửa', isEgg: true, eggXpProgress: 40, eggXpNeeded: 150 }
+            ];
+            state.activePet = 'panda';
+            window.Economy.saveState();
+            window.Economy.showToast('🐾 Đã mở khóa 8 Linh thú và chọn Gấu trúc đồng hành!');
+            if (window.Farm && typeof window.Farm.onShow === 'function') {
+              window.Farm.onShow();
+            }
+          }
+        };
+      }
+
+      const btnReset = document.getElementById('btn-reset-data');
+      if (btnReset) {
+        btnReset.onclick = () => {
+          if (confirm('Bạn có chắc muốn đặt lại dữ liệu nông trại về mặc định?')) {
+            if (window.Economy) {
+              window.Economy._resetState();
+              window.Economy.showToast('Đã đặt lại dữ liệu về ban đầu!');
+            }
+          }
+        };
+      }
+    });
+  </script>
+</body>
+</html>

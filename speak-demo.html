@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="vi" data-lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polylingo — Luyện Phát Âm Tiếng Trung • Demo</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  
+  <!-- Font chữ tiêu chuẩn của dự án -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- CSS hệ thống -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="themes.css">
+  <link rel="stylesheet" href="speak.css">
+
+  <style>
+    /* Thanh tiện ích Demo */
+    .demo-toolbar {
+      max-width: 860px;
+      margin: 1rem auto 0;
+      padding: 0.5rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--surface, #ffffff);
+      border: 1px solid var(--border, #e6ddce);
+      border-radius: var(--radius-sm, 8px);
+      box-shadow: var(--shadow-sm);
+    }
+    .demo-badge {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent, #b3261e);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .btn-theme-toggle {
+      background: var(--surface-2, #f4efe3);
+      border: 1px solid var(--border, #e6ddce);
+      color: var(--text, #1f1a17);
+      padding: 0.4rem 0.85rem;
+      border-radius: var(--radius-full, 9999px);
+      font-size: 0.825rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s;
+    }
+    .btn-theme-toggle:hover {
+      background: var(--border, #e6ddce);
+    }
+    /* Toast kinh tế mô phỏng */
+    #demo-toast-box {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+    .economy-toast {
+      background: #111827;
+      color: #f8fafc;
+      padding: 0.65rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      border-left: 4px solid #10b981;
+      animation: toastIn 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    @keyframes toastIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Thanh điều khiển Demo -->
+  <div class="demo-toolbar">
+    <div class="demo-badge">
+      <a href="index.html#/" style="display:flex;align-items:center;gap:6px;text-decoration:none;color:inherit;margin-right:8px;" title="Về trang chủ Polylingo">
+        <img src="assets/favicon.svg" width="20" height="20" alt="Polylingo">
+        <strong style="font-family:'Baloo 2',sans-serif;">Polylingo</strong>
+      </a>
+      <span>🇨🇳</span>
+      <span>Bản xem thử tính năng: Luyện Phát Âm (speak.js)</span>
+    </div>
+    <button type="button" class="btn-theme-toggle" id="btn-toggle-theme">
+      <span id="theme-icon">🌙</span>
+      <span id="theme-label">Giao diện tối</span>
+    </button>
+  </div>
+
+  <!-- Vùng chứa toàn bộ ứng dụng Luyện phát âm -->
+  <div id="speak-container"></div>
+
+  <!-- Khung hiện Toast thông báo phần thưởng -->
+  <div id="demo-toast-box"></div>
+
+  <!-- Dữ liệu từ vựng tiếng Trung -->
+  <script src="data/zh/vocab.js"></script>
+
+  <!-- Module Luyện phát âm -->
+  <script src="speak.js"></script>
+
+  <!-- Khởi tạo & Mock Economy -->
+  <script>
+    // Giả lập đối tượng Economy nếu game/economy.js chưa được nạp
+    if (!window.Economy) {
+      window.Economy = {
+        REWARDS: {
+          toneCorrect: { coins: 1, xp: 1 },
+          speakPass: { coins: 2, xp: 4, water: 1 }
+        },
+        reward(key) {
+          const r = this.REWARDS[key] || { xp: 1 };
+          const toastBox = document.getElementById('demo-toast-box');
+          if (toastBox) {
+            const toast = document.createElement('div');
+            toast.className = 'economy-toast';
+            toast.innerHTML = `🎁 <strong>+${r.coins || 0} xu, +${r.xp || 0} XP${r.water ? `, +${r.water} nước` : ''}</strong> (${key})`;
+            toastBox.appendChild(toast);
+            setTimeout(() => {
+              toast.style.opacity = '0';
+              toast.style.transition = 'opacity 0.3s';
+              setTimeout(() => toast.remove(), 300);
+            }, 2500);
+          }
+          return r;
+        }
+      };
+    }
+
+    // Gắn giao diện vào container
+    const rootEl = document.getElementById('speak-container');
+    if (window.SpeakPractice && rootEl) {
+      window.SpeakPractice.mount(rootEl);
+    }
+
+    // Nút chuyển đổi Giao diện Sáng / Tối
+    const btnTheme = document.getElementById('btn-toggle-theme');
+    const themeIcon = document.getElementById('theme-icon');
+    const themeLabel = document.getElementById('theme-label');
+
+    btnTheme.addEventListener('click', () => {
+      const htmlEl = document.documentElement;
+      const isDark = htmlEl.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        htmlEl.removeAttribute('data-theme');
+        themeIcon.textContent = '🌙';
+        themeLabel.textContent = 'Giao diện tối';
+      } else {
+        htmlEl.setAttribute('data-theme', 'dark');
+        themeIcon.textContent = '☀️';
+        themeLabel.textContent = 'Giao diện sáng';
+      }
+      if (window.SpeakPractice) {
+        window.SpeakPractice.refreshPane();
+      }
+    });
+  </script>
+</body>
+</html>

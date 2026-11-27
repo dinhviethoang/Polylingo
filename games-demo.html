@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi" data-lang="zh" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polylingo — Trò Chơi Tiếng Trung • MiniGames Demo</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="themes.css">
+  <link rel="stylesheet" href="games.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg, #faf6ee);
+      color: var(--text, #1f1a17);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .demo-navbar {
+      background: var(--surface, #ffffff);
+      border-bottom: 1px solid var(--border, #e5dac9);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: var(--shadow-sm, 0 1px 3px rgba(0,0,0,0.05));
+    }
+
+    .demo-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--accent, #b3261e);
+      text-decoration: none;
+    }
+
+    .demo-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .demo-wallet {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface-2, #f4efe3);
+      border: 1px solid var(--border, #e5dac9);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .demo-theme-btn {
+      background: var(--surface-2, #f4efe3);
+      border: 1px solid var(--border, #e5dac9);
+      color: var(--text, #1f1a17);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .demo-theme-btn:hover {
+      border-color: var(--accent, #b3261e);
+      color: var(--accent, #b3261e);
+    }
+
+    .demo-content-wrap {
+      flex: 1;
+      padding: 24px 16px;
+    }
+
+    /* Economy Toast Demo */
+    .demo-toast-box {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 9999;
+      pointer-events: none;
+    }
+
+    .demo-toast {
+      background: var(--surface, #ffffff);
+      color: var(--text, #1f1a17);
+      border: 1px solid var(--accent, #b3261e);
+      padding: 10px 16px;
+      border-radius: 8px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+      font-size: 0.88rem;
+      font-weight: 600;
+      animation: toastFade 3s ease forwards;
+    }
+
+    @keyframes toastFade {
+      0% { opacity: 0; transform: translateY(12px); }
+      10% { opacity: 1; transform: translateY(0); }
+      80% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-10px); }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="demo-navbar">
+    <a href="index.html#/" class="demo-brand" title="Về trang chủ Polylingo" style="text-decoration:none;">
+      <img src="assets/favicon.svg" width="22" height="22" alt="Polylingo">
+      <span>Polylingo — Trò Chơi Tiếng Trung</span>
+    </a>
+
+    <div class="demo-controls">
+      <div class="demo-wallet" id="demo-wallet">
+        <span>🪙 <strong id="wallet-coins">0</strong> Xu</span>
+        <span>⚡ <strong id="wallet-xp">0</strong> XP</span>
+      </div>
+
+      <button type="button" class="demo-theme-btn" id="demo-theme-btn">
+        🌙 Chế độ Tối
+      </button>
+    </div>
+  </header>
+
+  <main class="demo-content-wrap">
+    <div id="mini-games-app"></div>
+  </main>
+
+  <div class="demo-toast-box" id="demo-toast-box"></div>
+
+  <!-- Nạp các module theo yêu cầu -->
+  <script src="data/zh/vocab.js"></script>
+  <script src="typing.js"></script>
+  <script src="games.js"></script>
+
+  <script>
+    // 1. Giả lập module Economy nếu chưa nạp file kinh tế
+    if (!window.Economy) {
+      let state = { coins: 0, xp: 0 };
+      const listeners = [];
+
+      window.Economy = {
+        getState: () => ({ ...state }),
+        earn: (source, { coins = 0, xp = 0 }) => {
+          state.coins += coins;
+          state.xp += xp;
+
+          // Cập nhật UI ví
+          const coinsEl = document.getElementById('wallet-coins');
+          const xpEl = document.getElementById('wallet-xp');
+          if (coinsEl) coinsEl.textContent = state.coins;
+          if (xpEl) xpEl.textContent = state.xp;
+
+          // Toast thông báo
+          const toastBox = document.getElementById('demo-toast-box');
+          if (toastBox) {
+            const toast = document.createElement('div');
+            toast.className = 'demo-toast';
+            toast.textContent = `🎁 +${coins} Xu & +${xp} XP từ trò chơi!`;
+            toastBox.appendChild(toast);
+            setTimeout(() => toast.remove(), 3200);
+          }
+
+          listeners.forEach(cb => cb(state));
+          return state;
+        },
+        on: (cb) => { if (typeof cb === 'function') listeners.push(cb); }
+      };
+    }
+
+    // 2. Chuyển đổi Dark/Light mode
+    const themeBtn = document.getElementById('demo-theme-btn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme') || 'light';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        html.setAttribute('data-theme', newTheme);
+        themeBtn.textContent = newTheme === 'dark' ? '☀️ Chế độ Sáng' : '🌙 Chế độ Tối';
+      });
+    }
+
+    // 3. Khởi tạo MiniGames
+    const appEl = document.getElementById('mini-games-app');
+    if (window.MiniGames && appEl) {
+      window.MiniGames.mount(appEl);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,740 @@
+/* ==========================================================================
+   Typing Practice (Luyện gõ Pinyin) Stylesheet
+   Kế thừa CSS variables từ style.css (Light/Dark Mode, Responsive)
+   ========================================================================== */
+
+.typing-container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* Header & Cheatsheet */
+.typing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.typing-title-group {
+  flex: 1;
+  min-width: 260px;
+}
+
+.typing-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.25rem;
+}
+
+.typing-sub {
+  font-size: 0.875rem;
+  color: var(--text-sub);
+}
+
+.typing-cheatsheet-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-md);
+  font-size: 0.825rem;
+  color: var(--text-sub);
+  box-shadow: var(--shadow-sm);
+}
+
+.typing-cheatsheet-bar .cs-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.typing-cheatsheet-bar kbd {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-highlight);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.775rem;
+  font-family: var(--font-base);
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.typing-cheatsheet-bar .cs-divider {
+  color: var(--text-muted);
+  font-weight: 300;
+}
+
+/* Controls Card */
+.typing-controls-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.typing-control-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.typing-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.typing-control-group label {
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--text-sub);
+}
+
+.typing-select {
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-app);
+  color: var(--text-main);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  width: 100%;
+}
+
+.typing-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+.typing-options-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px dashed var(--border-color);
+}
+
+.typing-options-left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.typing-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  color: var(--text-main);
+  cursor: pointer;
+  user-select: none;
+}
+
+.typing-checkbox-label input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: var(--primary);
+  width: 16px;
+  height: 16px;
+}
+
+/* Practice Card */
+.typing-practice-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 1.5rem;
+}
+
+.typing-stats-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-sub);
+  margin-bottom: 0.65rem;
+}
+
+.typing-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.typing-stat-item .stat-value {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.typing-progress-track {
+  width: 100%;
+  height: 6px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.typing-progress-fill {
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.3s ease;
+}
+
+/* Question Prompt Area */
+.typing-prompt-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  padding: 1.25rem 1rem;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.typing-prompt-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  background: var(--primary-light);
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+}
+
+.typing-prompt-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.typing-prompt-hanzi {
+  font-family: var(--font-hanzi);
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--text-main);
+  letter-spacing: 2px;
+  line-height: 1.25;
+  user-select: text;
+}
+
+.typing-prompt-hanzi.sentence-mode {
+  font-size: 1.85rem;
+  letter-spacing: 1px;
+}
+
+.typing-audio-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  transition: transform 0.15s, background-color 0.15s, border-color 0.15s;
+  box-shadow: var(--shadow-sm);
+}
+
+.typing-audio-btn:hover {
+  transform: scale(1.08);
+  background: var(--primary-light);
+  border-color: var(--primary);
+}
+
+.typing-prompt-sub {
+  font-size: 1.05rem;
+  color: var(--text-sub);
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* Syllables Feedback Display */
+.typing-syllables-feedback {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.65rem;
+  margin-bottom: 1.25rem;
+  min-height: 58px;
+  align-items: center;
+}
+
+.syl-box {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--border-color);
+  background: var(--bg-app);
+  min-width: 64px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.syl-box.placeholder {
+  border-style: dashed;
+  color: var(--text-muted);
+}
+
+.syl-box.correct {
+  border-color: var(--success);
+  background: var(--success-light);
+  color: var(--success);
+}
+
+.syl-box.wrong-tone {
+  border-color: var(--warning);
+  background: var(--warning-light);
+  color: var(--warning);
+}
+
+.syl-box.wrong {
+  border-color: var(--danger);
+  background: var(--danger-light);
+  color: var(--danger);
+}
+
+.syl-box .syl-hanzi {
+  font-family: var(--font-hanzi);
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.syl-box .syl-target {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.syl-box .syl-user {
+  font-size: 0.75rem;
+  text-decoration: line-through;
+  opacity: 0.8;
+  margin-top: 1px;
+}
+
+.syl-box .syl-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-top: 3px;
+  text-transform: uppercase;
+}
+
+.syl-box.wrong-tone .syl-badge {
+  background: var(--warning);
+  color: #fff;
+}
+
+.syl-box.wrong .syl-badge {
+  background: var(--danger);
+  color: #fff;
+}
+
+.syl-box.correct .syl-badge {
+  background: var(--success);
+  color: #fff;
+}
+
+/* Input Area */
+.typing-input-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.typing-input-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+}
+
+.typing-input {
+  width: 100%;
+  font-size: 1.35rem;
+  font-weight: 500;
+  padding: 0.85rem 2.85rem 0.85rem 1.25rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-app);
+  color: var(--text-main);
+  font-family: var(--font-base);
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+  box-sizing: border-box;
+}
+
+.typing-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light, rgba(0, 0, 0, 0.08));
+}
+
+.typing-input.input-correct {
+  border-color: var(--success) !important;
+  background: var(--success-light) !important;
+}
+
+.typing-input.input-wrong {
+  border-color: var(--danger) !important;
+  background: var(--danger-light) !important;
+}
+
+.typing-input.input-wrong-tone {
+  border-color: var(--warning) !important;
+  background: var(--warning-light) !important;
+}
+
+.btn-input-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-input-clear:hover {
+  color: var(--text-main);
+}
+
+.typing-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.typing-actions .btn {
+  min-width: 105px;
+  padding: 0.65rem 1.15rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.kbd-hint {
+  font-size: 0.75rem;
+  padding: 1px 5px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+[data-theme="dark"] .kbd-hint {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.typing-keyboard-help {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 1rem;
+  line-height: 1.4;
+}
+
+.typing-keyboard-help kbd {
+  font-family: monospace;
+  font-size: 0.75rem;
+  padding: 1px 4px;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  background: var(--bg-elevated);
+}
+
+/* Results Box */
+.typing-result-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.result-header {
+  margin-bottom: 1.5rem;
+}
+
+.result-badge-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.result-header h2 {
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.25rem;
+}
+
+.result-subtitle {
+  color: var(--text-sub);
+  font-size: 0.95rem;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.result-stat-box {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.result-stat-num {
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.result-stat-label {
+  font-size: 0.8rem;
+  color: var(--text-sub);
+}
+
+/* Wrong list section */
+.typing-wrong-section {
+  text-align: left;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.typing-wrong-section h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--danger);
+}
+
+.typing-wrong-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 240px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+  padding-right: 0.25rem;
+}
+
+.wrong-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  gap: 0.75rem;
+}
+
+.wrong-item-left {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.wrong-item-hanzi {
+  font-family: var(--font-hanzi);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.wrong-item-py {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.wrong-item-vi {
+  font-size: 0.85rem;
+  color: var(--text-sub);
+}
+
+.wrong-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.result-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* History list */
+.typing-history-section {
+  text-align: left;
+  border-top: 1px dashed var(--border-color);
+  padding-top: 1.5rem;
+}
+
+.typing-history-section h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.75rem;
+}
+
+.typing-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.history-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.85rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  color: var(--text-main);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.history-item-date {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.history-item-stats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-weight: 500;
+}
+
+/* Mobile Responsiveness (375px) */
+@media (max-width: 640px) {
+  .typing-container {
+    padding: 1rem 0.5rem 2rem;
+  }
+
+  .typing-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .typing-cheatsheet-bar {
+    width: 100%;
+    justify-content: center;
+    font-size: 0.775rem;
+  }
+
+  .typing-controls-card {
+    padding: 1rem;
+  }
+
+  .typing-control-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .typing-options-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .typing-options-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .typing-practice-card {
+    padding: 1rem;
+  }
+
+  .typing-prompt-hanzi {
+    font-size: 2rem;
+  }
+
+  .typing-prompt-hanzi.sentence-mode {
+    font-size: 1.4rem;
+  }
+
+  .typing-input {
+    font-size: 1.15rem;
+    padding: 0.75rem 2.2rem 0.75rem 0.85rem;
+  }
+
+  .typing-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .typing-actions .btn {
+    width: 100%;
+  }
+
+  .result-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

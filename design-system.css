@@ -1,0 +1,292 @@
+/* ==========================================================================
+   DESIGN-SYSTEM.CSS — Polylingo Design System
+   Token 3 lớp (Primitive -> Semantic -> Component) & Các lớp tiện ích dùng chung
+   Không can thiệp vào các luật cũ trong style.css / themes.css
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. ROOT TOKENS: PRIMITIVE & SEMANTIC & COMPONENT
+   -------------------------------------------------------------------------- */
+:root {
+  /* ========================================================================
+     1A. PRIMITIVE TOKENS (Giá trị vật lý thô, không gắn mục đích)
+     ======================================================================== */
+
+  /* Neutral / Grayscale Palette */
+  --ds-gray-50:  #f9fafb;
+  --ds-gray-100: #f3f4f6;
+  --ds-gray-200: #e5e7eb;
+  --ds-gray-300: #d1d5db;
+  --ds-gray-400: #9ca3af;
+  --ds-gray-500: #6b7280;
+  --ds-gray-600: #4b5563;
+  --ds-gray-700: #374151;
+  --ds-gray-800: #1f2937;
+  --ds-gray-900: #111827;
+  --ds-gray-950: #030712;
+  --ds-white:    #ffffff;
+  --ds-black:    #000000;
+
+  /* Primitive Spacing (4, 8, 12, 16, 24, 32, 48px) */
+  --ds-space-4:  4px;
+  --ds-space-8:  8px;
+  --ds-space-12: 12px;
+  --ds-space-16: 16px;
+  --ds-space-24: 24px;
+  --ds-space-32: 32px;
+  --ds-space-48: 48px;
+
+  /* Alias theo thứ tự bậc */
+  --ds-space-1: var(--ds-space-4);
+  --ds-space-2: var(--ds-space-8);
+  --ds-space-3: var(--ds-space-12);
+  --ds-space-4-tier: var(--ds-space-16);
+  --ds-space-5: var(--ds-space-24);
+  --ds-space-6: var(--ds-space-32);
+  --ds-space-7: var(--ds-space-48);
+
+  /* Bán kính bo góc (Border Radius) */
+  --ds-radius-sm:   6px;
+  --ds-radius-md:   10px;
+  --ds-radius-lg:   14px;
+  --ds-radius-xl:   18px;
+  --ds-radius-full: 9999px;
+
+  /* Cỡ chữ (Font Sizes 12 - 32px) */
+  --ds-font-size-12: 12px;
+  --ds-font-size-14: 14px;
+  --ds-font-size-16: 16px;
+  --ds-font-size-18: 18px;
+  --ds-font-size-20: 20px;
+  --ds-font-size-24: 24px;
+  --ds-font-size-28: 28px;
+  --ds-font-size-32: 32px;
+
+  /* Độ đậm chữ (Font Weights) */
+  --ds-font-weight-regular:   400;
+  --ds-font-weight-medium:    500;
+  --ds-font-weight-semibold:  600;
+  --ds-font-weight-bold:      700;
+  --ds-font-weight-extrabold: 800;
+
+  /* Bóng đổ (Shadows) */
+  --ds-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --ds-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  --ds-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+
+  /* Thời gian & Hiệu ứng chuyển động (Motion & Transitions) */
+  --ds-duration-fast: 150ms;
+  --ds-duration-base: 200ms;
+  --ds-duration-slow: 300ms;
+  --ds-ease-default:   cubic-bezier(0.4, 0, 0.2, 1);
+  --ds-motion-fast:   var(--ds-duration-fast) var(--ds-ease-default);
+  --ds-motion-base:   var(--ds-duration-base) var(--ds-ease-default);
+  --ds-motion-slow:   var(--ds-duration-slow) var(--ds-ease-default);
+
+  /* ========================================================================
+     1B. SEMANTIC TOKENS (Ý nghĩa ngữ cảnh, kế thừa trực tiếp từ themes & style)
+     Tự động thích ứng khi html[data-lang=zh|ja|en|ru|home] hoặc [data-theme=dark]
+     ======================================================================== */
+  --ds-color-primary:       var(--accent, var(--primary, #2563eb));
+  --ds-color-primary-hover: var(--accent-hover, var(--primary-hover, #1d4ed8));
+  --ds-color-primary-light: var(--accent-light, var(--primary-light, #eff6ff));
+  --ds-color-accent:        var(--accent-2, var(--accent, #b3261e));
+
+  --ds-color-bg:            var(--bg, var(--bg-app, #f8fafc));
+  --ds-color-surface:       var(--surface, var(--bg-card, #ffffff));
+  --ds-color-surface-hover: var(--surface-2, var(--bg-elevated, #f1f5f9));
+  --ds-color-text:          var(--text, var(--text-main, #0f172a));
+  --ds-color-text-muted:    var(--muted, var(--text-muted, #4b5563));
+  --ds-color-border:        var(--border, var(--border-color, #e2e8f0));
+  --ds-color-border-hover:  var(--border-focus, var(--border-highlight, #cbd5e1));
+
+  --ds-color-success:       var(--success, #10b981);
+  --ds-color-success-light: var(--success-light, #ecfdf5);
+  --ds-color-warning:       var(--warning, #f59e0b);
+  --ds-color-warning-light: var(--warning-light, #fffbeb);
+  --ds-color-danger:        var(--danger, #ef4444);
+  --ds-color-danger-light:  var(--danger-light, #fef2f2);
+
+  --ds-focus-ring:          0 0 0 3px var(--accent-light, rgba(37, 99, 235, 0.25));
+  --ds-focus-ring-color:    var(--accent, var(--primary, #2563eb));
+
+  /* ========================================================================
+     1C. COMPONENT TOKENS (Dành riêng cho các thành phần giao diện phổ biến)
+     ======================================================================== */
+
+  /* Button Tokens */
+  --ds-btn-min-height:       44px;
+  --ds-btn-padding-y:        var(--ds-space-12);
+  --ds-btn-padding-x:        var(--ds-space-16);
+  --ds-btn-radius:           var(--ds-radius-md);
+  --ds-btn-font-size:        var(--ds-font-size-16);
+  --ds-btn-font-weight:      var(--ds-font-weight-semibold);
+  --ds-btn-primary-bg:       var(--ds-color-primary);
+  --ds-btn-primary-text:     #ffffff;
+  --ds-btn-primary-hover-bg: var(--ds-color-primary-hover);
+  --ds-btn-ghost-bg:         transparent;
+  --ds-btn-ghost-text:       var(--ds-color-text);
+  --ds-btn-ghost-hover-bg:   var(--ds-color-primary-light);
+
+  /* Card Tokens */
+  --ds-card-bg:      var(--ds-color-surface);
+  --ds-card-border:  1px solid var(--ds-color-border);
+  --ds-card-radius:  var(--ds-radius-lg);
+  --ds-card-padding: var(--ds-space-24);
+  --ds-card-shadow:  var(--ds-shadow-sm);
+
+  /* Input Tokens */
+  --ds-input-min-height:   44px;
+  --ds-input-bg:           var(--ds-color-surface);
+  --ds-input-border:       1px solid var(--ds-color-border);
+  --ds-input-radius:       var(--ds-radius-md);
+  --ds-input-padding:      var(--ds-space-12) var(--ds-space-16);
+  --ds-input-text:         var(--ds-color-text);
+  --ds-input-focus-border: var(--ds-color-primary);
+
+  /* Chip Tokens */
+  --ds-chip-bg:        var(--ds-color-surface-hover);
+  --ds-chip-text:      var(--ds-color-text);
+  --ds-chip-padding:   var(--ds-space-4) var(--ds-space-12);
+  --ds-chip-radius:    var(--ds-radius-full);
+  --ds-chip-font-size: var(--ds-font-size-14);
+}
+
+/* --------------------------------------------------------------------------
+   2. TIỆN ÍCH BIỂU TƯỢNG (DS-ICON)
+   -------------------------------------------------------------------------- */
+.ds-icon {
+  width: 1.25em;
+  height: 1.25em;
+  vertical-align: -0.2em;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   3. TIỆN ÍCH NÚT BẤM (DS-BTN)
+   Đảm bảo diện tích chạm tối thiểu 44px theo chuẩn WCAG AAA
+   -------------------------------------------------------------------------- */
+.ds-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-8);
+  min-height: var(--ds-btn-min-height);
+  min-width: 44px;
+  padding: var(--ds-btn-padding-y) var(--ds-btn-padding-x);
+  border-radius: var(--ds-btn-radius);
+  font-size: var(--ds-btn-font-size);
+  font-weight: var(--ds-btn-font-weight);
+  line-height: 1.25;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  user-select: none;
+  box-sizing: border-box;
+  transition: background var(--ds-motion-fast),
+              color var(--ds-motion-fast),
+              border-color var(--ds-motion-fast),
+              box-shadow var(--ds-motion-fast),
+              transform var(--ds-motion-fast);
+}
+
+.ds-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.ds-btn:disabled,
+.ds-btn[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Biến thể nút chính (Primary) */
+.ds-btn--primary {
+  background: var(--ds-btn-primary-bg);
+  color: var(--ds-btn-primary-text);
+  border-color: transparent;
+}
+
+.ds-btn--primary:hover:not(:disabled) {
+  background: var(--ds-btn-primary-hover-bg);
+}
+
+/* Biến thể nút trong suốt (Ghost) */
+.ds-btn--ghost {
+  background: var(--ds-btn-ghost-bg);
+  color: var(--ds-btn-ghost-text);
+  border-color: transparent;
+}
+
+.ds-btn--ghost:hover:not(:disabled) {
+  background: var(--ds-btn-ghost-hover-bg);
+  color: var(--ds-color-primary);
+}
+
+/* --------------------------------------------------------------------------
+   4. TIỆN ÍCH THẺ (DS-CARD)
+   -------------------------------------------------------------------------- */
+.ds-card {
+  background: var(--ds-card-bg);
+  border: var(--ds-card-border);
+  border-radius: var(--ds-card-radius);
+  padding: var(--ds-card-padding);
+  box-shadow: var(--ds-card-shadow);
+  box-sizing: border-box;
+  transition: box-shadow var(--ds-motion-base),
+              border-color var(--ds-motion-base),
+              transform var(--ds-motion-base);
+}
+
+/* --------------------------------------------------------------------------
+   5. TIỆN ÍCH CHIP / BADGE (DS-CHIP)
+   -------------------------------------------------------------------------- */
+.ds-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-4);
+  padding: var(--ds-chip-padding);
+  border-radius: var(--ds-chip-radius);
+  font-size: var(--ds-chip-font-size);
+  font-weight: var(--ds-font-weight-medium);
+  background: var(--ds-chip-bg);
+  color: var(--ds-chip-text);
+  line-height: 1.4;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   6. KHẢ NĂNG TRUY CẬP (A11Y): FOCUS-VISIBLE RÕ RÀNG
+   -------------------------------------------------------------------------- */
+:focus-visible {
+  outline: 2px solid var(--ds-color-border-focus);
+  outline-offset: 2px;
+}
+
+.ds-btn:focus-visible,
+.ds-card:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-focus-ring);
+}
+
+/* --------------------------------------------------------------------------
+   7. GIẢM CHUYỂN ĐỘNG CHO NGƯỜI DÙNG NHẠY CẢM (PREFERS-REDUCED-MOTION)
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

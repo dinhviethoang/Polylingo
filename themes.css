@@ -1,0 +1,939 @@
+/* ==========================================================================
+   THEMES.CSS — Hệ thống giao diện chủ đề văn hóa 4 ngôn ngữ & Trang chủ
+   Thứ tự nạp: Sau style.css và typing.css
+   Các ngôn ngữ: zh (Trung Hoa), ja (Nhật Bản), en (Anh Quốc), ru (Nước Nga), home (Trang chủ)
+   Hỗ trợ chế độ Sáng (Light) & Tối (Dark) cho từng chủ đề
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   0. TRANG CHỦ (#/) — Giao diện Trung tính Sang trọng (Linear / Stripe style)
+   -------------------------------------------------------------------------- */
+:root,
+[data-lang="home"] {
+  --accent: #111827;
+  --accent-2: #374151;
+  --accent-hover: #1f2937;
+  --accent-light: rgba(17, 24, 39, 0.06);
+  --bg: #F7F4EE;
+  --surface: #ffffff;
+  --surface-2: #EFECE4;
+  --text: #1C1917;
+  --muted: #6B645C;
+  --border: rgba(28, 25, 23, 0.08);
+  --border-focus: #111827;
+  --font-display: "PT Serif", "Playfair Display", Georgia, serif;
+  --watermark-char: "";
+  --pattern: none;
+}
+
+[data-theme="dark"],
+[data-theme="dark"][data-lang="home"] {
+  --accent: #f8fafc;
+  --accent-2: #e2e8f0;
+  --accent-hover: #ffffff;
+  --accent-light: rgba(248, 250, 252, 0.12);
+  --bg: #141416;
+  --surface: #1C1C1F;
+  --surface-2: #242428;
+  --text: #F3F1ED;
+  --muted: #A39E96;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-focus: #f8fafc;
+  --pattern: none;
+}
+
+/* --------------------------------------------------------------------------
+   1. CHỦ ĐỀ TRUNG HOA (zh)
+   Đỏ son #B3261E, vàng kim #C9A227, giấy dó #FAF6EE, mực #1F1A17
+   Họa tiết song cửa hồi văn / mây lành; Font Noto Serif SC
+   Tối: Sơn mài #17110F
+   -------------------------------------------------------------------------- */
+[data-lang="zh"] {
+  --accent: #b3261e;
+  --accent-2: #c9a227;
+  --accent-hover: #981f18;
+  --accent-light: rgba(179, 38, 30, 0.08);
+  --bg: #faf6ee;
+  --surface: #ffffff;
+  --surface-2: #f4efe3;
+  --text: #1f1a17;
+  --muted: #4b5563;
+  --border: #e6ddce;
+  --border-focus: #b3261e;
+  --font-display: "Noto Serif SC", "Songti SC", serif;
+  --watermark-char: "学";
+  --pattern: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h20v20H10V10h10V0h20v20H30V10h10v30H20V30h10V20H20v20H0V20h10v10H0V0z' fill='none' stroke='%23b3261e' stroke-width='0.75' stroke-opacity='0.045'/%3E%3C/svg%3E");
+}
+
+[data-theme="dark"][data-lang="zh"] {
+  --accent: #e24a42;
+  --accent-2: #e5b83b;
+  --accent-hover: #ec665f;
+  --accent-light: rgba(226, 74, 66, 0.15);
+  --bg: #17110f;
+  --surface: #221b17;
+  --surface-2: #2c221e;
+  --text: #faf6ee;
+  --muted: #a1a1aa;
+  --border: #382c26;
+  --border-focus: #e24a42;
+  --pattern: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h20v20H10V10h10V0h20v20H30V10h10v30H20V30h10V20H20v20H0V20h10v10H0V0z' fill='none' stroke='%23e5b83b' stroke-width='0.75' stroke-opacity='0.06'/%3E%3C/svg%3E");
+}
+
+/* --------------------------------------------------------------------------
+   2. CHỦ ĐỀ NHẬT BẢN (ja)
+   Chàm 藍 #1E3A5F, hồng anh đào #E59BB0, giấy washi #FAF8F4
+   Họa tiết sóng seigaiha; Font Shippori Mincho
+   Tối: Đêm chàm #0E1724
+   -------------------------------------------------------------------------- */
+[data-lang="ja"] {
+  --accent: #1e3a5f;
+  --accent-2: #e59bb0;
+  --accent-hover: #142944;
+  --accent-light: rgba(30, 58, 95, 0.08);
+  --bg: #faf8f4;
+  --surface: #ffffff;
+  --surface-2: #f2efe8;
+  --text: #161d26;
+  --muted: #4b5563;
+  --border: #e2dcd2;
+  --border-focus: #1e3a5f;
+  --font-display: "Shippori Mincho", "Hiragino Mincho ProN", serif;
+  --watermark-char: "学ぶ";
+  --pattern: url("data:image/svg+xml,%3Csvg width='40' height='20' viewBox='0 0 40 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231e3a5f' stroke-width='0.85' stroke-opacity='0.06'%3E%3Cpath d='M0 20 A20 20 0 0 1 40 20 M5 20 A15 15 0 0 1 35 20 M10 20 A10 10 0 0 1 30 20 M15 20 A5 5 0 0 1 25 20'/%3E%3Cpath d='M-20 10 A20 20 0 0 1 20 10 M20 10 A20 20 0 0 1 60 10'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+[data-theme="dark"][data-lang="ja"] {
+  --accent: #6b9fe4;
+  --accent-2: #f4aec0;
+  --accent-hover: #8bb4eb;
+  --accent-light: rgba(107, 159, 228, 0.15);
+  --bg: #0e1724;
+  --surface: #162234;
+  --surface-2: #1e2d43;
+  --text: #f7f9fc;
+  --muted: #a1a1aa;
+  --border: #25364e;
+  --border-focus: #6b9fe4;
+  --pattern: url("data:image/svg+xml,%3Csvg width='40' height='20' viewBox='0 0 40 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%236b9fe4' stroke-width='0.85' stroke-opacity='0.06'%3E%3Cpath d='M0 20 A20 20 0 0 1 40 20 M5 20 A15 15 0 0 1 35 20 M10 20 A10 10 0 0 1 30 20 M15 20 A5 5 0 0 1 25 20'/%3E%3Cpath d='M-20 10 A20 20 0 0 1 20 10 M20 10 A20 20 0 0 1 60 10'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* --------------------------------------------------------------------------
+   3. CHỦ ĐỀ ANH QUỐC (en)
+   Navy #14213D, vàng đồng #B08D57, nền kem #FBF8F1
+   Họa tiết kẻ ô sách cổ điển; Font Playfair Display
+   Tối: Thư viện đêm #0F141F
+   -------------------------------------------------------------------------- */
+[data-lang="en"] {
+  --accent: #14213d;
+  --accent-2: #b08d57;
+  --accent-hover: #0b1320;
+  --accent-light: rgba(20, 33, 61, 0.08);
+  --bg: #fbf8f1;
+  --surface: #ffffff;
+  --surface-2: #f4efe6;
+  --text: #1f2937;
+  --muted: #4b5563;
+  --border: #dfd7c7;
+  --border-focus: #14213d;
+  --font-display: "Playfair Display", Georgia, serif;
+  --watermark-char: "Learn";
+  --pattern: url("data:image/svg+xml,%3Csvg width='36' height='36' viewBox='0 0 36 36' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M36 0H0v36' fill='none' stroke='%23b08d57' stroke-width='0.5' stroke-opacity='0.05' stroke-dasharray='2,4'/%3E%3Cpath d='M18 0v36M0 18h36' fill='none' stroke='%2314213d' stroke-width='0.5' stroke-opacity='0.04'/%3E%3C/svg%3E");
+}
+
+[data-theme="dark"][data-lang="en"] {
+  --accent: #598de0;
+  --accent-2: #d4af6d;
+  --accent-hover: #76a2e5;
+  --accent-light: rgba(89, 141, 224, 0.15);
+  --bg: #0f141f;
+  --surface: #171e2d;
+  --surface-2: #212a3d;
+  --text: #f3f4f6;
+  --muted: #9ca3af;
+  --border: #273347;
+  --border-focus: #598de0;
+  --pattern: url("data:image/svg+xml,%3Csvg width='36' height='36' viewBox='0 0 36 36' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M36 0H0v36' fill='none' stroke='%23d4af6d' stroke-width='0.5' stroke-opacity='0.06' stroke-dasharray='2,4'/%3E%3C/svg%3E");
+}
+
+/* --------------------------------------------------------------------------
+   4. CHỦ ĐỀ NƯỚC NGA (ru)
+   Xanh lam Gzhel #1D4E9E, đỏ #C1272D ít, trắng sứ #F7F9FC
+   Họa tiết hoa văn Gzhel xanh-trắng; Font PT Serif (hỗ trợ Cyrillic)
+   Tối: Đêm lam #0B121E
+   -------------------------------------------------------------------------- */
+[data-lang="ru"] {
+  --accent: #1d4e9e;
+  --accent-2: #c1272d;
+  --accent-hover: #153a78;
+  --accent-light: rgba(29, 78, 158, 0.08);
+  --bg: #f7f9fc;
+  --surface: #ffffff;
+  --surface-2: #edf3fa;
+  --text: #141c24;
+  --muted: #4b5563;
+  --border: #d6e2f0;
+  --border-focus: #1d4e9e;
+  --font-display: "PT Serif", "Times New Roman", serif;
+  --watermark-char: "Учить";
+  --pattern: url("data:image/svg+xml,%3Csvg width='48' height='48' viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M24 10c-3 0-5 3-5 6 0 4 5 8 5 8s5-4 5-8c0-3-2-6-5-6z M18 20c-3-2-6-2-8 0-2 2-1 6 2 7 3 1 6-2 6-7z M30 20c3-2 6-2 8 0 2 2 1 6-2 7-3 1-6-2-6-7z M20 32c-2 2-2 5 0 7 2 2 6 1 7-2 1-3-2-6-7-5z M28 32c2 2 2 5 0 7-2 2-6 1-7-2-1-3 2-6 7-5z' fill='none' stroke='%231D4E9E' stroke-width='0.8' stroke-opacity='0.06'/%3E%3Ccircle cx='24' cy='24' r='2' fill='%231D4E9E' fill-opacity='0.08'/%3E%3C/svg%3E");
+}
+
+[data-theme="dark"][data-lang="ru"] {
+  --accent: #598de0;
+  --accent-2: #e64f54;
+  --accent-hover: #76a2e5;
+  --accent-light: rgba(89, 141, 224, 0.15);
+  --bg: #0b121e;
+  --surface: #131e30;
+  --surface-2: #1b2a42;
+  --text: #f4f7fb;
+  --muted: #a1a1aa;
+  --border: #23344d;
+  --border-focus: #598de0;
+  --pattern: url("data:image/svg+xml,%3Csvg width='48' height='48' viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M24 10c-3 0-5 3-5 6 0 4 5 8 5 8s5-4 5-8c0-3-2-6-5-6z M18 20c-3-2-6-2-8 0-2 2-1 6 2 7 3 1 6-2 6-7z M30 20c3-2 6-2 8 0 2 2 1 6-2 7-3 1-6-2-6-7z M20 32c-2 2-2 5 0 7 2 2 6 1 7-2 1-3-2-6-7-5z M28 32c2 2 2 5 0 7-2 2-6 1-7-2-1-3 2-6 7-5z' fill='none' stroke='%23598de0' stroke-width='0.8' stroke-opacity='0.08'/%3E%3Ccircle cx='24' cy='24' r='2' fill='%23598de0' fill-opacity='0.1'/%3E%3C/svg%3E");
+}
+
+/* ==========================================================================
+   ÁP DỤNG BIẾN CHỦ ĐỀ CHO TOÀN BỘ CÁC THÀNH PHẦN (GLOBAL MAPPING)
+   Transition mượt mà 300ms khi chuyển đổi chủ đề hoặc sáng/tối
+   ========================================================================== */
+html {
+  transition: background-color 300ms ease, color 300ms ease;
+}
+
+body {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+  background-image: var(--pattern) !important;
+  background-repeat: repeat !important;
+  transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease !important;
+}
+
+/* Đồng bộ CSS variables từ themes.css sang các biến cũ của style.css & typing.css */
+:root,
+[data-lang] {
+  --bg-app: var(--bg);
+  --bg-card: var(--surface);
+  --bg-elevated: var(--surface-2);
+  --border-color: var(--border);
+  --text-main: var(--text);
+  --text-sub: var(--muted);
+  --text-muted: var(--muted);
+  --primary: var(--accent);
+  --primary-hover: var(--accent-hover);
+  --primary-light: var(--accent-light);
+}
+
+/* Typography Tiêu đề theo font trưng bày của chủ đề */
+h1, h2, h3,
+.brand-title,
+.coming-soon-title,
+.pane-hero h2,
+.quiz-card-box h2,
+.dialogue-header-bar h2 {
+  font-family: var(--font-display);
+}
+
+/* Header & Thanh Menu Ngang */
+.app-header {
+  background: var(--surface) !important;
+  border-bottom: 1px solid var(--border) !important;
+  transition: background-color 300ms ease, border-color 300ms ease;
+}
+
+.header-container {
+  max-width: 100% !important;
+}
+
+.lang-nav-tab {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.lang-nav-tab:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  background: var(--surface);
+}
+
+.lang-nav-tab.active {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px -1px rgba(0, 0, 0, 0.2);
+}
+
+.lang-nav-tab.coming-tab:not(.active) {
+  opacity: 0.65;
+}
+
+.lang-nav-tab.coming-tab:not(.active):hover {
+  opacity: 0.9;
+}
+
+.lang-nav-tab.coming-tab.active {
+  opacity: 1;
+}
+
+.lang-tab-dot,
+.lang-tab-badge {
+  display: none !important;
+}
+
+/* Sidebar & Menu Dọc (248px) */
+.app-sidebar {
+  width: 248px !important;
+  min-width: 248px !important;
+  max-width: 248px !important;
+  background: var(--surface) !important;
+  border-right: 1px solid var(--border) !important;
+  transition: background-color 300ms ease, border-color 300ms ease;
+}
+
+.sidebar-header {
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-lang-name {
+  font-family: var(--font-display);
+  color: var(--text);
+}
+
+.sidebar-nav-item {
+  color: var(--text);
+  border-radius: 8px;
+  border-left: 3.5px solid transparent;
+  padding: 0.6rem 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.18s ease;
+}
+
+.sidebar-nav-item:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.sidebar-nav-item.active {
+  background: var(--accent-light) !important;
+  color: var(--accent) !important;
+  border-left-color: var(--accent) !important;
+  font-weight: 600;
+}
+
+.sidebar-icon-svg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.sidebar-footer {
+  background: var(--surface) !important;
+  border-top: 1px solid var(--border) !important;
+}
+
+.sidebar-progress-box {
+  background: var(--surface-2) !important;
+  border-color: var(--border) !important;
+}
+
+.prog-bar,
+.progress-fill,
+#quiz-progress-fill,
+.typing-progress-fill,
+#typing-progress-fill {
+  background: var(--accent) !important;
+}
+
+.subnav-btn.active {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: #ffffff !important;
+}
+
+.subnav-btn:hover {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+.stat-value {
+  color: var(--accent) !important;
+}
+
+.section-tag {
+  color: var(--accent) !important;
+  background: var(--accent-light) !important;
+}
+
+.step-icon-box {
+  background: var(--accent-light) !important;
+  color: var(--accent) !important;
+}
+
+[data-theme="dark"][data-lang="home"] .btn-primary,
+[data-theme="dark"][data-lang="home"] .subnav-btn.active {
+  color: #0f172a !important;
+  background-color: #f8fafc !important;
+}
+
+/* Main Content Container */
+.app-main {
+  max-width: 1120px !important;
+  margin: 0 auto;
+  padding: 1.75rem 1.25rem 3.5rem 1.25rem;
+}
+
+.portal-mode .app-main {
+  max-width: 1200px !important;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem 1.25rem;
+}
+
+/* Nút bấm (Buttons) */
+.btn-primary {
+  background-color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-hover) !important;
+  border-color: var(--accent-hover) !important;
+}
+
+.btn-outline {
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+  background-color: var(--surface) !important;
+}
+
+.btn-outline:hover {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+  background-color: var(--accent-light) !important;
+}
+
+/* Thẻ (Cards) */
+.stat-card,
+.roadmap-card,
+.highlight-card,
+.fc-card,
+.quiz-card-box,
+.coming-soon-wrapper,
+.dialogue-content-area,
+.dialogue-sidebar,
+.typing-cheatsheet-bar,
+.typing-stat-pill {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.roadmap-card:hover,
+.stat-card:hover {
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.08);
+  border-color: var(--accent) !important;
+}
+
+/* Hero Banners trong ngôn ngữ với chữ Thư pháp Watermark */
+.pane-hero {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-left: 4px solid var(--accent) !important;
+  border-radius: 12px;
+  padding: 1.75rem 2rem;
+  margin-bottom: 1.75rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+}
+
+.pane-hero .hero-content h2 {
+  color: var(--text);
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.pane-hero .hero-content p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  max-width: 680px;
+  line-height: 1.6;
+}
+
+/* Watermark lớn mờ ở góc hero */
+.pane-hero::after,
+.coming-soon-wrapper::after {
+  content: var(--watermark-char);
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-display);
+  font-size: clamp(80px, 14vw, 160px);
+  font-weight: 700;
+  color: var(--accent);
+  opacity: 0.08;
+  pointer-events: none;
+  line-height: 1;
+  user-select: none;
+  z-index: 0;
+}
+
+/* Dấu ấn văn hóa riêng cho từng ngôn ngữ */
+/* 1. TRUNG HOA (zh): Dấu triện đỏ & Khung viền góc & Mây lành */
+[data-lang="zh"] .pane-hero {
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='44' viewBox='0 0 80 44' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 32c-6.6 0-12-5.4-12-12 0-6.1 4.6-11.2 10.6-11.9C17.2 3.6 22.8 0 29.5 0c7.8 0 14.2 4.9 16.5 11.8 1.9-.9 4-1.4 6.2-1.4 6.8 0 12.5 4.7 13.9 11 1.2-.5 2.5-.8 3.9-.8 5.5 0 10 4.5 10 10s-4.5 10-10 10H16c-3.3 0-6-2.7-6-6s2.7-6 6-6h24' fill='none' stroke='%23B3261E' stroke-width='1.2' stroke-opacity='0.10'/%3E%3C/svg%3E") !important;
+  background-repeat: repeat;
+  border-top: 1.5px solid #C9A227 !important;
+  border-left: 4px solid var(--accent) !important;
+  overflow: hidden !important;
+}
+
+[data-lang="zh"] .pane-hero::after {
+  content: "学";
+  position: absolute;
+  right: 32px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  font-family: var(--font-display);
+  font-size: clamp(75px, 12vw, 135px) !important;
+  font-weight: 700;
+  color: var(--accent);
+  opacity: 0.05 !important;
+  pointer-events: none;
+  line-height: 1;
+  user-select: none;
+  z-index: 0;
+}
+
+[data-theme="dark"][data-lang="zh"] .pane-hero {
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='44' viewBox='0 0 80 44' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 32c-6.6 0-12-5.4-12-12 0-6.1 4.6-11.2 10.6-11.9C17.2 3.6 22.8 0 29.5 0c7.8 0 14.2 4.9 16.5 11.8 1.9-.9 4-1.4 6.2-1.4 6.8 0 12.5 4.7 13.9 11 1.2-.5 2.5-.8 3.9-.8 5.5 0 10 4.5 10 10s-4.5 10-10 10H16c-3.3 0-6-2.7-6-6s2.7-6 6-6h24' fill='none' stroke='%23E5B83B' stroke-width='1.2' stroke-opacity='0.12'/%3E%3C/svg%3E") !important;
+  border-top: 1.5px solid #E5B83B !important;
+}
+
+[data-lang="zh"] .step-badge,
+[data-lang="zh"] .stat-label strong,
+[data-lang="zh"] .seal-badge {
+  border: 2px solid var(--accent) !important;
+  background: rgba(179, 38, 30, 0.08) !important;
+  color: var(--accent) !important;
+  font-family: "Noto Serif SC", serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em;
+  border-radius: 3px !important;
+  box-shadow: inset 0 0 0 1px rgba(179, 38, 30, 0.25);
+  padding: 2px 7px !important;
+}
+
+[data-lang="zh"] .btn-outline {
+  border: 1.5px solid #B3261E !important;
+  color: #B3261E !important;
+}
+
+[data-lang="zh"] .btn-outline:hover {
+  background: rgba(179, 38, 30, 0.08) !important;
+  color: #981F18 !important;
+}
+
+[data-theme="dark"][data-lang="zh"] .btn-outline {
+  border-color: #E24A42 !important;
+  color: #E24A42 !important;
+}
+
+[data-theme="dark"][data-lang="zh"] .btn-outline:hover {
+  background: rgba(226, 74, 66, 0.15) !important;
+}
+
+[data-lang="zh"] .roadmap-card {
+  position: relative;
+}
+
+/* 2. NHẬT BẢN (ja): Điểm nhấn Mặt trời Hinomaru, Seigaiha & Sakura */
+[data-lang="ja"] .coming-soon-wrapper,
+[data-lang="ja"] .pane-hero {
+  background-image: url("data:image/svg+xml,%3Csvg width='44' height='22' viewBox='0 0 44 22' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231e3a5f' stroke-width='1.1' stroke-opacity='0.06'%3E%3Cpath d='M0 22 A22 22 0 0 1 44 22 M5.5 22 A16.5 16.5 0 0 1 38.5 22 M11 22 A11 11 0 0 1 33 22 M16.5 22 A5.5 5.5 0 0 1 27.5 22'/%3E%3Cpath d='M-22 11 A22 22 0 0 1 22 11 M22 11 A22 22 0 0 1 66 11'/%3E%3C/g%3E%3C/svg%3E") !important;
+  border-top: 3px solid #E59BB0 !important;
+  border-left: 4px solid #1E3A5F !important;
+}
+
+[data-theme="dark"][data-lang="ja"] .coming-soon-wrapper,
+[data-theme="dark"][data-lang="ja"] .pane-hero {
+  background-image: url("data:image/svg+xml,%3Csvg width='44' height='22' viewBox='0 0 44 22' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%236b9fe4' stroke-width='1.1' stroke-opacity='0.06'%3E%3Cpath d='M0 22 A22 22 0 0 1 44 22 M5.5 22 A16.5 16.5 0 0 1 38.5 22 M11 22 A11 11 0 0 1 33 22 M16.5 22 A5.5 5.5 0 0 1 27.5 22'/%3E%3Cpath d='M-22 11 A22 22 0 0 1 22 11 M22 11 A22 22 0 0 1 66 11'/%3E%3C/g%3E%3C/svg%3E") !important;
+  border-top: 3px solid #F4AEC0 !important;
+}
+
+[data-lang="ja"] .coming-soon-title::after {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: #BC002D;
+  border-radius: 50%;
+  margin-left: 8px;
+  vertical-align: middle;
+  box-shadow: 0 0 6px rgba(188, 0, 45, 0.4);
+}
+
+[data-lang="ja"] .cs-first-word-card {
+  border-left: 3.5px solid #E59BB0 !important;
+}
+
+/* Nền trắng đục che họa tiết nền cho các thẻ trang Sắp ra mắt (ja & ru) */
+[data-lang="ja"] .cs-first-word-card,
+[data-lang="ja"] .cs-feature-card,
+[data-lang="ru"] .cs-first-word-card,
+[data-lang="ru"] .cs-feature-card {
+  background: rgba(255, 255, 255, 0.94) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="dark"][data-lang="ja"] .cs-first-word-card,
+[data-theme="dark"][data-lang="ja"] .cs-feature-card,
+[data-theme="dark"][data-lang="ru"] .cs-first-word-card,
+[data-theme="dark"][data-lang="ru"] .cs-feature-card {
+  background: rgba(20, 20, 24, 0.92) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* 3. ANH QUỐC (en): Phong cách Thư viện Cổ điển, Navy & Đường kẻ đồng */
+[data-lang="en"] .coming-soon-wrapper,
+[data-lang="en"] .pane-hero {
+  border: 3px double #B08D57 !important;
+  border-top: 4px solid #14213D !important;
+  background-color: #FBF8F1 !important;
+}
+
+[data-theme="dark"][data-lang="en"] .coming-soon-wrapper,
+[data-theme="dark"][data-lang="en"] .pane-hero {
+  background-color: #0F141F !important;
+  border-color: #273347 !important;
+  border-top-color: #598DE0 !important;
+}
+
+[data-lang="en"] .btn-primary {
+  background-color: #14213D !important;
+  border-color: #14213D !important;
+  color: #ffffff !important;
+}
+
+[data-lang="en"] .btn-primary:hover {
+  background-color: #0B1320 !important;
+  border-color: #0B1320 !important;
+}
+
+[data-lang="en"] .btn-outline {
+  border: 1px solid #B08D57 !important;
+  color: #14213D !important;
+}
+
+[data-lang="en"] .btn-outline:hover {
+  background: rgba(20, 33, 61, 0.08) !important;
+}
+
+[data-lang="en"] .cs-first-word-card {
+  border: 2px double #B08D57 !important;
+  background: #FAF5EB !important;
+}
+
+[data-theme="dark"][data-lang="en"] .cs-first-word-card {
+  border: 2px double #D4AF6D !important;
+  background: #171E2D !important;
+}
+
+/* 4. NƯỚC NGA (ru): Viền lam sứ Gzhel & Họa tiết hoa Gzhel */
+[data-lang="ru"] .coming-soon-wrapper,
+[data-lang="ru"] .pane-hero {
+  background-image: url("data:image/svg+xml,%3Csvg width='52' height='52' viewBox='0 0 52 52' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M26 8c-3.5 0-6 3.5-6 7 0 4.5 6 9.5 6 9.5s6-5 6-9.5c0-3.5-2.5-7-6-7z M19 21c-3.5-2.5-7-2.5-9.5 0-2.5 2.5-1 7 2.5 8 3.5 1 7-2.5 7-8z M33 21c3.5-2.5 7-2.5 9.5 0 2.5 2.5 1 7-2.5 8-3.5 1-7-2.5-7-8z M21 35c-2.5 2.5-2.5 6 0 8.5 2.5 2.5 7 1 8.5-2.5 1.5-3.5-2.5-7.5-8.5-6z M31 35c2.5 2.5 2.5 6 0 8.5-2.5 2.5-7 1-8.5-2.5-1.5-3.5 2.5-7.5 8.5-6z' fill='none' stroke='%231D4E9E' stroke-width='1' stroke-opacity='0.08'/%3E%3Ccircle cx='26' cy='26' r='2.5' fill='%231D4E9E' fill-opacity='0.12'/%3E%3C/svg%3E") !important;
+  border: 3px double #1D4E9E !important;
+  border-radius: 16px !important;
+}
+
+[data-theme="dark"][data-lang="ru"] .coming-soon-wrapper,
+[data-theme="dark"][data-lang="ru"] .pane-hero {
+  border-color: #598DE0 !important;
+}
+
+[data-lang="ru"] .cs-first-word-card {
+  border: 2px double #1D4E9E !important;
+  border-radius: 12px !important;
+}
+
+[data-lang="ru"] .cs-fw-tag {
+  color: #C1272D !important;
+}
+
+/* (Old portal-card styles removed - see portal.css) */
+
+
+
+/* Trang Sắp Ra Mắt: Preview Layout */
+.coming-soon-wrapper {
+  max-width: 860px !important;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cs-hero-greeting {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.cs-greeting-flag {
+  font-size: 3.2rem;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.cs-big-greeting {
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+  font-family: var(--font-display);
+}
+
+.cs-greeting-phonetic {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+
+.coming-soon-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+
+.coming-soon-desc {
+  color: var(--muted);
+  max-width: 620px;
+  margin: 0 auto;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* Mẫu từ đầu tiên bạn sẽ học */
+.cs-first-word-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.35rem 1.6rem;
+  margin: 0 auto 2.25rem auto;
+  max-width: 480px;
+  text-align: center;
+  box-shadow: 0 2px 8px -1px rgba(0, 0, 0, 0.05);
+}
+
+.cs-fw-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  margin-bottom: 0.65rem;
+}
+
+.cs-fw-word {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text);
+  font-family: var(--font-display);
+  line-height: 1.15;
+}
+
+.cs-fw-phonetic {
+  font-size: 1rem;
+  color: var(--accent);
+  font-weight: 600;
+  margin: 0.25rem 0;
+}
+
+.cs-fw-vi {
+  font-size: 0.92rem;
+  color: var(--text);
+  margin-top: 6px;
+  margin-bottom: 0.9rem;
+}
+
+.cs-fw-audio-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 auto;
+  cursor: pointer;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+.cs-fw-audio-btn:hover {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+.cs-speaker-svg {
+  color: var(--accent);
+  stroke: var(--accent);
+}
+
+/* Lưới 6 phân hệ sắp ra mắt */
+.cs-features-section {
+  margin-bottom: 2.25rem;
+}
+
+.cs-features-heading {
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 1.15rem;
+  color: var(--text);
+}
+
+.cs-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.85rem;
+}
+
+.cs-feature-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  opacity: 0.9;
+  position: relative;
+}
+
+/* Màu sắc chữ chuẩn xác cho Tiếng Anh (en) & các trang Sắp ra mắt */
+[data-lang="en"] .coming-soon-title,
+[data-lang="en"] .cs-big-greeting,
+[data-lang="en"] .cs-features-heading,
+[data-lang="en"] .cs-fw-word,
+[data-lang="en"] .cs-feat-name {
+  color: #14213D !important;
+}
+
+[data-lang="en"] .cs-fw-vi {
+  color: #1F2937 !important;
+}
+
+[data-lang="en"] .coming-soon-desc,
+[data-lang="en"] .cs-feat-desc,
+[data-lang="en"] .cs-greeting-phonetic,
+[data-lang="en"] .coming-soon-actions p {
+  color: #4B5563 !important;
+}
+
+/* Đảm bảo chế độ tối (Dark Mode) chữ sáng rõ trên nền tối cho en, ja, ru */
+[data-theme="dark"][data-lang="en"] .coming-soon-title,
+[data-theme="dark"][data-lang="en"] .cs-big-greeting,
+[data-theme="dark"][data-lang="en"] .cs-features-heading,
+[data-theme="dark"][data-lang="en"] .cs-fw-word,
+[data-theme="dark"][data-lang="en"] .cs-feat-name,
+[data-theme="dark"][data-lang="ja"] .coming-soon-title,
+[data-theme="dark"][data-lang="ja"] .cs-big-greeting,
+[data-theme="dark"][data-lang="ja"] .cs-features-heading,
+[data-theme="dark"][data-lang="ja"] .cs-fw-word,
+[data-theme="dark"][data-lang="ja"] .cs-feat-name,
+[data-theme="dark"][data-lang="ru"] .coming-soon-title,
+[data-theme="dark"][data-lang="ru"] .cs-big-greeting,
+[data-theme="dark"][data-lang="ru"] .cs-features-heading,
+[data-theme="dark"][data-lang="ru"] .cs-fw-word,
+[data-theme="dark"][data-lang="ru"] .cs-feat-name {
+  color: #F3F4F6 !important;
+}
+
+[data-theme="dark"][data-lang="en"] .cs-fw-vi,
+[data-theme="dark"][data-lang="ja"] .cs-fw-vi,
+[data-theme="dark"][data-lang="ru"] .cs-fw-vi {
+  color: #E5E7EB !important;
+}
+
+[data-theme="dark"][data-lang="en"] .coming-soon-desc,
+[data-theme="dark"][data-lang="en"] .cs-feat-desc,
+[data-theme="dark"][data-lang="en"] .coming-soon-actions p,
+[data-theme="dark"][data-lang="ja"] .coming-soon-desc,
+[data-theme="dark"][data-lang="ja"] .cs-feat-desc,
+[data-theme="dark"][data-lang="ja"] .cs-greeting-phonetic,
+[data-theme="dark"][data-lang="ja"] .coming-soon-actions p,
+[data-theme="dark"][data-lang="ru"] .coming-soon-desc,
+[data-theme="dark"][data-lang="ru"] .cs-feat-desc,
+[data-theme="dark"][data-lang="ru"] .cs-greeting-phonetic,
+[data-theme="dark"][data-lang="ru"] .coming-soon-actions p {
+  color: #9CA3AF !important;
+}
+
+[data-theme="dark"][data-lang="en"] .cs-greeting-phonetic,
+[data-theme="dark"][data-lang="en"] .cs-fw-phonetic {
+  color: #D4AF6D !important;
+}
+
+.cs-feat-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--accent-light);
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cs-feat-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.cs-feat-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.15rem;
+}
+
+.cs-feat-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.cs-feat-badge {
+  font-size: 0.65rem;
+  color: var(--muted);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.cs-cta-zh {
+  background-color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: #ffffff !important;
+}
