@@ -2112,7 +2112,7 @@
             </div>
           </div>
 
-          <div id="match-feedback-row" class="match-feedback-row"></div>
+          <div id="match-feedback-row" class="match-feedback-row" role="status" aria-live="polite"></div>
         </div>
       `;
 
@@ -2254,7 +2254,7 @@
             `).join('')}
           </div>
 
-          <div id="practice-feedback" class="practice-feedback" style="display: none;"></div>
+          <div id="practice-feedback" class="practice-feedback" role="status" aria-live="polite" style="display: none;"></div>
         </div>
       `;
 
@@ -2352,7 +2352,7 @@
             ${isZh ? `<p class="typing-helper-text">Mẹo: Hệ thống chấp nhận cả Pinyin không dấu (ví dụ: ni hao).</p>` : ''}
           </form>
 
-          <div id="typing-feedback" class="typing-feedback" style="display: none;"></div>
+          <div id="typing-feedback" class="typing-feedback" role="status" aria-live="polite" style="display: none;"></div>
         </div>
       `;
 

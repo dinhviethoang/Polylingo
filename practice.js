@@ -2195,7 +2195,7 @@
       const isLast = (this.currentIndex >= this.questions.length - 1);
 
       feedbackMount.innerHTML = `
-        <div class="practice-feedback-bar ${isCorrect ? 'correct' : 'wrong'}">
+        <div class="practice-feedback-bar ${isCorrect ? 'correct' : 'wrong'}" role="status" aria-live="polite">
           <div class="practice-feedback-left">
             <div class="practice-feedback-icon">${isCorrect ? ICONS.check : ICONS.x}</div>
             <div>

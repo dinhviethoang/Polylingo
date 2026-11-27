@@ -45,7 +45,7 @@ test('1. Phủ đủ 100% chữ Hán xuất hiện trong window.HSK1_WORDS', () 
     }
   }
 
-  assert.strictEqual(allChars.size, 478, `Số chữ Hán khác nhau phải đúng 478, nhận được: ${allChars.size}`);
+  assert.strictEqual(allChars.size, 479, `Số chữ Hán khác nhau phải đúng 479, nhận được: ${allChars.size}`);
 
   const missing = [];
   for (const ch of allChars) {
@@ -55,7 +55,7 @@ test('1. Phủ đủ 100% chữ Hán xuất hiện trong window.HSK1_WORDS', () 
   }
 
   assert.strictEqual(missing.length, 0, `Còn thiếu các chữ sau trong CHAR_DECOMP: ${missing.join(', ')}`);
-  assert.ok(Object.keys(CHAR_DECOMP).length >= 478, 'CHAR_DECOMP phải có ít nhất 478 mục');
+  assert.ok(Object.keys(CHAR_DECOMP).length >= 479, 'CHAR_DECOMP phải có ít nhất 479 mục');
 });
 
 // 2. Kiểm tra cấu trúc trường dữ liệu chuẩn của từng chữ
@@ -190,7 +190,7 @@ test('5. Tỷ lệ chữ độc thể và hợp thể phân loại chính xác, 
 
   assert.ok(docTheCount >= 100, `Số chữ độc thể hợp lý (>= 100 chữ), nhận: ${docTheCount}`);
   assert.ok(hopTheCount >= 300, `Số chữ hợp thể hợp lý (>= 300 chữ), nhận: ${hopTheCount}`);
-  assert.strictEqual(docTheCount + hopTheCount, 478, 'Tổng số chữ phải đúng 478');
+  assert.strictEqual(docTheCount + hopTheCount, 479, 'Tổng số chữ phải đúng 479');
 });
 
 // 6. Kiểm tra không chứa cụm từ sáo rỗng bị cấm và tránh lối mòn cho 你, 好, 我

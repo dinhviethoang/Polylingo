@@ -1,0 +1,15 @@
+{
+  "name": "Polylingo — Gieo chữ mỗi ngày",
+  "short_name": "Polylingo",
+  "description": "Học tiếng Anh, Trung, Nhật, Nga cho người Việt — từng bài nhỏ, mỗi ngày.",
+  "lang": "vi",
+  "start_url": "./#/",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FFF8EC",
+  "theme_color": "#C8102E",
+  "icons": [
+    { "src": "assets/logo-mark.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "assets/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

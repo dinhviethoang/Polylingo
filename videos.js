@@ -214,6 +214,25 @@
    * @param {object} charPinyinMap Bảng tra chữ -> pinyin (ví dụ window.CHAR_PINYIN)
    * @returns {Array<{text: string, word: string, py: string, vi: string, isWord: boolean, isChar: boolean, isPunct: boolean}>}
    */
+  function escapeVideoText(v) {
+    return String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  /** Thoát HTML mọi chuỗi trong video tự thêm (trừ link YouTube cần giữ nguyên để tách ID). */
+  function sanitizeLocalVideo(video) {
+    const walk = (val, key) => {
+      if (typeof val === 'string') return key === 'youtube' ? val : escapeVideoText(val);
+      if (Array.isArray(val)) return val.map(x => walk(x, ''));
+      if (val && typeof val === 'object') {
+        const out = {};
+        Object.keys(val).forEach(k => { out[k] = walk(val[k], k); });
+        return out;
+      }
+      return val;
+    };
+    return walk(video, '');
+  }
+
   function tokenizeLongestWords(text, dict, charPinyinMap) {
     if (!text || typeof text !== 'string') return [];
     const dictionary = dict || (typeof window !== 'undefined' ? window.HSK1_WORDS : {}) || {};
@@ -704,7 +723,8 @@
           const key = isEn ? 'en_videos_local' : 'zh_videos_local';
           const local = JSON.parse(window.localStorage.getItem(key) || '[]');
           if (Array.isArray(local)) {
-            list.push(...local);
+            // Video tự thêm do người dùng nhập: thoát ký tự HTML vì giao diện ghép chuỗi vào innerHTML.
+            list.push(...local.map(sanitizeLocalVideo));
           }
         }
       } catch (_) {}
@@ -2150,7 +2170,14 @@
             list.push(vid);
             window.localStorage.setItem(storageKey, JSON.stringify(list));
           }
-        } catch (_) {}
+        } catch (err) {
+          const full = err && (err.name === 'QuotaExceededError' || err.code === 22);
+          const msg = full
+            ? 'Bộ nhớ trình duyệt đã đầy nên chưa lưu được video. Hãy xóa bớt video tự thêm hoặc dùng phụ đề ngắn hơn.'
+            : 'Chưa lưu được video vào trình duyệt.';
+          if (window.app && window.app.showToast) window.app.showToast(msg, 'warning');
+          return;
+        }
 
         modal.remove();
         this.openVideo(vid.id);

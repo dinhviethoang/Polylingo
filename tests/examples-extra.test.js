@@ -31,18 +31,18 @@ function runTest(name, fn) {
 console.log('=== BẮT ĐẦU KIỂM TRA CÂU VÍ DỤ MỞ RỘNG HSK1 (ZH EXAMPLES EXTRA) ===\n');
 
 // 1. Kiểm tra số lượng từ
-runTest('1. Đủ 500 từ trong ZH_EXAMPLES_EXTRA và ZH_EXAMPLE_TOKENS', () => {
+runTest('1. Đủ 501 từ trong ZH_EXAMPLES_EXTRA và ZH_EXAMPLE_TOKENS', () => {
   assert.ok(HSK1_WORDS, 'HSK1_WORDS phải tồn tại');
   const hskKeys = Object.keys(HSK1_WORDS);
-  assert.strictEqual(hskKeys.length, 500, `HSK1_WORDS cần đủ 500 từ, hiện có ${hskKeys.length}`);
+  assert.strictEqual(hskKeys.length, 501, `HSK1_WORDS cần đủ 501 từ, hiện có ${hskKeys.length}`);
 
   assert.ok(ZH_EXAMPLES_EXTRA, 'ZH_EXAMPLES_EXTRA phải tồn tại');
   const extraKeys = Object.keys(ZH_EXAMPLES_EXTRA);
-  assert.strictEqual(extraKeys.length, 500, `ZH_EXAMPLES_EXTRA cần đủ 500 từ, hiện có ${extraKeys.length}`);
+  assert.strictEqual(extraKeys.length, 501, `ZH_EXAMPLES_EXTRA cần đủ 501 từ, hiện có ${extraKeys.length}`);
 
   assert.ok(ZH_EXAMPLE_TOKENS, 'ZH_EXAMPLE_TOKENS phải tồn tại');
   const tokenKeys = Object.keys(ZH_EXAMPLE_TOKENS);
-  assert.strictEqual(tokenKeys.length, 500, `ZH_EXAMPLE_TOKENS cần đủ 500 từ, hiện có ${tokenKeys.length}`);
+  assert.strictEqual(tokenKeys.length, 501, `ZH_EXAMPLE_TOKENS cần đủ 501 từ, hiện có ${tokenKeys.length}`);
 
   for (const w of hskKeys) {
     assert.ok(ZH_EXAMPLES_EXTRA[w], `Từ "${w}" thiếu trong ZH_EXAMPLES_EXTRA`);

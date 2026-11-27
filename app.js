@@ -4,6 +4,28 @@
  * HanziWriter, Tone Curves SVG, Quizzes & Dialogue Player.
  */
 
+/* --- Tải dữ liệu theo nhu cầu (giữ chạy được với file://: dùng thẻ script, không dùng fetch) --- */
+const ZH_HEAVY_DATA = ['data/zh/char-decomp.js', 'data/zh/examples-extra.js'];
+const LAZY_DATA_SECTIONS = ['learn'];
+const lazyScriptPromises = {};
+function loadLazyScript(src) {
+  if (!lazyScriptPromises[src]) {
+    lazyScriptPromises[src] = new Promise((resolve) => {
+      const el = document.createElement('script');
+      el.src = src;
+      el.async = false;
+      el.onload = () => resolve(true);
+      el.onerror = () => { delete lazyScriptPromises[src]; resolve(false); };
+      document.head.appendChild(el);
+    });
+  }
+  return lazyScriptPromises[src];
+}
+function loadLazyData(list) {
+  return Promise.all(list.map(loadLazyScript));
+}
+if (typeof window !== 'undefined') window.PolyLazy = { loadLazyData, ZH_HEAVY_DATA };
+
 const ic = (n, opts) => (typeof window !== 'undefined' && window.PolyIcons ? window.PolyIcons.svg(n, opts) : (typeof PolyIcons !== 'undefined' ? PolyIcons.svg(n, opts) : ''));
 
 /* ==========================================================================
@@ -542,8 +564,9 @@ class ChineseApp {
         const tooltip = isComing ? 'Sắp ra mắt' : `${lang.name} (${lang.native})`;
         return `
           <a href="#${lang.id}/home" class="lang-nav-tab ${isActive ? 'active' : ''} ${isComing ? 'coming-tab' : ''}" data-lang="${lang.id}" title="${tooltip}">
-            <span class="lang-tab-flag">${lang.flag}</span>
+            <span class="lang-tab-flag">${window.langFlag ? window.langFlag(lang, 14) : lang.flag}</span>
             <span class="lang-tab-name">${lang.name}</span>
+            ${isComing ? '<span class="lang-tab-soon">Sắp có</span>' : ''}
           </a>
         `;
       }).join('');
@@ -557,7 +580,7 @@ class ChineseApp {
 
     if (pickerFlag && pickerName) {
       if (curLangObj) {
-        pickerFlag.textContent = curLangObj.flag;
+        pickerFlag.innerHTML = window.langFlag ? window.langFlag(curLangObj, 14) : curLangObj.flag;
         pickerName.textContent = curLangObj.shortName || curLangObj.name;
       } else {
         pickerFlag.innerHTML = ic('globe', { size: 18 });
@@ -570,7 +593,7 @@ class ChineseApp {
         const isActive = this.currentLang === lang.id;
         return `
           <a href="#${lang.id}/home" class="lang-dropdown-item ${isActive ? 'active' : ''}" data-lang="${lang.id}">
-            <span class="dropdown-item-flag">${lang.flag}</span>
+            <span class="dropdown-item-flag">${window.langFlag ? window.langFlag(lang, 16) : lang.flag}</span>
             <span class="dropdown-item-name">${lang.name}</span>
             ${!lang.ready ? '<span class="dropdown-item-badge">Sắp có</span>' : '<span class="dropdown-item-badge badge-ready">Đang mở</span>'}
           </a>
@@ -597,7 +620,7 @@ class ChineseApp {
     if (headerEl) {
       headerEl.innerHTML = `
         <div class="sidebar-lang-card">
-          <span class="sidebar-lang-flag">${lang.flag}</span>
+          <span class="sidebar-lang-flag">${window.langFlag ? window.langFlag(lang, 22) : lang.flag}</span>
           <div class="sidebar-lang-text">
             <span class="sidebar-lang-name">${lang.name}</span>
             <span class="sidebar-lang-native">${lang.greeting ? lang.greeting + ' • ' : ''}${lang.native}</span>
@@ -607,20 +630,38 @@ class ChineseApp {
     }
 
     if (navEl) {
-      navEl.innerHTML = (lang.sections || []).map(sec => {
+      // Gom mục thành 3 nhóm để người mới không bị ngợp trước một danh sách dài.
+      const SECTION_GROUPS = [
+        { id: 'hoc', label: 'Học', ids: ['home', 'learn', 'pinyin', 'phonics', 'kana', 'cyrillic', 'vocab', 'writing', 'dialogues'] },
+        { id: 'luyen', label: 'Luyện tập', ids: ['flashcards', 'quiz', 'typing', 'speak', 'talk'] },
+        { id: 'giaitri', label: 'Giải trí', ids: ['videos', 'games'] }
+      ];
+      const sections = lang.sections || [];
+      const renderItem = (sec) => {
         const isActive = activeSection === sec.id;
         const isDimmed = !lang.ready;
         const isFeatured = sec.id === 'learn';
         const iconSvg = ChineseApp.getSidebarSvg(sec.iconName || sec.id);
         return `
-          <a href="#${lang.id}/${sec.id}" class="sidebar-nav-item ${isActive ? 'active' : ''} ${isDimmed ? 'dimmed' : ''} ${isFeatured ? 'featured-nav-item' : ''}" data-section="${sec.id}">
+          <a href="#${lang.id}/${sec.id}" class="sidebar-nav-item ${isActive ? 'active' : ''} ${isDimmed ? 'dimmed' : ''} ${isFeatured ? 'featured-nav-item' : ''}" data-section="${sec.id}"${isActive ? ' aria-current="page"' : ''} title="${sec.desc || sec.label}">
             <span class="sidebar-icon-wrap">${iconSvg}</span>
             <span class="sidebar-label">${sec.label}</span>
             ${isFeatured ? '<span class="sidebar-badge badge-featured">Mục chính</span>' : ''}
             ${isDimmed ? '<span class="sidebar-badge">Sắp có</span>' : ''}
           </a>
         `;
-      }).join('');
+      };
+      const used = new Set();
+      let html = '';
+      SECTION_GROUPS.forEach(g => {
+        const items = sections.filter(sec => g.ids.includes(sec.id));
+        if (!items.length) return;
+        items.forEach(sec => used.add(sec.id));
+        html += `<div class="sidebar-nav-group" role="group" aria-label="${g.label}"><div class="sidebar-group-label">${g.label}</div>${items.map(renderItem).join('')}</div>`;
+      });
+      const rest = sections.filter(sec => !used.has(sec.id));
+      if (rest.length) html += `<div class="sidebar-nav-group">${rest.map(renderItem).join('')}</div>`;
+      navEl.innerHTML = html;
 
       navEl.querySelectorAll('.sidebar-nav-item').forEach(el => {
         el.addEventListener('click', () => {
@@ -760,7 +801,7 @@ class ChineseApp {
     const btnCsSpeak = document.getElementById('btn-cs-speak');
     const elGrid = document.getElementById('cs-features-grid');
 
-    if (elFlag) elFlag.textContent = lang.flag;
+    if (elFlag) elFlag.innerHTML = window.langFlag ? window.langFlag(lang, 40) : lang.flag;
     if (elBigGreeting) elBigGreeting.textContent = `${lang.greeting || 'Hello'}!`;
     if (elGreetingPhonetic) elGreetingPhonetic.textContent = lang.greetingPhonetic || `${lang.greeting} • Xin chào`;
     if (elTitle) elTitle.textContent = `Khóa học ${lang.name} đang được biên soạn`;
@@ -839,7 +880,7 @@ class ChineseApp {
 
   /* --- SPA Hash Routing --- */
   initRouting() {
-    const handleRoute = () => {
+    const handleRoute = async () => {
       const rawHash = window.location.hash.slice(1).trim();
 
       // Route #farm toàn cục (xử lý trước phần ngôn ngữ)
@@ -881,9 +922,20 @@ class ChineseApp {
       if (!langObj.ready) {
         this.activateComingSoon(langId, sectionId, params);
       } else {
+        // Dữ liệu nặng (~1MB: chiết tự + câu ví dụ mở rộng) chỉ tải khi vào Lộ trình tiếng Trung.
+        if (langId === 'zh' && LAZY_DATA_SECTIONS.includes(sectionId)) {
+          const hashAtStart = window.location.hash;
+          await loadLazyData(ZH_HEAVY_DATA);
+          if (window.location.hash !== hashAtStart) return; // người dùng đã chuyển trang khác
+        }
         this.activateTab(sectionId, params, langId);
       }
     };
+
+    // Tải sẵn dữ liệu nặng khi máy rảnh để lần sau mở Lộ trình không phải chờ.
+    const prefetch = () => loadLazyData(ZH_HEAVY_DATA).catch(() => {});
+    if ('requestIdleCallback' in window) window.requestIdleCallback(prefetch, { timeout: 8000 });
+    else setTimeout(prefetch, 4000);
 
     window.addEventListener('hashchange', handleRoute);
     handleRoute();
@@ -1094,7 +1146,7 @@ class ChineseApp {
         heroContent.innerHTML = `
           <div class="hero-badge-lang" style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
             <span class="seal-badge" style="background:#14213D;color:#FCA311;border:1px solid #B08D57;">Starter • A1</span>
-            <span style="font-size: 0.88rem; color: var(--muted); font-weight: 500;">🇬🇧 Tiếng Anh Căn Bản • English</span>
+            <span style="font-size: 0.88rem; color: var(--muted); font-weight: 500;">${window.langFlag ? window.langFlag('en', 12) : ''} Tiếng Anh Căn Bản • English</span>
           </div>
           <h2>Welcome! Hello there!</h2>
           <p>Học phát âm chuẩn 44 âm IPA, tích lũy 500 từ vựng cốt lõi theo phương pháp SM-2, nghe nói phản xạ và làm chủ giao tiếp thực tế.</p>
@@ -1103,7 +1155,7 @@ class ChineseApp {
         heroContent.innerHTML = `
           <div class="hero-badge-lang" style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
             <span class="seal-badge">HSK 1</span>
-            <span style="font-size: 0.88rem; color: var(--muted); font-weight: 500;">🇨🇳 Tiếng Trung Cơ Bản • 中文</span>
+            <span style="font-size: 0.88rem; color: var(--muted); font-weight: 500;">${window.langFlag ? window.langFlag('zh', 12) : ''} Tiếng Trung Cơ Bản • 中文</span>
           </div>
           <h2>Xin chào bạn! 你好！</h2>
           <p>Học phát âm chuẩn Pinyin, tích lũy 150 từ vựng cốt lõi theo phương pháp SM-2, tập viết chữ Hán thuận bút và phản xạ giao tiếp tự tin.</p>
@@ -2484,3 +2536,10 @@ window.app = app;
 document.addEventListener('DOMContentLoaded', () => {
   app.init();
 });
+
+// PWA: cài lên màn hình chính và học được khi mất mạng (chỉ khi chạy qua http/https).
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol) && location.hostname !== 'localhost') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}

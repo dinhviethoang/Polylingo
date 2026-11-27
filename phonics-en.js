@@ -97,7 +97,7 @@
           <!-- Header Giới thiệu Ngữ âm IPA -->
           <div class="phonics-en-header">
             <div class="phonics-header-title-box">
-              <span class="phonics-badge-royal">🇬🇧 Ngữ âm IPA Chuẩn Quốc Tế</span>
+              <span class="phonics-badge-royal">Ngữ âm IPA Chuẩn Quốc Tế</span>
               <h1 class="phonics-main-title">44 Âm Tiết IPA Tiếng Anh</h1>
               <p class="phonics-main-desc">
                 Nền tảng phát âm chuẩn bản ngữ cho người Việt. Làm chủ khẩu hình, phân biệt cặp âm dễ nhầm, làm chủ âm cuối và ngữ điệu nối âm.

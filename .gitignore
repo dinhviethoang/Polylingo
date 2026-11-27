@@ -7,3 +7,5 @@ node_modules/
 .chrome_profile/
 _anh-kiem-tra/
 wrangler.jsonc
+__pycache__/
+*.pyc

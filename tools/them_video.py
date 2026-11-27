@@ -64,20 +64,31 @@ def load_char_pinyin_map(base_dir: Path) -> dict:
         return {}
     try:
         content = p.read_text(encoding="utf-8")
-        # Tìm khối JSON { "一": "yī", ... }
-        start = content.find("{")
-        end = content.rfind("}")
-        if start != -1 and end != -1:
-            json_str = content[start:end+1]
-            # Loại bỏ comment nếu có
-            json_str = re.sub(r"//.*?\n", "\n", json_str)
-            return json.loads(json_str)
+        # Lấy các cặp "chữ": "pinyin" (file bọc trong hàm nên không đọc thẳng JSON được)
+        pairs = re.findall(r'^\s*"([^"\\])":\s*"([^"]*)"', content, re.M)
+        return {k: v for k, v in pairs}
     except Exception:
         pass
     return {}
 
 
-def generate_pinyin(text: str, char_map: dict = None) -> str:
+def load_word_pinyin_map(base_dir: Path) -> dict:
+    """Đọc pinyin cấp TỪ trong data/zh/hsk1-words-*.js (giữ thanh nhẹ: 谢谢 → xièxie)."""
+    words = {}
+    for p in sorted((base_dir / "data" / "zh").glob("hsk1-words-*.js")):
+        try:
+            content = p.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        for m in re.finditer(r"""^\s*['"]([^'"]+)['"]:\s*\{\s*\n\s*py:\s*['"]([^'"]*)['"]""", content, re.M):
+            words[m.group(1)] = m.group(2)
+    return words
+
+
+_PUNCT_RE = re.compile(r"[\s\u3000-\u303f\uff00-\uffef!-/:-@\[-`{-~]")
+
+
+def generate_pinyin(text: str, char_map: dict = None, word_map: dict = None) -> str:
     """Tự động sinh Pinyin có dấu thanh cho chuỗi chữ Hán."""
     if not text:
         return ""
@@ -99,19 +110,34 @@ def generate_pinyin(text: str, char_map: dict = None) -> str:
     except ImportError:
         pass
 
-    # 2. Dự phòng: dùng bảng char_pinyin_map
-    if char_map:
+    # 2. Dự phòng: ghép từ dài nhất trong HSK1 (giữ thanh nhẹ), rồi tới bảng từng chữ
+    if char_map or word_map:
+        char_map = char_map or {}
+        word_map = word_map or {}
         tokens = []
-        for ch in text:
-            if ch in char_map:
-                tokens.append(char_map[ch])
-            elif re.match(r"[\s\p{P}\p{S}]", ch):
-                if tokens:
-                    tokens[-1] += ch
-                else:
-                    tokens.append(ch)
-            else:
-                tokens.append(ch)
+        i = 0
+        while i < len(text):
+            ch = text[i]
+            if _PUNCT_RE.match(ch):
+                if ch.strip():
+                    if tokens:
+                        tokens[-1] += ch
+                    else:
+                        tokens.append(ch)
+                i += 1
+                continue
+            hit = None
+            for n in range(min(5, len(text) - i), 1, -1):
+                cand = text[i:i + n]
+                if cand in word_map:
+                    hit = (word_map[cand], n)
+                    break
+            if hit:
+                tokens.append(hit[0])
+                i += hit[1]
+                continue
+            tokens.append(word_map.get(ch) or char_map.get(ch) or ch)
+            i += 1
         return " ".join(tokens)
 
     return ""
@@ -392,6 +418,7 @@ def main():
 
     base_dir = Path(__file__).resolve().parent.parent
     char_map = load_char_pinyin_map(base_dir) if lang == "zh" else {}
+    word_map = load_word_pinyin_map(base_dir) if lang == "zh" else {}
 
     cues = []
     if args.kich_ban:
@@ -435,7 +462,7 @@ def main():
         print(f"-> Bóc tách được {len(cues)} câu phụ đề. Đang tự động kiểm tra và sinh Pinyin...")
         for cue in cues:
             if not cue.get("py") and cue.get("zh"):
-                cue["py"] = generate_pinyin(cue["zh"], char_map)
+                cue["py"] = generate_pinyin(cue["zh"], char_map, word_map)
 
     ytid = parse_youtube_id(args.link)
     duration = math_ceil_duration = int(cues[-1]["end"]) if cues else 60

@@ -17949,6 +17949,70 @@ window.ZH_EXAMPLES_EXTRA = Object.assign(window.ZH_EXAMPLES_EXTRA || {}, {
       ]
     }
   ],
+  "吗": [
+    {
+      "zh": "你喜欢喝茶吗？",
+      "py": "Nǐ xǐhuan hē chá ma?",
+      "vi": "Bạn có thích uống trà không?",
+      "tokens": [
+        {
+          "w": "你",
+          "py": "nǐ"
+        },
+        {
+          "w": "喜欢",
+          "py": "xǐhuan"
+        },
+        {
+          "w": "喝",
+          "py": "hē"
+        },
+        {
+          "w": "茶",
+          "py": "chá"
+        },
+        {
+          "w": "吗",
+          "py": "ma"
+        },
+        {
+          "w": "？",
+          "py": ""
+        }
+      ]
+    },
+    {
+      "zh": "他是中国人吗？",
+      "py": "Tā shì Zhōngguó rén ma?",
+      "vi": "Anh ấy là người Trung Quốc phải không?",
+      "tokens": [
+        {
+          "w": "他",
+          "py": "tā"
+        },
+        {
+          "w": "是",
+          "py": "shì"
+        },
+        {
+          "w": "中国",
+          "py": "Zhōngguó"
+        },
+        {
+          "w": "人",
+          "py": "rén"
+        },
+        {
+          "w": "吗",
+          "py": "ma"
+        },
+        {
+          "w": "？",
+          "py": ""
+        }
+      ]
+    }
+  ],
   "呢": [
     {
       "zh": "我的书包在哪儿呢？",
@@ -42025,6 +42089,28 @@ window.ZH_EXAMPLE_TOKENS = Object.assign(window.ZH_EXAMPLE_TOKENS || {}, {
     },
     {
       "w": "。",
+      "py": ""
+    }
+  ],
+  "吗": [
+    {
+      "w": "你",
+      "py": "nǐ"
+    },
+    {
+      "w": "是",
+      "py": "shì"
+    },
+    {
+      "w": "老师",
+      "py": "lǎoshī"
+    },
+    {
+      "w": "吗",
+      "py": "ma"
+    },
+    {
+      "w": "？",
       "py": ""
     }
   ],

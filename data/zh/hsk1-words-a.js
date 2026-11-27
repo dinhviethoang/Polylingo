@@ -2096,6 +2096,14 @@ window.HSK1_WORDS = Object.assign(window.HSK1_WORDS || {}, {
     note: 'Mở miệng (khẩu 口) hỏi lửng lơ tỉnh lược cuối câu',
     ex: { zh: '我是学生，你呢？', py: 'Wǒ shì xuésheng, nǐ ne?', vi: 'Tôi là học sinh, còn bạn thì sao?' }
   },
+  '吗': {
+    py: 'ma',
+    vi: 'không? (trợ từ nghi vấn đặt cuối câu)',
+    hv: 'ma',
+    pos: 'trợ từ',
+    note: 'Miệng (khẩu 口) hỏi kèm âm 马 (mǎ) mượn tiếng; đọc thanh nhẹ "ma"',
+    ex: { zh: '你是老师吗？', py: 'Nǐ shì lǎoshī ma?', vi: 'Bạn là giáo viên phải không?' }
+  },
   '来': {
     py: 'lái',
     vi: 'đến, tới',

@@ -1,4 +1,4 @@
-// _kiem_tra_soturvuon.js
+// _kiem_tra_ui.js
 const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -6,7 +6,7 @@ const path = require('path');
 const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const PORT = 9222;
 const URL = 'http://localhost:5180/#farm';
-const SCREENSHOT_PATH = path.resolve(__dirname, '_anh-kiem-tra/soturvuon.png');
+const SCREENSHOT_PATH = path.resolve(__dirname, '..', '_anh-kiem-tra/nhiemvu.png');
 
 async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -39,7 +39,7 @@ async function run() {
     '--disable-gpu',
     '--no-first-run',
     '--no-default-browser-check',
-    '--user-data-dir=' + path.resolve(__dirname, '.chrome_profile'),
+    '--user-data-dir=' + path.resolve(__dirname, '..', '.chrome_profile'),
     URL
   ]);
 
@@ -65,74 +65,8 @@ async function run() {
 
     await sleep(2000);
 
-    // Chuẩn bị dữ liệu mẫu cho Sổ Từ Vườn và chậu
-    console.log('3. Thiết lập dữ liệu mẫu: gieo Cây Từ & tạo mục Sổ Từ Vườn...');
-    await sendCDP(ws, 'Runtime.evaluate', {
-      expression: `(${function() {
-        if (window.Economy) {
-          const state = window.Economy.getState();
-          if (state && state.farm) {
-            if (!state.farm.wordbook) state.farm.wordbook = {};
-            state.farm.wordbook['苹果'] = {
-              hanzi: '苹果',
-              pinyin: 'píngguǒ',
-              meaning: 'Quả táo',
-              hanViet: 'Bình quả',
-              example: { zh: '我喜欢吃苹果。', py: 'Wǒ xǐhuan chī píngguǒ.', vi: 'Tôi thích ăn táo.' },
-              status: 'due',
-              stage: 2,
-              reviewsPassed: 1,
-              isWordTree: true
-            };
-            state.farm.wordbook['水'] = {
-              hanzi: '水',
-              pinyin: 'shuǐ',
-              meaning: 'Nước',
-              hanViet: 'Thủy',
-              example: { zh: '请喝水。', py: 'Qǐng hē shuǐ.', vi: 'Xin mời uống nước.' },
-              status: 'mastered',
-              stage: 4,
-              reviewsPassed: 4,
-              isWordTree: true
-            };
-            state.farm.wordbook['菊花'] = {
-              hanzi: '菊花',
-              pinyin: 'júhuā',
-              meaning: 'Hoa cúc vàng',
-              status: 'normal',
-              isNormalCrop: true
-            };
-
-            // Gieo cây từ vào slot 0 nếu chưa có
-            if (state.farm.slots && state.farm.slots[0] && state.farm.slots[0].pot) {
-              state.farm.slots[0].pot.crop = {
-                cropId: 'word_tree',
-                isWordTree: true,
-                wordHanzi: '苹果',
-                wordData: state.farm.wordbook['苹果'],
-                stage: 2,
-                reviewsPassed: 1,
-                intervalIndex: 1,
-                intervalMs: 86400000,
-                plantedAt: Date.now() - 10000,
-                lastReviewedAt: Date.now() - 10000,
-                dueAt: Date.now() - 1000, // tới hạn ôn
-                watered: true,
-                isRipe: false,
-                pest: null
-              };
-            }
-
-            window.Economy.saveState();
-          }
-        }
-      }.toString()})()`
-    });
-
-    await sleep(500);
-
-    // 4. Kiểm tra elementFromPoint trên mọi chậu và nút
-    console.log('4. Kiểm tra mọi chậu và nút bấm được (elementFromPoint)...');
+    // 3. Kiểm tra elementFromPoint trên mọi chậu và nút
+    console.log('3. Kiểm tra mọi chậu và nút bấm được (elementFromPoint)...');
     const evalResult = await sendCDP(ws, 'Runtime.evaluate', {
       expression: `(${function() {
         const results = [];
@@ -174,25 +108,25 @@ async function run() {
     });
     console.log(`   Kết quả: Chậu (${potPass} pass, ${potFail} fail), Nút bấm (${btnPass} pass, ${btnFail} fail)`);
     if (potFail > 0 || btnFail > 0) {
-      console.warn('   Chi tiết elementFromPoint fail:', checkResults.filter(r => !r.ok));
+      console.warn('   Chi tiết lỗi elementFromPoint:', checkResults.filter(r => !r.ok));
     }
 
-    // 5. Mở Sổ Từ Vườn
-    console.log('5. Mở Sổ Từ Vườn (Garden Wordbook)...');
+    // 4. Mở Bảng Nhiệm Vụ
+    console.log('4. Mở Bảng Nhiệm Vụ Ngày...');
     await sendCDP(ws, 'Runtime.evaluate', {
       expression: `(${function() {
-        const btn = document.getElementById('vt-btn-open-wordbook');
+        const btn = document.getElementById('vt-btn-open-quests');
         if (btn) btn.click();
-        else if (window.Farm && typeof window.Farm.openGardenWordbookModal === 'function') {
-          window.Farm.openGardenWordbookModal();
+        else if (window.Farm && typeof window.Farm.openQuestsModal === 'function') {
+          window.Farm.openQuestsModal();
         }
       }.toString()})()`
     });
 
-    await sleep(1200);
+    await sleep(1000);
 
-    // 6. Chụp ảnh màn hình lưu vào _anh-kiem-tra/soturvuon.png
-    console.log('6. Chụp ảnh màn hình lưu _anh-kiem-tra/soturvuon.png...');
+    // 5. Chụp ảnh màn hình lưu vào _anh-kiem-tra/nhiemvu.png
+    console.log('5. Chụp ảnh màn hình lưu _anh-kiem-tra/nhiemvu.png...');
     const shot = await sendCDP(ws, 'Page.captureScreenshot', { format: 'png' });
     const buffer = Buffer.from(shot.data, 'base64');
     fs.writeFileSync(SCREENSHOT_PATH, buffer);

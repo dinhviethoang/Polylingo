@@ -73,7 +73,7 @@ const LANGUAGES = [
       { id: 'writing', iconName: 'writing', label: 'Chữ viết (Hán tự)', desc: 'Tập viết từng nét thuận bút chữ Hán chuẩn mực' },
       { id: 'quiz', iconName: 'quiz', label: 'Kiểm tra', desc: '10 câu trắc nghiệm ngẫu nhiên đánh giá phản xạ' },
       { id: 'games', iconName: 'games', label: 'Trò chơi', desc: 'Mini games ghép từ, lật thẻ rèn phản xạ ngôn ngữ' },
-      { id: 'dialogues', iconName: 'dialogues', label: 'Hội thoại', desc: 'Mẫu câu đàm thoại đời sống có âm thanh người thật' }
+      { id: 'dialogues', iconName: 'dialogues', label: 'Hội thoại', desc: 'Mẫu câu đàm thoại đời sống, nghe đọc mẫu và luyện theo' }
     ]
   },
   {
@@ -138,8 +138,28 @@ const LANGUAGES = [
   }
 ];
 
+/**
+ * Cờ dạng SVG (Windows không vẽ được emoji cờ, chỉ hiện "GB", "CN"...).
+ * langFlag('zh') hoặc langFlag(langObj, 20) → chuỗi <svg>.
+ */
+const LANG_FLAG_SVG = {
+  en: '<rect width="30" height="20" fill="#012169"/><path d="M0 0l30 20M30 0L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0l30 20M30 0L0 20" stroke="#C8102E" stroke-width="1.6"/><path d="M15 0v20M0 10h30" stroke="#fff" stroke-width="6"/><path d="M15 0v20M0 10h30" stroke="#C8102E" stroke-width="3.4"/>',
+  zh: '<rect width="30" height="20" fill="#DE2910"/><path fill="#FFDE00" d="M5 2.4l1.06 3.26h3.43l-2.77 2.02 1.06 3.26L5 8.92l-2.78 2.02 1.06-3.26L.5 5.66h3.43z"/><circle cx="10.5" cy="2.5" r=".9" fill="#FFDE00"/><circle cx="12.5" cy="4.6" r=".9" fill="#FFDE00"/><circle cx="12.5" cy="7.4" r=".9" fill="#FFDE00"/><circle cx="10.5" cy="9.5" r=".9" fill="#FFDE00"/>',
+  ja: '<rect width="30" height="20" fill="#fff"/><circle cx="15" cy="10" r="6" fill="#BC002D"/>',
+  ru: '<rect width="30" height="20" fill="#fff"/><rect y="6.67" width="30" height="6.67" fill="#0039A6"/><rect y="13.33" width="30" height="6.67" fill="#D52B1E"/>'
+};
+function langFlag(langOrId, size) {
+  const id = typeof langOrId === 'string' ? langOrId : (langOrId && langOrId.id);
+  const body = LANG_FLAG_SVG[id];
+  if (!body) return (langOrId && langOrId.flag) || '';
+  const h = size || 16;
+  const w = Math.round(h * 1.5);
+  return '<svg class="lang-flag-svg" viewBox="0 0 30 20" width="' + w + '" height="' + h + '" role="img" aria-hidden="true" focusable="false" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.12);vertical-align:middle;flex-shrink:0">' + body + '</svg>';
+}
+
 if (typeof window !== 'undefined') {
   window.LANGUAGES = LANGUAGES;
+  window.langFlag = langFlag;
 }
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = LANGUAGES;

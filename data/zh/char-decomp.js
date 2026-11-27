@@ -2297,6 +2297,31 @@ window.CHAR_DECOMP = Object.assign(window.CHAR_DECOMP || {}, {
     "radical": "口",
     "mnemonic": "Miệng 口 cất lời mách bảo chuyện con trâu đực 牛 vừa húc đổ bờ rào quanh vườn rau."
   },
+  "吗": {
+    "py": "ma",
+    "hv": "ma",
+    "meaning": "không? (trợ từ nghi vấn)",
+    "strokes": 6,
+    "structure": "trái-phải",
+    "parts": [
+      {
+        "c": "口",
+        "name": "Bộ Khẩu",
+        "vi": "miệng, lời nói",
+        "pos": "trái",
+        "role": "nghĩa"
+      },
+      {
+        "c": "马",
+        "name": "Chữ Mã",
+        "vi": "con ngựa (âm mǎ)",
+        "pos": "phải",
+        "role": "âm"
+      }
+    ],
+    "radical": "口",
+    "mnemonic": "Mở miệng 口 hỏi con ngựa 马 \"mǎ\": đi không? Thêm 吗 cuối câu là thành câu hỏi có/không."
+  },
   "呢": {
     "py": "ne",
     "hv": "ni",
