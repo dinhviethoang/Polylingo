@@ -485,6 +485,73 @@
     `;
   }
 
+  // 5. NƯỚC ĐỨC (de) — Lâu đài trên núi, dãy Alps, rừng thông, hoàng hôn đỏ vàng
+  function renderSvgGermany() {
+    return `
+      <svg class="hp-poster-svg" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="hp-de-sky" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#1A1A1A" />
+            <stop offset="40%" stop-color="#7F1D1D" />
+            <stop offset="72%" stop-color="#DD6B20" />
+            <stop offset="100%" stop-color="#FFCE00" />
+          </linearGradient>
+          <radialGradient id="hp-de-sun" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FFF3B0" stop-opacity="1" />
+            <stop offset="60%" stop-color="#FFCE00" stop-opacity="0.6" />
+            <stop offset="100%" stop-color="#FFCE00" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+
+        <!-- Lớp 0: Trời hoàng hôn ba màu cờ và mặt trời -->
+        <rect width="300" height="400" fill="url(#hp-de-sky)" />
+        <circle cx="220" cy="215" r="46" fill="url(#hp-de-sun)" class="hp-layer-back" />
+
+        <!-- Lớp 1: Dãy Alps xa, đỉnh phủ tuyết -->
+        <g class="hp-layer-back">
+          <path d="M-10 270 L50 190 L90 235 L140 160 L190 225 L235 175 L310 260 L310 300 L-10 300 Z" fill="#4A1C1C" opacity="0.75" />
+          <path d="M128 176 L140 160 L152 177 L145 174 L140 180 L134 174 Z" fill="#FFFFFF" opacity="0.85" />
+          <path d="M226 186 L235 175 L246 189 L239 186 L234 191 Z" fill="#FFFFFF" opacity="0.8" />
+        </g>
+
+        <!-- Lớp 2: Lâu đài trên đồi -->
+        <g class="hp-layer-mid">
+          <path d="M60 300 C90 255 150 250 190 270 L190 320 L60 320 Z" fill="#2B1010" />
+          <rect x="98" y="215" width="58" height="50" fill="#F3E9DC" />
+          <rect x="88" y="200" width="16" height="66" fill="#EADFCF" />
+          <polygon points="86,200 96,170 106,200" fill="#1F2937" />
+          <rect x="146" y="190" width="18" height="76" fill="#EADFCF" />
+          <polygon points="144,190 155,150 166,190" fill="#1F2937" />
+          <rect x="118" y="196" width="14" height="22" fill="#EADFCF" />
+          <polygon points="116,196 125,176 134,196" fill="#1F2937" />
+          <rect x="106" y="230" width="6" height="10" rx="3" fill="#7F1D1D" />
+          <rect x="122" y="230" width="6" height="10" rx="3" fill="#7F1D1D" />
+          <rect x="138" y="230" width="6" height="10" rx="3" fill="#7F1D1D" />
+          <rect x="152" y="205" width="5" height="9" rx="2.5" fill="#FFCE00" />
+          <line x1="155" y1="150" x2="155" y2="138" stroke="#FFFFFF" stroke-width="1.5" />
+          <path d="M155 138 L166 141 L155 144 Z" fill="#DD0000" />
+        </g>
+
+        <!-- Lớp 3: Đồi xanh và rừng thông phía trước -->
+        <g class="hp-layer-fore">
+          <path d="M-10 315 C60 295 130 320 200 305 C250 295 290 310 315 302 L315 400 L-10 400 Z" fill="#14532D" />
+          <path d="M-10 345 C70 330 150 352 230 335 C275 326 298 338 315 333 L315 400 L-10 400 Z" fill="#0F3D22" />
+          <polygon points="20,330 34,288 48,330" fill="#0B2E1A" />
+          <polygon points="40,338 52,302 64,338" fill="#0B2E1A" />
+          <polygon points="240,322 255,276 270,322" fill="#0B2E1A" />
+          <polygon points="262,330 274,296 286,330" fill="#0B2E1A" />
+        </g>
+
+        <!-- Lớp 4: Chim bay và đốm nắng -->
+        <g class="hp-layer-accent" fill="none" stroke="#FFF3B0" stroke-width="1.5" opacity="0.85">
+          <path d="M60 120 q6 -6 12 0 q6 -6 12 0" />
+          <path d="M90 100 q5 -5 10 0 q5 -5 10 0" />
+          <path d="M200 120 q4 -4 8 0 q4 -4 8 0" />
+        </g>
+      </svg>
+    `;
+  }
+
   // Cảnh Nông Trại Thu Nhỏ (Phong Cách Hoạt Hình Dễ Thương: Đồi cỏ pastel, nhà kho đỏ hồng, hàng rào, mây trôi, mặt trời, linh thú nhún nhảy)
   function renderSvgMiniFarm(petType = 'panda') {
     const petSvg = (typeof Sprites !== 'undefined' && Sprites.renderPetSVG)
@@ -727,6 +794,13 @@
     } catch (e) { jaDone = 0; }
     const jaPct = Math.min(100, Math.round((jaDone / 35) * 100));
 
+    // Tiến độ tiếng Đức: số bài đã qua trong 30 bài (german.js lưu ở de_learn_progress_v1)
+    let deDone = 0;
+    try {
+      const deProg = JSON.parse(localStorage.getItem('de_learn_progress_v1') || '{}');
+      deDone = Object.values((deProg && deProg.lessons) || {}).filter(r => r && r.completed).length;
+    } catch (e) { deDone = 0; }
+    const dePct = Math.min(100, Math.round((deDone / 30) * 100));
     // Tiến độ tiếng Nga: số bài đã qua trong 35 bài (russian.js lưu ở ru_learn_progress_v1)
     let ruDone = 0;
     try {
@@ -1072,7 +1146,35 @@
             </div>
           </a>
 
-          <!-- 4. Tiếng Nga (ru) -->
+          <!-- 4. Tiếng Đức (de) -->
+          <a href="#de/learn" class="hp-poster" data-lang="de" aria-label="Học Tiếng Đức">
+            ${renderSvgGermany()}
+            <div class="hp-poster-overlay">
+              <div class="hp-poster-top">
+                <span class="hp-poster-native-giant">Deutsch</span>
+              </div>
+              <div class="hp-poster-bottom">
+                <div class="hp-poster-title-row">
+                  <h3 class="hp-poster-name">Tiếng Đức</h3>
+                  <span class="hp-poster-badge ready">
+                    <span class="hp-dot"></span> Đang học
+                  </span>
+                </div>
+                <p class="hp-poster-greeting">Hallo · Guten Tag (Xin chào)</p>
+                <div class="hp-poster-progress">
+                  <div class="hp-poster-prog-text">
+                    <span>Tiến độ bài học</span>
+                    <span class="hp-tabular">${dePct}%</span>
+                  </div>
+                  <div class="hp-poster-prog-track">
+                    <div class="hp-poster-prog-fill" style="width: ${dePct}%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </a>
+
+          <!-- 5. Tiếng Nga (ru) -->
           <a href="#ru/learn" class="hp-poster" data-lang="ru" aria-label="Học Tiếng Nga">
             ${renderSvgRussia()}
             <div class="hp-poster-overlay">
@@ -1228,7 +1330,7 @@
         <span class="hp-footer-sep">•</span>
         <span class="hp-footer-slogan">Gieo chữ mỗi ngày, nói cùng thế giới</span>
         <span class="hp-footer-sep">•</span>
-        <span>Học tiếng Anh, Trung, Nhật, Nga — từng bài nhỏ, mỗi ngày.</span>
+        <span>Học tiếng Anh, Trung, Nhật, Đức, Nga — từng bài nhỏ, mỗi ngày.</span>
       </footer>
     `;
 
