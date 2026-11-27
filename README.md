@@ -53,7 +53,9 @@
    - Xuất/Nhập tiến độ ra file JSON (dùng được cả khi mở bằng file://).
    - Cài đặt một lần và tự đăng qua GitHub Actions: xem [HUONG-DAN-TAI-KHOAN.md](HUONG-DAN-TAI-KHOAN.md).
 
-10. **Khác**: báo khi máy thiếu giọng đọc (`voice-check.js`), cờ SVG (`langFlag()` trong `languages.js`), dữ liệu nặng tiếng Trung tải khi mở Lộ trình, PWA (`manifest.webmanifest`, `sw.js`).
+10. **Học chủ động** (`boost.js`, `dictation.js`, `reading.js`): Học thử 1 phút ở trang chủ, Nghe gõ câu, Đọc và dịch, Kho ôn chung (gom từ mọi mục vào thẻ SM-2), mục tiêu phút học mỗi ngày, tra từ bằng cách bôi đen ở mọi trang, Video có Nghe chép và Điền từ, chọn trình độ khi bắt đầu.
+
+11. **Khác**: báo khi máy thiếu giọng đọc (`voice-check.js`), cờ SVG (`langFlag()` trong `languages.js`), dữ liệu nặng tiếng Trung tải khi mở Lộ trình, PWA (`manifest.webmanifest`, `sw.js`).
 
 ## Chạy test
 
