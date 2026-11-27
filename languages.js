@@ -1,8 +1,7 @@
 /**
  * Danh sách 5 ngôn ngữ hỗ trợ trên nền tảng Polylingo
  * Thứ tự chuẩn: Anh (en), Trung (zh), Nhật (ja), Đức (de), Nga (ru)
- * zh, en, ja, de: Sẵn sàng học (ready: true)
- * ru: Đang biên soạn (ready: false) có chủ đề văn hóa riêng đầy đủ
+ * Cả 5 ngôn ngữ đã sẵn sàng học (ready: true). ja do japanese.js vẽ, ru do russian.js vẽ, de do german.js vẽ.
  */
 const LANGUAGES = [
   {
@@ -163,20 +162,25 @@ const LANGUAGES = [
       meaning: 'Xin chào (lời chào thân mật phổ biến nhất)'
     },
     watermark: 'Учить',
-    ready: false,
+    ready: true,
     font: 'PT Serif',
     tts: 'ru-RU',
     accentColor: '#1D4E9E',
     accentColor2: '#C1272D',
-    description: 'Bảng chữ cái Kirin (Cyrillic), ngữ âm & trọng âm tiếng Nga, từ vựng cơ bản và mẫu câu hàng ngày.',
-    totalWords: 200,
+    description: 'Bảng chữ Kirin, trọng âm, 733 từ A1 có giống và câu ví dụ, 6 cách, lộ trình 35 bài theo khung ТРКИ A1.',
+    totalWords: 733,
     sections: [
-      { id: 'home', iconName: 'home', label: 'Tổng quan', desc: 'Lộ trình làm quen tiếng Nga toàn diện từ vỡ lòng' },
-      { id: 'cyrillic', iconName: 'phonics', label: 'Bảng chữ cái Cyrillic', desc: '33 ký tự chữ cái Kirin và quy tắc trọng âm đặc trưng' },
-      { id: 'vocab', iconName: 'vocab', label: 'Từ vựng căn bản', desc: '200 từ vựng cốt lõi thường nhật trong giao tiếp' },
-      { id: 'flashcards', iconName: 'flashcards', label: 'Thẻ ghi nhớ', desc: 'Thuật toán SM-2 hỗ trợ ghi nhớ từ vựng dài hạn' },
-      { id: 'quiz', iconName: 'quiz', label: 'Kiểm tra', desc: 'Luyện tập phản xạ nhận diện chữ cái và ngữ nghĩa' },
-      { id: 'dialogues', iconName: 'dialogues', label: 'Hội thoại', desc: 'Mẫu câu giao tiếp thường nhật với người bản xứ' }
+      { id: 'home', iconName: 'home', label: 'Tổng quan', desc: 'Lộ trình tiếng Nga từ bảng chữ đến A1' },
+      { id: 'learn', iconName: 'learn', label: 'Lộ trình', desc: '35 bài: 6 bài chữ cái và 29 bài A1' },
+      { id: 'cyrillic', iconName: 'phonics', label: 'Bảng chữ Kirin', desc: '33 chữ, "bạn giả", trọng âm, bàn phím' },
+      { id: 'vocab', iconName: 'vocab', label: 'Từ vựng A1', desc: '733 từ có trọng âm, giống, câu ví dụ' },
+      { id: 'cases', iconName: 'reading', label: '6 cách', desc: 'Bảng biến cách danh từ, đại từ, tính từ và luyện điền' },
+      { id: 'writing', iconName: 'writing', label: 'Tập viết', desc: 'Viết chữ Kirin in hoa, in thường' },
+      { id: 'dialogues', iconName: 'dialogues', label: 'Hội thoại', desc: '10 hội thoại đời thường A1' },
+      { id: 'flashcards', iconName: 'flashcards', label: 'Thẻ ghi nhớ', desc: 'Ôn ngắt quãng SM-2' },
+      { id: 'quiz', iconName: 'quiz', label: 'Kiểm tra', desc: 'Nghĩa, nghe, giống, trọng âm, 6 cách' },
+      { id: 'typing', iconName: 'typing', label: 'Luyện gõ', desc: 'Gõ phiên âm ra chữ Kirin, chia động từ' },
+      { id: 'talk', iconName: 'talk', label: 'Luyện nói', desc: 'Nói từng từ, nhập vai 8 tình huống, đóng vai A–B' }
     ]
   }
 ];

@@ -30,33 +30,31 @@
 5. **Tiếng Nhật (`#ja/...`)**: `japanese.js` + `japanese.css` vẽ Tổng quan, Lộ trình 35 bài, Bảng chữ Kana, Từ vựng N5 (703 từ), Kanji (103 chữ có âm Hán Việt), Thẻ ghi nhớ, Tập viết (nét KanjiVG), Luyện gõ, Kiểm tra; Luyện nói và Hội thoại dùng chung `talk.js`/`app.js`. Dữ liệu ở `data/ja/`, lõi xử lý `data/ja/ja-core.js`, chỉ tải khi vào tiếng Nhật. Test: `node tests/ja.test.js`.
 6. **Tiếng Đức (`#de/...`)**: `german.js` + `german.css` vẽ Tổng quan, Lộ trình 30 bài A1, Phát âm (bảng chữ cái, ä/ö/ü, ch, cặp âm), Từ vựng A1 (704 từ, tô màu der/die/das), Ngữ pháp (13 bảng), Thẻ ghi nhớ, Luyện gõ (có phím ä ö ü ß, gõ ae/oe/ue/ss cũng được), Kiểm tra (nghĩa, nghe, mạo từ, số nhiều, chia động từ, nghe chép); Luyện nói, Hội thoại, tra từ dùng chung `talk.js`/`app.js`/`boost.js`. Dữ liệu ở `data/de/`, lõi `data/de/de-core.js`, chỉ tải khi vào tiếng Đức. Test: `node tests/de.test.js`.
 
-7. **Trang Sắp Ra Mắt (`#ru/...`)**:
-   - Sidebar hiển thị danh sách mục dự kiến dưới dạng làm mờ (dimmed).
-   - Trang nội dung "Sắp ra mắt" đẹp mắt kèm nút chuyển nhanh sang "Học tiếng Trung trước".
+7. **Tiếng Nga (`#ru/...`)**: `russian.js` + `russian.css` vẽ Tổng quan, Lộ trình 35 bài (6 bài chữ Kirin + 29 bài A1 theo khung ТРКИ), Bảng chữ Kirin (33 chữ, chữ "bạn giả", quy tắc đọc, bàn phím ЙЦУКЕН), Từ vựng A1 (733 từ có dấu trọng âm, giống, chia động từ), 6 cách (bảng biến cách danh từ, đại từ, tính từ, luyện điền cách), Thẻ ghi nhớ, Tập viết chữ viết tay, Luyện gõ (gõ Kirin hoặc Latinh tự đổi), Kiểm tra (có câu chọn trọng âm); Luyện nói (giọng ru-RU, 8 nhập vai + 10 A–B) và Hội thoại dùng chung `talk.js`/`app.js`. Dữ liệu ở `data/ru/`, lõi xử lý `data/ru/ru-core.js`, chỉ tải khi vào tiếng Nga. Test: `node tests/ru.test.js`.
 
-7. **Định Tuyến SPA (Hash Router)**:
+8. **Định Tuyến SPA (Hash Router)**:
    - Định dạng chuẩn: `#{langId}/{sectionId}?{params}` (ví dụ: `#zh/vocab`, `#zh/writing?char=你`).
    - Tự động chuyển tiếp thông minh từ các hash cũ (`#vocab` &rarr; `#zh/vocab`).
    - Ghi nhớ ngôn ngữ và phân hệ học cuối cùng trong `localStorage` qua `try/catch`.
 
-8. **Font Chữ & Giọng Đọc**:
+9. **Font Chữ & Giọng Đọc**:
    - Giao diện người dùng sử dụng font chuẩn tiếng Việt **Be Vietnam Pro** qua Google Fonts.
    - Font chữ Hán **Noto Sans SC** được áp dụng riêng biệt cho phần hiển thị chữ Hán.
    - Giọng đọc Web Speech API (`SpeechSynthesis`) tự động chọn theo cấu hình TTS của từng ngôn ngữ.
 
-8. **Tương Thích Di Động (<860px và 375px)**:
+10. **Tương Thích Di Động (<860px và 375px)**:
    - Header thu gọn, menu ngôn ngữ cuộn ngang mượt mà.
    - Nút ☰ mở ngăn kéo (drawer) trượt từ mép trái với lớp phủ làm mờ (overlay). Tự động đóng ngăn kéo khi chọn mục hoặc bấm ra ngoài.
    - Giao diện được tối ưu không tràn ngang trên màn hình nhỏ từ 375px trở lên.
 
-9. **Tài khoản & đồng bộ tiến độ** (`account.js`, `functions/api/`, `migrations/`):
+11. **Tài khoản & đồng bộ tiến độ** (`account.js`, `functions/api/`, `migrations/`):
    - Nút "Đăng nhập" ở header: đăng ký/đăng nhập, tự lưu tiến độ lên Cloudflare D1 và học tiếp trên máy khác.
    - Xuất/Nhập tiến độ ra file JSON (dùng được cả khi mở bằng file://).
    - Cài đặt một lần và tự đăng qua GitHub Actions: xem [HUONG-DAN-TAI-KHOAN.md](HUONG-DAN-TAI-KHOAN.md).
 
-10. **Học chủ động** (`boost.js`, `dictation.js`, `reading.js`): Học thử 1 phút ở trang chủ, Nghe gõ câu, Đọc và dịch, Kho ôn chung (gom từ mọi mục vào thẻ SM-2), mục tiêu phút học mỗi ngày, tra từ bằng cách bôi đen ở mọi trang, Video có Nghe chép và Điền từ, chọn trình độ khi bắt đầu.
+12. **Học chủ động** (`boost.js`, `dictation.js`, `reading.js`): Học thử 1 phút ở trang chủ, Nghe gõ câu, Đọc và dịch, Kho ôn chung (gom từ mọi mục vào thẻ SM-2), mục tiêu phút học mỗi ngày, tra từ bằng cách bôi đen ở mọi trang, Video có Nghe chép và Điền từ, chọn trình độ khi bắt đầu.
 
-11. **Khác**: báo khi máy thiếu giọng đọc (`voice-check.js`), cờ SVG (`langFlag()` trong `languages.js`), dữ liệu nặng tiếng Trung tải khi mở Lộ trình, PWA (`manifest.webmanifest`, `sw.js`).
+13. **Khác**: báo khi máy thiếu giọng đọc (`voice-check.js`), cờ SVG (`langFlag()` trong `languages.js`), dữ liệu nặng tiếng Trung tải khi mở Lộ trình, PWA (`manifest.webmanifest`, `sw.js`).
 
 ## Chạy test
 

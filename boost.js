@@ -303,11 +303,30 @@
       vi: w.vi, hv: '', pos: w.posLabel || '', ex: w.ex ? { de: w.ex.de, vi: w.ex.vi } : null, id: w.id, speakText: w.display };
   }
 
+  /** Tra từ tiếng Nga trong từ vựng A1 (data/ru qua RuCore): khớp nguyên dạng, nếu không thì bỏ dần đuôi biến cách. */
+  function lookupRu(s) {
+    const core = root.RuCore;
+    if (!core) return null;
+    const d = core.load();
+    const first = core.plainKey(s).split(' ')[0] || '';
+    if (!/[а-я]/.test(first)) return null;
+    const key = w => core.plainKey(w.plain);
+    let w = d.words.find(x => key(x) === core.plainKey(s)) || d.words.find(x => key(x) === first);
+    for (let cut = 1; !w && cut <= 3 && first.length - cut >= 3; cut++) {
+      const stem = first.slice(0, -cut);
+      w = d.words.find(x => !/\s/.test(x.plain) && key(x).startsWith(stem) && key(x).length - stem.length <= 3);
+    }
+    if (!w) return null;
+    return { lang: 'ru', word: w.word, phonetic: w.translit, vi: w.vi, pos: [w.posLabel, w.genderLabel].filter(Boolean).join(', '),
+      ex: w.ex ? { ru: w.ex.ru, vi: w.ex.vi } : null, id: w.id, speakText: core.stripStress(w.word) };
+  }
+
   function lookupWord(text, langHint) {
     const s = String(text || '').trim();
     if (!s) return null;
     if (langHint === 'ja') return lookupJa(s);
     if (langHint === 'de') return lookupDe(s);
+    if (langHint === 'ru') return lookupRu(s);
     if (hasCJK(s)) {
       const chars = (s.match(CJK_RE_G) || []).join('');
       const idx = getZhIndex();
@@ -372,7 +391,7 @@
      5. Kho ôn chung (ReviewBank)
      ====================================================================== */
   const ReviewBank = {
-    sm2Key(lang) { return lang === 'en' ? 'en_sm2_data' : (lang === 'ja' || lang === 'de') ? `${lang}_sm2_data` : 'hsk_sm2_data'; },
+    sm2Key(lang) { return lang === 'en' ? 'en_sm2_data' : (lang === 'ja' || lang === 'ru' || lang === 'de') ? `${lang}_sm2_data` : 'hsk_sm2_data'; },
 
     vocab(lang) { return lang === 'en' ? enWordList() : zhWordList(); },
 
@@ -391,11 +410,11 @@
 
     /** Thêm 1 từ vào thẻ ôn. Trả về 'added' | 'exists' | 'unknown'. */
     addWord(lang, word, when) {
-      if (lang === 'ja' || lang === 'de') {
-        // Thẻ tiếng Nhật / tiếng Đức do japanese.js / german.js quản lý (khóa ja_sm2_data / de_sm2_data, định dạng {ef, interval, repetition, due})
-        const info = lang === 'ja' ? lookupJa(word) : lookupDe(word);
+      if (lang === 'ja' || lang === 'ru' || lang === 'de') {
+        // Thẻ tiếng Nhật, Nga, Đức do japanese.js, russian.js, german.js quản lý (khóa ja_/ru_/de_sm2_data, định dạng {ef, interval, repetition, due})
+        const info = lang === 'ja' ? lookupJa(word) : lang === 'ru' ? lookupRu(word) : lookupDe(word);
         if (!info) return 'unknown';
-        const key = `${lang}_sm2_data`;
+        const key = this.sm2Key(lang);
         const data = store.get(key, {});
         if (data[info.id]) return 'exists';
         data[info.id] = { ef: 2.5, interval: 0, repetition: 0, due: Date.now() + (when === 'tomorrow' ? 86400000 : 0) };
@@ -662,7 +681,7 @@
       const node = sel.anchorNode && (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentElement);
       if (!node || !node.closest) return this.hideButton();
       if (!node.closest('.app-main')) return this.hideButton();
-      if (node.closest('input, textarea, select, [contenteditable="true"], #tab-videos, .pb-lookup-card, #tab-writing, .ja-quiz, .ja-write-stage, .de-quiz')) return this.hideButton();
+      if (node.closest('input, textarea, select, [contenteditable="true"], #tab-videos, .pb-lookup-card, #tab-writing, .ja-quiz, .ja-write-stage, .ru-write-stage, .de-quiz')) return this.hideButton();
       const info = lookupWord(text, document.documentElement.getAttribute('data-target-lang'));
       if (!info) return this.hideButton();
       const rect = sel.getRangeAt(0).getBoundingClientRect();
@@ -699,7 +718,7 @@
 
     speak(info) {
       const app = root.app;
-      const tts = info.lang === 'en' ? 'en-US' : info.lang === 'ja' ? 'ja-JP' : info.lang === 'de' ? 'de-DE' : 'zh-CN';
+      const tts = info.lang === 'en' ? 'en-US' : info.lang === 'ja' ? 'ja-JP' : info.lang === 'ru' ? 'ru-RU' : info.lang === 'de' ? 'de-DE' : 'zh-CN';
       if (app && typeof app.speakText === 'function') app.speakText(info.speakText || info.word, null, tts);
     },
 
@@ -710,11 +729,11 @@
       card.setAttribute('role', 'dialog');
       card.setAttribute('aria-label', `Tra từ ${info.word}`);
       const ex = info.ex || null;
-      const exText = ex ? (ex.ja || ex.de || ex.en || ex.zh || '') : '';
+      const exText = ex ? (ex.ja || ex.ru || ex.de || ex.en || ex.zh || '') : '';
       const exPh = ex ? (ex.py || ex.ipa || '') : '';
       card.innerHTML = `
         <div class="pb-lookup-head">
-          <span class="pb-lookup-word" lang="${['en', 'ja', 'de'].includes(info.lang) ? info.lang : 'zh'}">${esc(info.word)}</span>
+          <span class="pb-lookup-word" lang="${['en', 'ja', 'ru', 'de'].includes(info.lang) ? info.lang : 'zh'}">${esc(info.word)}</span>
           <button type="button" class="pb-icon-btn" data-a="speak" aria-label="Nghe phát âm">${icon('volume', 18)}</button>
           <button type="button" class="pb-icon-btn pb-lookup-x" data-a="close" aria-label="Đóng">${icon('x', 16)}</button>
         </div>
@@ -722,7 +741,7 @@
         ${info.vi ? `<div class="pb-lookup-vi">${esc(info.vi)}</div>` : '<div class="pb-lookup-vi pb-muted">Chưa có nghĩa trong từ điển của Polylingo.</div>'}
         ${info.hv ? `<div class="pb-lookup-meta">Hán Việt: <em>${esc(info.hv)}</em></div>` : ''}
         ${info.pos ? `<div class="pb-lookup-meta">Từ loại: ${esc(info.pos)}</div>` : ''}
-        ${exText ? `<div class="pb-lookup-ex"><div lang="${['en', 'ja', 'de'].includes(info.lang) ? info.lang : 'zh'}">${esc(exText)}</div>${exPh ? `<div class="pb-muted">${esc(exPh)}</div>` : ''}${ex.vi ? `<div>${esc(ex.vi)}</div>` : ''}</div>` : ''}
+        ${exText ? `<div class="pb-lookup-ex"><div lang="${['en', 'ja', 'ru', 'de'].includes(info.lang) ? info.lang : 'zh'}">${esc(exText)}</div>${exPh ? `<div class="pb-muted">${esc(exPh)}</div>` : ''}${ex.vi ? `<div>${esc(ex.vi)}</div>` : ''}</div>` : ''}
         <div class="pb-lookup-actions">
           ${info.id ? '<button type="button" class="pb-btn pb-btn-primary" data-a="add">' + icon('plus', 15) + ' Thêm vào thẻ ôn</button>' : ''}
           <button type="button" class="pb-btn pb-btn-ghost" data-a="off">Tắt tra nhanh</button>

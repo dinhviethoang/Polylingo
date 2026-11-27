@@ -18,8 +18,8 @@
   const addTopic = (id, name, icon) => {
     if (!topics.some(t => t.id === id)) topics.push({ id, name, icon });
   };
-  addTopic('nhap-mon', 'Nhập môn phát âm & chữ Hán', '🔤');
-  addTopic('doi-song', 'Thời tiết, Sở thích & Năng lực', '🌤️');
+  addTopic('nhap-mon', 'Nhập môn phát âm & chữ Hán', '');
+  addTopic('doi-song', 'Thời tiết, Sở thích & Năng lực', '');
 
   // Bài học (unit) của Lộ trình → chủ đề của mục Từ vựng
   const UNIT_TOPIC = {
