@@ -48,7 +48,10 @@
     toneCorrect:    { coins: 1,  xp: 1 },
     checkpointPass: { coins: 50, xp: 50 },
     videoWatched:   { coins: 15, xp: 20, water: 1 },
-    videoShadow:    { coins: 3,  xp: 5,  water: 1 }
+    videoShadow:    { coins: 3,  xp: 5,  water: 1 },
+    sentenceTyped:  { coins: 2,  xp: 3 },
+    readingSentence:{ coins: 2,  xp: 3 },
+    dailyGoal:      { coins: 15, xp: 10, water: 2 }
   };
 
   // 8 Linh thú theo văn hóa 4 nước: zh, ja, en, ru
@@ -725,6 +728,16 @@
       } else {
         return { coins: 0, xp: 0, water: 0, capped: true };
       }
+    } else if (key === 'sentenceTyped' || key === 'readingSentence') {
+      const cur = state.today.counts[key] || 0;
+      if (cur < 40) {
+        state.today.counts[key] = cur + 1;
+      } else {
+        return { coins: 0, xp: 0, water: 0, capped: true };
+      }
+    } else if (key === 'dailyGoal') {
+      if (state.today.counts.dailyGoal) return { coins: 0, xp: 0, water: 0, capped: true };
+      state.today.counts.dailyGoal = 1;
     } else {
       state.today.counts[key] = (state.today.counts[key] || 0) + 1;
     }

@@ -334,7 +334,9 @@ class ChineseApp {
       talk: false,
       videos: false,
       games: false,
-      farm: false
+      farm: false,
+      dictation: false,
+      reading: false
     };
   }
 
@@ -359,7 +361,10 @@ class ChineseApp {
     if (this.currentLang === 'en') {
       const raw = typeof window !== 'undefined' ? window.EN_WORDS : null;
       if (!raw) return [];
-      return Array.isArray(raw) ? raw : Object.values(raw);
+      const list = Array.isArray(raw) ? raw : Object.values(raw);
+      // Từ tiếng Anh không có trường id: dùng chính từ làm mã để thẻ ôn SM-2 không bị trùng một khóa.
+      list.forEach(w => { if (w && !w.id && w.word) w.id = w.word; });
+      return list;
     }
     return (this.dataVocab && this.dataVocab.length > 0) ? this.dataVocab : DEFAULT_VOCAB;
   }
@@ -548,7 +553,9 @@ class ChineseApp {
       quiz: `<svg class="sidebar-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
       games: `<svg class="sidebar-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="10" y1="12" y2="12"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/><rect width="20" height="12" x="2" y="6" rx="6"/></svg>`,
       farm: `<svg class="sidebar-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg>`,
-      dialogues: `<svg class="sidebar-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`
+      dialogues: `<svg class="sidebar-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+      dictation: `<svg class="sidebar-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4"/><path d="M6.5 7v10"/><path d="M10 9v6"/><rect width="10" height="8" x="12" y="12" rx="1.5"/><path d="M14.5 15h.01"/><path d="M17 15h.01"/><path d="M19.5 15h.01"/><path d="M14.5 18h5"/></svg>`,
+      reading: `<svg class="sidebar-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg>`
     };
     return icons[key] || icons.home;
   }
@@ -632,8 +639,8 @@ class ChineseApp {
     if (navEl) {
       // Gom mục thành 3 nhóm để người mới không bị ngợp trước một danh sách dài.
       const SECTION_GROUPS = [
-        { id: 'hoc', label: 'Học', ids: ['home', 'learn', 'pinyin', 'phonics', 'kana', 'cyrillic', 'vocab', 'writing', 'dialogues'] },
-        { id: 'luyen', label: 'Luyện tập', ids: ['flashcards', 'quiz', 'typing', 'speak', 'talk'] },
+        { id: 'hoc', label: 'Học', ids: ['home', 'learn', 'pinyin', 'phonics', 'kana', 'cyrillic', 'vocab', 'writing', 'dialogues', 'reading'] },
+        { id: 'luyen', label: 'Luyện tập', ids: ['flashcards', 'quiz', 'typing', 'dictation', 'speak', 'talk'] },
         { id: 'giaitri', label: 'Giải trí', ids: ['videos', 'games'] }
       ];
       const sections = lang.sections || [];
@@ -730,7 +737,12 @@ class ChineseApp {
       window.VideoLearn.onHide();
     } else if (prevTab === 'games' && window.MiniGames && typeof window.MiniGames.onHide === 'function') {
       window.MiniGames.onHide();
+    } else if (prevTab === 'dictation' && window.SentenceDictation) {
+      window.SentenceDictation.onHide();
+    } else if (prevTab === 'reading' && window.ReadTranslate) {
+      window.ReadTranslate.onHide();
     }
+    if (window.PolyBoost && window.PolyBoost.Lookup) window.PolyBoost.Lookup.closeAll();
   }
 
   activatePortal() {
@@ -898,7 +910,7 @@ class ChineseApp {
       }
 
       // Tự động chuyển đổi các hash cũ dạng #vocab, #writing?char=... sang #zh/...
-      const zhSections = ['home', 'learn', 'pinyin', 'typing', 'speak', 'talk', 'videos', 'vocab', 'flashcards', 'writing', 'quiz', 'games', 'dialogues'];
+      const zhSections = ['home', 'learn', 'pinyin', 'typing', 'dictation', 'speak', 'talk', 'videos', 'vocab', 'flashcards', 'writing', 'quiz', 'games', 'dialogues', 'reading'];
       const [firstPart, queryPart] = rawHash.split('?');
       const queryStr = queryPart ? `?${queryPart}` : '';
 
@@ -942,7 +954,7 @@ class ChineseApp {
   }
 
   activateTab(tabId, params = new URLSearchParams(), langId = 'zh') {
-    const validTabs = ['home', 'learn', 'phonics', 'pinyin', 'typing', 'speak', 'talk', 'videos', 'vocab', 'flashcards', 'writing', 'quiz', 'games', 'dialogues'];
+    const validTabs = ['home', 'learn', 'phonics', 'pinyin', 'typing', 'dictation', 'reading', 'speak', 'talk', 'videos', 'vocab', 'flashcards', 'writing', 'quiz', 'games', 'dialogues'];
     if (!validTabs.includes(tabId)) tabId = 'home';
 
     if (this.currentTab && this.currentTab !== tabId) {
@@ -984,6 +996,25 @@ class ChineseApp {
     if (tabId === 'home') {
       this.renderHomeTab(langId);
       this.renderStats();
+      if (window.PolyBoost) window.PolyBoost.renderLangHome(langId);
+    } else if (tabId === 'dictation') {
+      const el = document.getElementById('tab-dictation');
+      if (window.SentenceDictation && el) {
+        if (!this.mountedModules.dictation) {
+          window.SentenceDictation.mount(el);
+          this.mountedModules.dictation = true;
+        }
+        window.SentenceDictation.onShow(params, langId);
+      }
+    } else if (tabId === 'reading') {
+      const el = document.getElementById('tab-reading');
+      if (window.ReadTranslate && el) {
+        if (!this.mountedModules.reading) {
+          window.ReadTranslate.mount(el);
+          this.mountedModules.reading = true;
+        }
+        window.ReadTranslate.onShow(params, langId);
+      }
     } else if (tabId === 'phonics') {
       const el = document.getElementById('tab-phonics');
       if (window.PhonicsEn && el) {
@@ -1074,6 +1105,8 @@ class ChineseApp {
         const modeSelect = document.getElementById('fc-mode-select');
         if (modeSelect) modeSelect.value = modeParam;
       }
+      // Gom từ đã học / từ khó / từ đã tra ở mọi mục vào thẻ ôn trước khi lập lượt ôn.
+      if (window.PolyBoost && window.PolyBoost.ReviewBank) window.PolyBoost.ReviewBank.sync(langId);
       this.startFlashcardSession();
     } else if (tabId === 'dialogues') {
       this.initDialogueTab();

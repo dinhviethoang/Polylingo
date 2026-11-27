@@ -690,7 +690,7 @@
     const wotd = getWordOfTheDay();
 
     // Tính % hoàn thành tiếng Trung
-    const totalZhWords = 150;
+    const totalZhWords = (typeof window !== 'undefined' && Array.isArray(window.VOCAB) && window.VOCAB.length) || 521;
     let zhWordsLearned = 0;
     try {
       const sm2 = JSON.parse(localStorage.getItem('hsk_sm2_data') || '{}');
@@ -1204,6 +1204,11 @@
         ${footerHtml}
       </div>
     `;
+
+    // Học thử 1 phút, thẻ phút học / từ cần ôn, phần giới thiệu + hỏi đáp (boost.js)
+    if (typeof window !== 'undefined' && window.PolyBoost && typeof window.PolyBoost.decoratePortal === 'function') {
+      try { window.PolyBoost.decoratePortal(containerEl); } catch (e) { console.warn('[Portal] PolyBoost:', e); }
+    }
 
     // Mặc định mở rộng Nhiệm vụ ngày trên Desktop (>768px), thu gọn trên điện thoại (<=768px)
     const questsDetails = containerEl.querySelector('#hp-quests-details');

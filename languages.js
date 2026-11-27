@@ -36,6 +36,8 @@ const LANGUAGES = [
       { id: 'speak', iconName: 'speak', label: 'Phát âm', desc: 'Luyện phát âm câu từ tiếng Anh chuẩn xác' },
       { id: 'talk', iconName: 'talk', label: 'Luyện nói', desc: 'Luyện nói phản xạ và đàm thoại nhập vai tình huống' },
       { id: 'dialogues', iconName: 'dialogues', label: 'Hội thoại', desc: 'Mẫu câu giao tiếp thực tế nơi công sở và đời sống' },
+      { id: 'reading', iconName: 'reading', label: 'Đọc và dịch', desc: 'Bài đọc ngắn, tự dịch từng câu có chấm theo ý chính' },
+      { id: 'dictation', iconName: 'dictation', label: 'Nghe gõ câu', desc: 'Nghe một câu rồi gõ lại cả câu, sửa chỗ sai tới khi đúng' },
       { id: 'videos', iconName: 'videos', label: 'Video giải trí', desc: 'Xem video phụ đề song ngữ, tra từ và nhại giọng' }
     ]
   },
@@ -58,13 +60,14 @@ const LANGUAGES = [
     tts: 'zh-CN',
     accentColor: '#B3261E',
     accentColor2: '#C9A227',
-    description: 'Phát âm Pinyin, 150 từ vựng HSK1 cốt lõi, tập viết chữ Hán và đàm thoại thực tế.',
+    description: 'Phát âm Pinyin, hơn 500 từ vựng HSK1, tập viết chữ Hán và đàm thoại thực tế.',
     totalWords: 521, // cập nhật tự động trong data/zh/vocab-merge.js
     sections: [
       { id: 'home', iconName: 'home', label: 'Tổng quan', desc: 'Bảng theo dõi tiến độ và lộ trình bài bản' },
       { id: 'learn', iconName: 'learn', label: 'Lộ trình', desc: 'Lộ trình bài học HSK 3.0 chuẩn hóa theo từng chặng' },
       { id: 'pinyin', iconName: 'phonics', label: 'Phát âm (Pinyin)', desc: '21 thanh mẫu, 36 vận mẫu và quy tắc biến điệu' },
       { id: 'typing', iconName: 'typing', label: 'Luyện gõ Pinyin', desc: 'Rèn phản xạ gõ pinyin kèm thanh điệu trên bàn phím' },
+      { id: 'dictation', iconName: 'dictation', label: 'Nghe gõ câu', desc: 'Nghe một câu rồi gõ lại cả câu bằng pinyin hoặc chữ Hán' },
       { id: 'speak', iconName: 'speak', label: 'Luyện phát âm', desc: 'Luyện đọc thanh điệu, cặp âm dễ nhầm và câu giao tiếp' },
       { id: 'talk', iconName: 'talk', label: 'Luyện nói', desc: 'Luyện nói từng từ và đàm thoại nhập vai tình huống thực tế' },
       { id: 'videos', iconName: 'videos', label: 'Video giải trí', desc: 'Xem video vừa học phụ đề song ngữ, tra từ và nói theo' },
@@ -73,7 +76,8 @@ const LANGUAGES = [
       { id: 'writing', iconName: 'writing', label: 'Chữ viết (Hán tự)', desc: 'Tập viết từng nét thuận bút chữ Hán chuẩn mực' },
       { id: 'quiz', iconName: 'quiz', label: 'Kiểm tra', desc: '10 câu trắc nghiệm ngẫu nhiên đánh giá phản xạ' },
       { id: 'games', iconName: 'games', label: 'Trò chơi', desc: 'Mini games ghép từ, lật thẻ rèn phản xạ ngôn ngữ' },
-      { id: 'dialogues', iconName: 'dialogues', label: 'Hội thoại', desc: 'Mẫu câu đàm thoại đời sống, nghe đọc mẫu và luyện theo' }
+      { id: 'dialogues', iconName: 'dialogues', label: 'Hội thoại', desc: 'Mẫu câu đàm thoại đời sống, nghe đọc mẫu và luyện theo' },
+      { id: 'reading', iconName: 'reading', label: 'Đọc và dịch', desc: 'Bài đọc ngắn HSK1, tự dịch từng câu có chấm theo ý chính' }
     ]
   },
   {

@@ -30,6 +30,7 @@
   <link rel="stylesheet" href="portal.css">
   <link rel="stylesheet" href="phonics-en.css">
   <link rel="stylesheet" href="account.css">
+  <link rel="stylesheet" href="boost.css">
 </head>
 <body>
   <div id="app" class="app-layout">
@@ -676,6 +677,12 @@
       </section>
 
       <!-- 2B. SPEAK PRACTICE TAB (LUYỆN PHÁT ÂM) -->
+      <!-- Nghe gõ câu (dictation.js) -->
+      <section id="tab-dictation" class="tab-pane"></section>
+
+      <!-- Đọc và dịch (reading.js) -->
+      <section id="tab-reading" class="tab-pane"></section>
+
       <section id="tab-speak" class="tab-pane"></section>
 
       <!-- 2C. TALK PRACTICE TAB (LUYỆN NÓI & TRÒ CHUYỆN) -->
@@ -1007,6 +1014,11 @@
   <script src="videos.js"></script>
   <script src="games.js"></script>
   <script src="portal.js"></script>
+  <script src="data/zh/reading.js"></script>
+  <script src="data/en/reading.js"></script>
+  <script src="boost.js"></script>
+  <script src="dictation.js"></script>
+  <script src="reading.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.2/dist/hanzi-writer.min.js"></script>
   <script src="app.js" defer></script>
   <script src="typing.js" defer></script>
