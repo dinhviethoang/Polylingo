@@ -1,0 +1,67 @@
+/* account.css — nút Tài khoản ở header + hộp thoại đăng nhập / sao lưu */
+.btn-account { gap: 0.35rem; min-height: 40px; }
+.btn-account.is-signed-in { border-color: var(--primary); }
+.btn-account .acc-btn-label { max-width: 9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 860px) {
+  .btn-account .acc-btn-label { display: none; }
+}
+
+.acc-overlay {
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(10, 12, 20, 0.55);
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+}
+.acc-modal {
+  position: relative;
+  width: min(440px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  background: var(--bg-card, #fff);
+  color: var(--text-main, #111);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+  padding: 24px 22px 20px;
+  font-family: var(--font-base);
+}
+.acc-modal h2 { margin: 0 0 6px; font-size: 1.3rem; }
+.acc-modal h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; font-size: 1rem; }
+.acc-close {
+  position: absolute; top: 10px; right: 10px;
+  width: 40px; height: 40px; border-radius: 10px;
+  border: 0; background: transparent; color: inherit; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.acc-close:hover { background: var(--bg-elevated, #f1f5f9); }
+.acc-muted { color: var(--text-sub, #4b5563); margin: 0 0 12px; line-height: 1.5; font-size: 0.93rem; }
+.acc-small { font-size: 0.85rem; margin-top: 12px; }
+.acc-section { border-top: 1px solid var(--border-color, #e2e8f0); padding-top: 16px; margin-top: 16px; }
+.acc-form label { display: flex; flex-direction: column; gap: 4px; font-weight: 600; font-size: 0.9rem; margin-bottom: 12px; }
+.acc-form input {
+  font: inherit; font-weight: 400;
+  padding: 10px 12px; min-height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--border-highlight, #cbd5e1);
+  background: var(--bg-app, #fff); color: inherit;
+}
+.acc-form input:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }
+.acc-error { color: var(--danger, #dc2626); min-height: 1.2em; margin: 0 0 8px; font-size: 0.9rem; }
+.acc-row, .acc-choice { display: flex; flex-wrap: wrap; gap: 8px; }
+.acc-choice { flex-direction: column; }
+.acc-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 44px; padding: 8px 14px;
+  border-radius: 10px; cursor: pointer;
+  border: 1px solid var(--border-highlight, #cbd5e1);
+  background: var(--bg-elevated, #f1f5f9); color: inherit;
+  font: inherit; font-weight: 600; font-size: 0.92rem;
+}
+.acc-btn:hover { filter: brightness(0.97); }
+.acc-btn:focus-visible, .acc-link:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.acc-btn:disabled { opacity: 0.6; cursor: progress; }
+.acc-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+.acc-wide { width: 100%; }
+.acc-switch { margin: 12px 0 0; font-size: 0.9rem; text-align: center; }
+.acc-link { border: 0; background: none; color: var(--primary); font: inherit; font-weight: 600; cursor: pointer; padding: 4px; text-decoration: underline; }
+.acc-status { font-size: 0.88rem; color: var(--text-sub, #4b5563); min-height: 1.2em; margin: 0 0 10px; }

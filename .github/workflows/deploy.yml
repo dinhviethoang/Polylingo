@@ -1,0 +1,59 @@
+# Mỗi lần đẩy code lên nhánh main: chạy test → đóng gói → cập nhật D1 → đăng lên Cloudflare Pages.
+# Cần 2 GitHub Secrets: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID (xem HUONG-DAN-TAI-KHOAN.md).
+name: Test và đăng lên Cloudflare
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Chạy toàn bộ test
+        run: |
+          set -e
+          for t in tests/*.test.js; do
+            echo "::group::$t"
+            node "$t"
+            echo "::endgroup::"
+          done
+
+  deploy:
+    needs: test
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency: deploy-production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Đóng gói dist/
+        run: bash tools/dong-goi.sh
+      - name: Cập nhật cơ sở dữ liệu D1
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '3.114.0'
+          command: d1 migrations apply polylingo-db --remote
+      - name: Đăng lên Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '3.114.0'
+          command: pages deploy dist --project-name polylingo --branch main --commit-dirty=true

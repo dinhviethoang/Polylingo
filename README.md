@@ -45,3 +45,16 @@
    - Header thu gọn, menu ngôn ngữ cuộn ngang mượt mà.
    - Nút ☰ mở ngăn kéo (drawer) trượt từ mép trái với lớp phủ làm mờ (overlay). Tự động đóng ngăn kéo khi chọn mục hoặc bấm ra ngoài.
    - Giao diện được tối ưu không tràn ngang trên màn hình nhỏ từ 375px trở lên.
+
+9. **Tài khoản & đồng bộ tiến độ** (`account.js`, `functions/api/`, `migrations/`):
+   - Nút "Đăng nhập" ở header: đăng ký/đăng nhập, tự lưu tiến độ lên Cloudflare D1 và học tiếp trên máy khác.
+   - Xuất/Nhập tiến độ ra file JSON (dùng được cả khi mở bằng file://).
+   - Cài đặt một lần và tự đăng qua GitHub Actions: xem [HUONG-DAN-TAI-KHOAN.md](HUONG-DAN-TAI-KHOAN.md).
+
+10. **Khác**: báo khi máy thiếu giọng đọc (`voice-check.js`), cờ SVG (`langFlag()` trong `languages.js`), dữ liệu nặng tiếng Trung tải khi mở Lộ trình, PWA (`manifest.webmanifest`, `sw.js`).
+
+## Chạy test
+
+```bash
+for t in tests/*.test.js; do node "$t"; done
+```

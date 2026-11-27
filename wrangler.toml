@@ -1,0 +1,11 @@
+# Cấu hình Cloudflare Pages cho Polylingo (dùng wrangler@3).
+# Không chứa bí mật: database_id chỉ là mã định danh, khóa API để ở GitHub Secrets.
+name = "polylingo"
+pages_build_output_dir = "dist"
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "polylingo-db"
+database_id = "THAY_BANG_ID_CUA_D1"   # lấy từ lệnh: npx wrangler@3 d1 create polylingo-db
+migrations_dir = "migrations"
