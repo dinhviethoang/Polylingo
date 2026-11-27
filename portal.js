@@ -690,7 +690,7 @@
     const wotd = getWordOfTheDay();
 
     // Tính % hoàn thành tiếng Trung
-    const totalZhWords = 150;
+    const totalZhWords = (typeof window !== 'undefined' && Array.isArray(window.VOCAB) && window.VOCAB.length) || 521;
     let zhWordsLearned = 0;
     try {
       const sm2 = JSON.parse(localStorage.getItem('hsk_sm2_data') || '{}');
@@ -718,6 +718,22 @@
       enWordsLearned = Math.min(enCompletedCount * 15, totalEnWords);
     }
     const enPct = Math.min(100, Math.max(Math.round((enCompletedCount / 30) * 100), Math.round((enWordsLearned / totalEnWords) * 100)));
+
+    // Tiến độ tiếng Nhật: số bài đã qua trong 35 bài (japanese.js lưu ở ja_learn_progress_v1)
+    let jaDone = 0;
+    try {
+      const jaProg = JSON.parse(localStorage.getItem('ja_learn_progress_v1') || '{}');
+      jaDone = Object.values((jaProg && jaProg.lessons) || {}).filter(r => r && r.completed).length;
+    } catch (e) { jaDone = 0; }
+    const jaPct = Math.min(100, Math.round((jaDone / 35) * 100));
+
+    // Tiến độ tiếng Nga: số bài đã qua trong 35 bài (russian.js lưu ở ru_learn_progress_v1)
+    let ruDone = 0;
+    try {
+      const ruProg = JSON.parse(localStorage.getItem('ru_learn_progress_v1') || '{}');
+      ruDone = Object.values((ruProg && ruProg.lessons) || {}).filter(r => r && r.completed).length;
+    } catch (e) { ruDone = 0; }
+    const ruPct = Math.min(100, Math.round((ruDone / 35) * 100));
 
     // Số liệu Nông trại
     const plots = (ecoState.farm && Array.isArray(ecoState.farm.plots)) ? ecoState.farm.plots : [];
@@ -1001,7 +1017,7 @@
           </a>
 
           <!-- 2. Tiếng Nhật (ja) -->
-          <a href="#ja/home" class="hp-poster" data-lang="ja" aria-label="Xem trước Tiếng Nhật">
+          <a href="#ja/learn" class="hp-poster" data-lang="ja" aria-label="Học Tiếng Nhật">
             ${renderSvgJapan()}
             <div class="hp-poster-overlay">
               <div class="hp-poster-top">
@@ -1010,9 +1026,20 @@
               <div class="hp-poster-bottom">
                 <div class="hp-poster-title-row">
                   <h3 class="hp-poster-name">Tiếng Nhật</h3>
-                  <span class="hp-poster-badge coming">Sắp ra mắt</span>
+                  <span class="hp-poster-badge ready">
+                    <span class="hp-dot"></span> Đang học
+                  </span>
                 </div>
                 <p class="hp-poster-greeting">こんにちは · Konnichiwa (Xin chào)</p>
+                <div class="hp-poster-progress">
+                  <div class="hp-poster-prog-text">
+                    <span>Tiến độ bài học</span>
+                    <span class="hp-tabular">${jaPct}%</span>
+                  </div>
+                  <div class="hp-poster-prog-track">
+                    <div class="hp-poster-prog-fill" style="width: ${jaPct}%"></div>
+                  </div>
+                </div>
               </div>
             </div>
           </a>
@@ -1046,7 +1073,7 @@
           </a>
 
           <!-- 4. Tiếng Nga (ru) -->
-          <a href="#ru/home" class="hp-poster" data-lang="ru" aria-label="Xem trước Tiếng Nga">
+          <a href="#ru/learn" class="hp-poster" data-lang="ru" aria-label="Học Tiếng Nga">
             ${renderSvgRussia()}
             <div class="hp-poster-overlay">
               <div class="hp-poster-top">
@@ -1055,9 +1082,20 @@
               <div class="hp-poster-bottom">
                 <div class="hp-poster-title-row">
                   <h3 class="hp-poster-name">Tiếng Nga</h3>
-                  <span class="hp-poster-badge coming">Sắp ra mắt</span>
+                  <span class="hp-poster-badge ready">
+                    <span class="hp-dot"></span> Đang học
+                  </span>
                 </div>
                 <p class="hp-poster-greeting">Привет · Privet (Xin chào)</p>
+                <div class="hp-poster-progress">
+                  <div class="hp-poster-prog-text">
+                    <span>Tiến độ bài học</span>
+                    <span class="hp-tabular">${ruPct}%</span>
+                  </div>
+                  <div class="hp-poster-prog-track">
+                    <div class="hp-poster-prog-fill" style="width: ${ruPct}%"></div>
+                  </div>
+                </div>
               </div>
             </div>
           </a>
@@ -1204,6 +1242,11 @@
         ${footerHtml}
       </div>
     `;
+
+    // Học thử 1 phút, thẻ phút học / từ cần ôn, phần giới thiệu + hỏi đáp (boost.js)
+    if (typeof window !== 'undefined' && window.PolyBoost && typeof window.PolyBoost.decoratePortal === 'function') {
+      try { window.PolyBoost.decoratePortal(containerEl); } catch (e) { console.warn('[Portal] PolyBoost:', e); }
+    }
 
     // Mặc định mở rộng Nhiệm vụ ngày trên Desktop (>768px), thu gọn trên điện thoại (<=768px)
     const questsDetails = containerEl.querySelector('#hp-quests-details');

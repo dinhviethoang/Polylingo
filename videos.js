@@ -8,6 +8,7 @@
 (function () {
   'use strict';
 
+  const escapeHtml = (str) => String(str == null ? '' : str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   const ic = (n, opts) => (typeof window !== 'undefined' && window.PolyIcons ? window.PolyIcons.svg(n, opts) : (typeof PolyIcons !== 'undefined' ? PolyIcons.svg(n, opts) : ''));
 
   /* ==========================================================================
@@ -645,6 +646,10 @@
     playbackRate: 1.0,
     isLoopingCue: false,
     isShadowingMode: false,
+    drillMode: null, // null | 'dictate' (nghe chép) | 'cloze' (điền từ)
+    drillCue: null,
+    drillResult: null,
+    drillDoneCues: null,
     speechRecognition: null,
     isListening: false,
     lastShadowAwardedCue: null,
@@ -938,6 +943,9 @@
       this.isPlaying = false;
       this.activeCue = null;
       this.activeQuiz = null;
+      this.drillCue = null;
+      this.drillResult = null;
+      this.drillDoneCues = new Set();
 
       // Cập nhật hash url #{lang}/videos?v=...
       if (typeof window !== 'undefined') {
@@ -1073,11 +1081,20 @@
                         ${ic('mic', { size: 16 })} Nói theo
                       </button>
                     ` : ''}
+                    <button class="video-ctrl-btn ${this.drillMode === 'dictate' ? 'active' : ''}" id="btn-ctrl-dictate" title="Tự dừng cuối mỗi câu, ẩn phụ đề để bạn nghe rồi gõ lại">
+                      ${ic('keyboard', { size: 16 })} Nghe chép
+                    </button>
+                    <button class="video-ctrl-btn ${this.drillMode === 'cloze' ? 'active' : ''}" id="btn-ctrl-cloze" title="Tự dừng cuối mỗi câu để bạn điền từ còn thiếu">
+                      ${ic('pen', { size: 16 })} Điền từ
+                    </button>
                   </div>
                 </div>
 
                 <!-- Panel Nói theo (Shadowing Mode) -->
                 <div id="video-shadowing-wrapper" style="display: ${this.isShadowingMode ? 'block' : 'none'};"></div>
+
+                <!-- Panel Nghe chép / Điền từ -->
+                <div id="video-drill-wrapper" style="display: ${this.drillMode ? 'block' : 'none'};"></div>
 
                 <!-- Khung Trắc Nghiệm Cuối Video -->
                 <div id="video-quiz-wrapper"></div>
@@ -1145,9 +1162,15 @@
         });
       }
 
+      ['dictate', 'cloze'].forEach(mode => {
+        const b = this.containerEl.querySelector(`#btn-ctrl-${mode}`);
+        if (b) b.addEventListener('click', () => this.setDrillMode(this.drillMode === mode ? null : mode));
+      });
+
       const shadowBtn = this.containerEl.querySelector('#btn-ctrl-shadow');
       if (shadowBtn) {
         shadowBtn.addEventListener('click', () => {
+          if (!this.isShadowingMode && this.drillMode) this.setDrillMode(null);
           this.isShadowingMode = !this.isShadowingMode;
           shadowBtn.classList.toggle('active', this.isShadowingMode);
           const wrap = this.containerEl.querySelector('#video-shadowing-wrapper');
@@ -1349,6 +1372,16 @@
         }
       }
 
+      // Nghe chép / Điền từ: dừng ở cuối câu để người học làm bài với đúng câu vừa nghe
+      if (this.drillMode && this.activeCue && this.isPlaying && currentTime >= this.activeCue.end
+        && this.drillCue !== this.activeCue && !(this.drillDoneCues && this.drillDoneCues.has(this.activeCue))) {
+        this.pause();
+        this.drillCue = this.activeCue;
+        this.drillResult = null;
+        this.renderDrillPanel();
+        return;
+      }
+
       if (currentCue !== this.activeCue) {
         this.activeCue = currentCue;
         this.updateSubtitleDisplay();
@@ -1474,6 +1507,15 @@
       const cue = this.activeCue;
       if (!cue) {
         area.innerHTML = `<div class="video-sub-zh" style="color:var(--video-text-muted)">...</div>`;
+        return;
+      }
+
+      if (this.drillMode === 'dictate' && !(this.drillDoneCues && this.drillDoneCues.has(cue))) {
+        area.innerHTML = `
+          <div class="video-sub-hidden-notice">
+            ${ic('keyboard', { size: 16 })} Nghe chép: phụ đề câu này được ẩn. Hết câu video tự dừng để bạn gõ lại.
+          </div>
+        `;
         return;
       }
 
@@ -1696,6 +1738,153 @@
         utter.rate = 0.9;
         window.speechSynthesis.speak(utter);
       } catch (_) {}
+    },
+
+    /* --- NGHE CHÉP & ĐIỀN TỪ (dùng PolyBoost.SentenceCheck để chấm) --- */
+    setDrillMode(mode) {
+      this.drillMode = mode;
+      this.drillCue = null;
+      this.drillResult = null;
+      if (mode && this.isShadowingMode) {
+        this.isShadowingMode = false;
+        const sw = this.containerEl ? this.containerEl.querySelector('#video-shadowing-wrapper') : null;
+        if (sw) sw.style.display = 'none';
+        const sb = this.containerEl ? this.containerEl.querySelector('#btn-ctrl-shadow') : null;
+        if (sb) sb.classList.remove('active');
+      }
+      if (!this.containerEl) return;
+      ['dictate', 'cloze'].forEach(m => {
+        const b = this.containerEl.querySelector(`#btn-ctrl-${m}`);
+        if (b) b.classList.toggle('active', this.drillMode === m);
+      });
+      const wrap = this.containerEl.querySelector('#video-drill-wrapper');
+      if (wrap) wrap.style.display = mode ? 'block' : 'none';
+      this.renderDrillPanel();
+      this.updateSubtitleDisplay();
+    },
+
+    /** Chọn từ để đục lỗ trong câu: tiếng Anh lấy từ dài nhất, tiếng Trung lấy từ có trong từ điển dài nhất. */
+    makeCloze(cue) {
+      const isEn = this.lang === 'en';
+      const text = isEn ? (cue.en || cue.zh || '') : (cue.zh || '');
+      if (isEn) {
+        const words = text.match(/[A-Za-z']+/g) || [];
+        let best = '';
+        words.forEach(w => { if (w.length > best.length) best = w; });
+        if (!best) return null;
+        const i = text.indexOf(best);
+        return { before: text.slice(0, i), answer: best, after: text.slice(i + best.length), py: '' };
+      }
+      const boost = typeof window !== 'undefined' ? window.PolyBoost : null;
+      const segs = boost && boost.segmentZh ? boost.segmentZh(text) : [];
+      let pick = null;
+      segs.forEach(v => { if (!pick || v.hanzi.length > pick.hanzi.length) pick = v; });
+      const answer = pick ? pick.hanzi : ((text.match(/[\u3400-\u9fff]/) || [])[0] || '');
+      if (!answer) return null;
+      const i = text.indexOf(answer);
+      return { before: text.slice(0, i), answer, after: text.slice(i + answer.length), py: pick ? pick.pinyin : '' };
+    },
+
+    renderDrillPanel() {
+      const wrap = this.containerEl ? this.containerEl.querySelector('#video-drill-wrapper') : null;
+      if (!wrap) return;
+      if (!this.drillMode) { wrap.innerHTML = ''; return; }
+      const isEn = this.lang === 'en';
+      const title = this.drillMode === 'dictate' ? 'Nghe chép' : 'Điền từ';
+      const cue = this.drillCue;
+      if (!cue) {
+        wrap.innerHTML = `
+          <div class="video-shadow-panel video-drill-panel">
+            <div class="video-shadow-header">
+              <h4 class="video-shadow-title"><span>${ic(this.drillMode === 'dictate' ? 'keyboard' : 'pen', { size: 18 })} ${title}</span></h4>
+              <span style="font-size:0.8rem;color:var(--video-text-sub)">Bấm phát video. Hết mỗi câu video tự dừng để bạn làm bài.</span>
+            </div>
+          </div>`;
+        return;
+      }
+      const target = isEn ? (cue.en || cue.zh || '') : (cue.zh || '');
+      const res = this.drillResult;
+      const boost = typeof window !== 'undefined' ? window.PolyBoost : null;
+      let task = '';
+      if (this.drillMode === 'cloze') {
+        const cz = this.makeCloze(cue);
+        this.drillCloze = cz;
+        task = cz ? `<div class="video-drill-cloze">${escapeHtml(cz.before)}<span class="video-drill-blank">${res && res.ok ? escapeHtml(cz.answer) : '____'}</span>${escapeHtml(cz.after)}</div>` : '';
+      }
+      const feedback = res
+        ? `${boost && this.drillMode === 'dictate' ? boost.SentenceCheck.render(res) : ''}
+           <p style="margin:0.4rem 0 0;font-weight:600;color:${res.ok ? '#10B981' : '#DC2626'}">${res.ok ? 'Chính xác!' : (this.drillMode === 'dictate' ? `Đúng ${res.accuracy}%. Sửa chữ tô đỏ rồi kiểm tra lại, hoặc nghe lại câu.` : 'Chưa đúng, nghe lại rồi thử lần nữa.')}</p>
+           ${res.ok || res.revealed ? `<div style="margin-top:0.4rem">${escapeHtml(target)}${cue.py ? `<div style="font-size:0.85rem;color:var(--video-text-sub)">${escapeHtml(cue.py)}</div>` : ''}${cue.vi ? `<div style="font-size:0.85rem;color:var(--video-text-sub)">${escapeHtml(cue.vi)}</div>` : ''}</div>` : ''}`
+        : '';
+      const ph = this.drillMode === 'cloze'
+        ? (isEn ? 'Gõ từ còn thiếu' : 'Gõ chữ Hán hoặc pinyin của từ còn thiếu')
+        : (isEn ? 'Gõ lại cả câu vừa nghe' : 'Gõ pinyin không cần dấu hoặc chữ Hán');
+      wrap.innerHTML = `
+        <div class="video-shadow-panel video-drill-panel">
+          <div class="video-shadow-header">
+            <h4 class="video-shadow-title"><span>${ic(this.drillMode === 'dictate' ? 'keyboard' : 'pen', { size: 18 })} ${title}</span></h4>
+            <span style="font-size:0.8rem;color:var(--video-text-sub)">${this.drillMode === 'dictate' ? 'Gõ lại câu bạn vừa nghe' : 'Điền từ còn thiếu trong câu'}</span>
+          </div>
+          ${task}
+          <div class="video-drill-row">
+            <input type="text" id="video-drill-input" class="video-drill-input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${ph}" ${res && res.ok ? 'disabled' : ''}>
+            ${res && res.ok
+              ? `<button class="video-btn video-btn-primary" id="btn-drill-next">${ic('play', { size: 15 })} Câu tiếp</button>`
+              : `<button class="video-btn video-btn-primary" id="btn-drill-check">Kiểm tra</button>`}
+            <button class="video-btn" id="btn-drill-replay">${ic('repeat', { size: 15 })} Nghe lại</button>
+            ${res && !res.ok ? '<button class="video-btn" id="btn-drill-reveal">Xem đáp án</button>' : ''}
+          </div>
+          <div class="video-drill-feedback">${feedback}</div>
+        </div>`;
+      const input = wrap.querySelector('#video-drill-input');
+      if (input && !(res && res.ok)) {
+        input.value = this.drillDraft || '';
+        input.addEventListener('input', () => { this.drillDraft = input.value; });
+        input.addEventListener('keydown', (e) => {
+          e.stopPropagation();
+          if (e.key === 'Enter') { e.preventDefault(); this.checkDrill(); }
+        });
+        setTimeout(() => input.focus(), 30);
+      }
+      const on = (id, fn) => { const b = wrap.querySelector(id); if (b) b.addEventListener('click', fn); };
+      on('#btn-drill-check', () => this.checkDrill());
+      on('#btn-drill-replay', () => { this.drillCue = null; this.seekTo(cue.start); this.play(); });
+      on('#btn-drill-reveal', () => { this.drillResult = Object.assign({}, this.drillResult, { revealed: true }); this.renderDrillPanel(); });
+      on('#btn-drill-next', () => {
+        this.drillCue = null;
+        this.drillResult = null;
+        this.drillDraft = '';
+        this.renderDrillPanel();
+        this.play();
+      });
+    },
+
+    checkDrill() {
+      const cue = this.drillCue;
+      const wrap = this.containerEl ? this.containerEl.querySelector('#video-drill-wrapper') : null;
+      const input = wrap ? wrap.querySelector('#video-drill-input') : null;
+      if (!cue || !input || !input.value.trim()) return;
+      const boost = typeof window !== 'undefined' ? window.PolyBoost : null;
+      if (!boost || !boost.SentenceCheck) return;
+      const isEn = this.lang === 'en';
+      let res;
+      if (this.drillMode === 'cloze') {
+        const cz = this.drillCloze || this.makeCloze(cue);
+        if (!cz) return;
+        res = boost.SentenceCheck.compare(this.lang, cz.answer, input.value, { py: cz.py });
+      } else {
+        res = boost.SentenceCheck.compare(this.lang, isEn ? (cue.en || cue.zh) : cue.zh, input.value, { py: cue.py });
+      }
+      this.drillResult = res;
+      if (res.ok) {
+        if (!this.drillDoneCues) this.drillDoneCues = new Set();
+        this.drillDoneCues.add(cue);
+        this.updateSubtitleDisplay();
+        if (typeof window !== 'undefined' && window.Economy && typeof window.Economy.reward === 'function') {
+          window.Economy.reward('sentenceTyped');
+        }
+      }
+      this.renderDrillPanel();
     },
 
     /* --- CHẾ ĐỘ NÓI THEO (SHADOWING) & SPEECH RECOGNITION --- */

@@ -51,3 +51,10 @@ Toàn bộ các nội dung sau được đội ngũ Polylingo **tự biên soạ
 3. **Giải thích quy tắc phát âm:** Quy tắc âm ngắt `っ`, trường âm `ー`, biến âm của `ん`, trợ từ `は/へ/を` bằng tiếng Việt dễ hiểu.
 4. **Hội thoại đời thường N5 (data/ja/dialogues.js & talk-dialogues.js):** 10 kịch bản hội thoại cơ bản N5 và 10 bài đóng vai tương tác A–B dùng thể lịch sự `です/ます`, có đầy đủ phiên âm Kana, Romaji và dịch nghĩa tiếng Việt tự nhiên.
 5. **Kịch bản nhập vai giao tiếp (data/ja/talk-scenarios.js):** 8 tình huống thực tế tại Nhật Bản (Konbini, ga tàu, nhà hàng, hỏi đường, tự giới thiệu, mua vé, khám bệnh, khách sạn).
+
+
+## Bổ sung 27/11/2026
+- `words-a.js`, `words-b.js`, `curriculum.js`, nghĩa và mẹo nhớ trong `kanji.js`: PolyLingo tự soạn.
+- Âm On/Kun của Kanji đối chiếu với **KANJIDIC2** (EDRDG, CC BY-SA 4.0).
+- Thứ tự nét ở mục Tập viết tải trực tiếp từ **KanjiVG** (Ulrich Apel, CC BY-SA 3.0) qua cdn.jsdelivr.net/gh/KanjiVG/kanjivg, không lưu bản sao trong repo.
+- Cách tổ chức bài học tham khảo các trang ghi trong `docs/tham-khao-web-tieng-nhat.md`, không dùng nội dung của họ.

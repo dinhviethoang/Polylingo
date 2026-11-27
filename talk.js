@@ -269,6 +269,10 @@
    * @returns {{ type: 'ok'|'initial'|'final'|'tone'|'unknown', advice: string, expectedPy?: string, heardPy?: string, diff?: Object }}
    */
   function diagnose(expectedChar, heardChar, map) {
+    // Tiếng Nhật: chưa có bảng chẩn đoán âm, chỉ chấm theo độ khớp ký tự.
+    if (typeof TalkPractice !== 'undefined' && (TalkPractice.lang === 'ja' || TalkPractice.lang === 'ru')) {
+      return { type: 'ok', advice: '' };
+    }
     if (!expectedChar) {
       return { type: 'unknown', advice: 'Không có dữ liệu đối chiếu.' };
     }
@@ -674,6 +678,49 @@
     }
 
     const candidateList = Array.isArray(answers) ? answers : [answers];
+
+    // Tiếng Nga: so theo chữ cái, bỏ qua trọng âm, ё = е, dấu câu.
+    const isRu = (typeof TalkPractice !== 'undefined' && TalkPractice.lang === 'ru') ||
+      candidateList.some(item => item && typeof item === 'object' && item.ru);
+    if (isRu && typeof window !== 'undefined' && window.RuCore) {
+      let best = { score: -1, item: null, perChar: [] };
+      for (const item of candidateList) {
+        const written = typeof item === 'string' ? item : (item.ru || item.zh || item.hanzi || '');
+        const r = window.RuCore.compareText(written, transcript);
+        if (r.score > best.score) best = { score: r.score, item, perChar: r.perChar };
+      }
+      return {
+        score: Math.max(0, best.score),
+        bestAnswer: best.item || candidateList[0] || null,
+        perChar: best.perChar,
+        transcript,
+        matched: best.score >= 60
+      };
+    }
+
+    // Tiếng Nhật: so ký tự với câu chữ Hán lẫn câu kana, lấy điểm cao hơn (máy nhận diện có thể trả chữ Hán hoặc kana).
+    const isJa = (typeof TalkPractice !== 'undefined' && TalkPractice.lang === 'ja') ||
+      candidateList.some(item => item && typeof item === 'object' && item.kana);
+    if (isJa && typeof window !== 'undefined' && window.JaCore) {
+      let best = { score: -1, item: null, perChar: [] };
+      for (const item of candidateList) {
+        const written = typeof item === 'string' ? item : (item.ja || item.zh || item.hanzi || '');
+        const kana = typeof item === 'string' ? '' : (item.kana || '');
+        const a = window.JaCore.compareChars(written, transcript);
+        const b = kana ? window.JaCore.compareChars(kana, transcript) : { score: -1, perChar: [] };
+        const useKana = b.score > a.score;
+        const sc = Math.max(a.score, b.score);
+        if (sc > best.score) best = { score: sc, item, perChar: useKana ? b.perChar : a.perChar };
+      }
+      return {
+        score: Math.max(0, best.score),
+        bestAnswer: best.item || candidateList[0] || null,
+        perChar: best.perChar,
+        transcript,
+        matched: best.score >= 60
+      };
+    }
+
     const isEn = candidateList.some(item => {
       const s = typeof item === 'string' ? item : (item.en || item.zh || item.hanzi || '');
       return /[a-zA-Z]/.test(s) && !/[\u4e00-\u9fa5]/.test(s);
@@ -865,8 +912,13 @@
       this.charPinyinMap = buildCharPinyinMap(words, charPy);
     },
 
+    /** Mã ngôn ngữ cho nhận diện giọng nói và giọng đọc */
+    speechCode() {
+      return this.lang === 'en' ? 'en-US' : this.lang === 'ja' ? 'ja-JP' : this.lang === 'ru' ? 'ru-RU' : 'zh-CN';
+    },
+
     /**
-     * Vòng đời onShow: kích hoạt khi mở tab #zh/talk hoặc #en/talk
+     * Vòng đời onShow: kích hoạt khi mở tab #zh/talk, #en/talk hoặc #ja/talk
      */
     onShow(params = new URLSearchParams(), lang = 'zh') {
       const prevLang = this.lang;
@@ -933,7 +985,7 @@
 
       try {
         const rec = new SpeechRec();
-        rec.lang = this.lang === 'en' ? 'en-US' : 'zh-CN';
+        rec.lang = this.speechCode();
         rec.continuous = false;
         rec.interimResults = true;
         rec.maxAlternatives = 5;
@@ -993,12 +1045,12 @@
      */
     toggleListening() {
       if (!this.speechAvailable || !this.recognition) {
-        this.promptTypingModal(`Trình duyệt chưa hỗ trợ nhận diện giọng nói ${this.lang === 'en' ? 'tiếng Anh' : 'tiếng Trung'}.`);
+        this.promptTypingModal(`Trình duyệt chưa hỗ trợ nhận diện giọng nói ${this.lang === 'en' ? 'tiếng Anh' : this.lang === 'ja' ? 'tiếng Nhật' : this.lang === 'ru' ? 'tiếng Nga' : 'tiếng Trung'}.`);
         return;
       }
 
       if (this.recognition) {
-        this.recognition.lang = this.lang === 'en' ? 'en-US' : 'zh-CN';
+        this.recognition.lang = this.speechCode();
       }
 
       if (this.isListening) {
@@ -1034,8 +1086,9 @@
       if (typeof window === 'undefined' || !window.speechSynthesis) return;
       window.speechSynthesis.cancel();
 
-      const utter = new SpeechSynthesisUtterance(text);
-      const ttsLang = this.lang === 'en' ? 'en-US' : 'zh-CN';
+      // Bỏ dấu trọng âm tiếng Nga (U+0301) để giọng đọc không vấp.
+      const utter = new SpeechSynthesisUtterance(String(text || '').replace(/\u0301/g, ''));
+      const ttsLang = this.speechCode();
       utter.lang = ttsLang;
       utter.rate = rate;
       if (window.app && window.app.audio && typeof window.app.audio.getVoiceForLang === 'function') {
@@ -1055,6 +1108,64 @@
     loadWordsForDrill() {
       const s = this.wordState;
       let words = [];
+
+      if (this.lang === 'ru') {
+        const rd = (typeof window !== 'undefined' && window.RuCore) ? window.RuCore.load() : null;
+        let ruWords = rd ? rd.words.filter(w => w.plain.length <= 18) : [];
+        if (s.scope === 'learned') {
+          const done = new Set();
+          try {
+            const prog = JSON.parse(localStorage.getItem('ru_learn_progress_v1') || '{}');
+            Object.entries((prog && prog.lessons) || {}).forEach(([id, r]) => { if (r && r.completed) done.add(id); });
+          } catch (e) {}
+          const ids = new Set(rd ? rd.lessons.filter(l => done.has(l.id)).flatMap(l => l.wordIds) : []);
+          const learned = ruWords.filter(w => ids.has(w.id));
+          ruWords = learned.length ? learned.slice(0, 30) : ruWords.slice(0, 20);
+        } else {
+          ruWords = ruWords.slice().sort(() => Math.random() - 0.5).slice(0, 30);
+        }
+        s.wordList = ruWords.map(w => ({
+          hanzi: w.word, word: w.word, zh: w.word, ru: w.word,
+          py: w.translit, vi: w.vi || '', hv: '', topic: ''
+        }));
+        s.currentIndex = 0;
+        s.attempts = 0;
+        s.history = [];
+        s.passedCount = 0;
+        s.isFinished = false;
+        return;
+      }
+
+      if (this.lang === 'ja') {
+        const jd = (typeof window !== 'undefined' && window.JaCore) ? window.JaCore.load() : null;
+        let jaWords = jd ? jd.words.filter(w => w.pos !== 'exp' || w.kana.length <= 10) : [];
+        if (s.scope === 'learned') {
+          let done = new Set();
+          try {
+            const prog = JSON.parse(localStorage.getItem('ja_learn_progress_v1') || '{}');
+            Object.entries((prog && prog.lessons) || {}).forEach(([id, r]) => { if (r && r.completed) done.add(id); });
+          } catch (e) {}
+          const ids = new Set(jd ? jd.lessons.filter(l => done.has(l.id)).flatMap(l => l.wordIds) : []);
+          const learned = jaWords.filter(w => ids.has(w.id));
+          jaWords = learned.length ? learned.slice(0, 30) : jaWords.slice(0, 20);
+        } else if (s.scope === 'all') {
+          jaWords = jaWords.slice().sort(() => Math.random() - 0.5).slice(0, 30);
+        } else {
+          const byTopic = s.topic ? jaWords.filter(w => w.topic === s.topic) : [];
+          jaWords = byTopic.length ? byTopic : jaWords.slice(0, 15);
+        }
+        s.wordList = jaWords.map(w => ({
+          hanzi: w.word, word: w.word, zh: w.word, ja: w.word, kana: w.kana,
+          py: w.kanji ? `${w.kana} · ${w.romaji}` : w.romaji,
+          vi: w.vi || '', hv: w.hanViet || '', topic: w.topic || ''
+        }));
+        s.currentIndex = 0;
+        s.attempts = 0;
+        s.history = [];
+        s.passedCount = 0;
+        s.isFinished = false;
+        return;
+      }
 
       if (this.lang === 'en') {
         const rawEn = typeof window !== 'undefined' ? window.EN_WORDS : null;
@@ -1195,7 +1306,11 @@
       if (!current) return;
 
       const target = current.hanzi || current.zh || '';
-      const turnScore = scoreTurn(recognizedTranscripts[0] || '', [{ zh: target }]);
+      const turnScore = this.lang === 'ja'
+        ? scoreTurn(recognizedTranscripts[0] || '', [{ zh: target, kana: current.kana || '' }])
+        : this.lang === 'ru'
+          ? scoreTurn(recognizedTranscripts[0] || '', [{ zh: target, ru: target }])
+          : scoreTurn(recognizedTranscripts[0] || '', [{ zh: target }]);
       const score = turnScore.score;
       const heard = turnScore.transcript || '';
 
@@ -1261,7 +1376,11 @@
     startScenario(scenarioId) {
       const scenarios = this.lang === 'en'
         ? ((typeof window !== 'undefined' && (window.TALK_SCENARIOS_EN || window.EN_TALK_SCENARIOS)) || [])
-        : ((typeof window !== 'undefined' && window.TALK_SCENARIOS) || []);
+        : this.lang === 'ja'
+          ? ((typeof window !== 'undefined' && (window.JA_TALK_SCENARIOS || window.TALK_SCENARIOS_JA)) || [])
+          : this.lang === 'ru'
+            ? ((typeof window !== 'undefined' && window.RU_TALK_SCENARIOS) || [])
+            : ((typeof window !== 'undefined' && window.TALK_SCENARIOS) || []);
       const sc = scenarios.find(item => item.id === scenarioId) || scenarios[0];
       if (!sc) return;
 
@@ -1282,8 +1401,10 @@
       // Đẩy tin nhắn mở đầu của NPC
       const firstTurn = sc.turns[r.currentTurnId];
       if (firstTurn && firstTurn.npc) {
-        const npcText = firstTurn.npc.en || firstTurn.npc.zh;
-        const npcPhonetic = firstTurn.npc.ipa || firstTurn.npc.py || '';
+        const isJaNpc = this.lang === 'ja';
+        const isRuNpc = this.lang === 'ru';
+        const npcText = isJaNpc ? (firstTurn.npc.ja || firstTurn.npc.zh) : isRuNpc ? (firstTurn.npc.ru || firstTurn.npc.zh) : (firstTurn.npc.en || firstTurn.npc.zh);
+        const npcPhonetic = isJaNpc ? (firstTurn.npc.romaji || firstTurn.npc.py || '') : isRuNpc ? (firstTurn.npc.py || '') : (firstTurn.npc.ipa || firstTurn.npc.py || '');
         r.messages.push({
           sender: 'npc',
           zh: npcText,
@@ -1575,7 +1696,7 @@
       const cur = s.wordList[s.currentIndex];
       if (!cur) return '<div class="talk-empty-box">Không có từ vựng nào để luyện tập.</div>';
 
-      const pySyllables = splitPinyin(cur.py || '');
+      const pySyllables = this.lang === 'ja' ? Array.from(cur.kana || cur.hanzi || '') : this.lang === 'ru' ? (cur.py || '').split(/\s+/).filter(Boolean) : splitPinyin(cur.py || '');
 
       return `
         <div class="talk-words-container">
@@ -1585,7 +1706,7 @@
               <label>Phạm vi luyện tập:</label>
               <select id="talk-scope-select" class="form-select">
                 <option value="learned" ${s.scope === 'learned' ? 'selected' : ''}>Từ đã học trong Lộ trình</option>
-                <option value="all" ${s.scope === 'all' ? 'selected' : ''}>Toàn bộ từ vựng HSK1</option>
+                <option value="all" ${s.scope === 'all' ? 'selected' : ''}>${this.lang === 'ja' ? 'Ngẫu nhiên 30 từ N5' : this.lang === 'ru' ? 'Ngẫu nhiên 30 từ A1' : this.lang === 'en' ? 'Toàn bộ từ vựng' : 'Toàn bộ từ vựng HSK1'}</option>
               </select>
             </div>
             <div class="talk-progress-badge">
@@ -1727,7 +1848,11 @@
     renderRoleplayLobby() {
       const scenarios = this.lang === 'en'
         ? ((typeof window !== 'undefined' && (window.TALK_SCENARIOS_EN || window.EN_TALK_SCENARIOS)) || [])
-        : ((typeof window !== 'undefined' && window.TALK_SCENARIOS) || []);
+        : this.lang === 'ja'
+          ? ((typeof window !== 'undefined' && (window.JA_TALK_SCENARIOS || window.TALK_SCENARIOS_JA)) || [])
+          : this.lang === 'ru'
+            ? ((typeof window !== 'undefined' && window.RU_TALK_SCENARIOS) || [])
+            : ((typeof window !== 'undefined' && window.TALK_SCENARIOS) || []);
       const historyKey = `${this.lang || 'zh'}_talk_history`;
       const rawHistory = typeof localStorage !== 'undefined' ? localStorage.getItem(historyKey) : null;
       const history = rawHistory ? JSON.parse(rawHistory) : {};
@@ -1944,7 +2069,7 @@
       const card = this.container.querySelector('#talk-active-word-card');
       const cur = this.wordState.wordList[this.wordState.currentIndex];
       if (card && cur) {
-        const pySyllables = splitPinyin(cur.py || '');
+        const pySyllables = this.lang === 'ja' ? Array.from(cur.kana || cur.hanzi || '') : this.lang === 'ru' ? (cur.py || '').split(/\s+/).filter(Boolean) : splitPinyin(cur.py || '');
         card.innerHTML = this.renderWordCardInner(cur, pySyllables);
         this.bindWordCardEvents();
       }
@@ -1974,6 +2099,47 @@
        ========================================================================== */
 
     getRoleAbDialogues() {
+      if (this.lang === 'ru') {
+        const ruTalk = (typeof window !== 'undefined' && window.RU_TALK_DIALOGUES) || [];
+        const ruBase = (typeof window !== 'undefined' && window.RU_DIALOGUES) || [];
+        const toSent = line => ({
+          who: line.who || 'A',
+          zh: line.ru || line.zh || '',
+          ru: line.ru || line.zh || '',
+          py: line.py || (window.RuCore ? window.RuCore.translit(line.ru || '') : ''),
+          vi: line.vi || ''
+        });
+        const norm = d => ({
+          id: d.id,
+          title: d.title,
+          scene: d.scene || `Tình huống giao tiếp cơ bản theo chủ đề "${d.title}".`,
+          roleA: d.roleA || { name: 'Người A', char: 'A', avatar: '' },
+          roleB: d.roleB || { name: 'Người B', char: 'B', avatar: '' },
+          sentences: (d.sentences || d.lines || []).map(toSent)
+        });
+        return [...ruTalk.map(norm), ...ruBase.map(norm)];
+      }
+      if (this.lang === 'ja') {
+        const jaTalk = (typeof window !== 'undefined' && (window.JA_TALK_DIALOGUES || window.TALK_DIALOGUES_JA)) || [];
+        const jaBase = (typeof window !== 'undefined' && (window.JA_DIALOGUES || window.DIALOGUES_JA)) || [];
+        const toSent = line => ({
+          who: line.who || 'A',
+          zh: line.ja || line.zh || '',
+          ja: line.ja || line.zh || '',
+          kana: line.kana || '',
+          py: [line.kana, line.romaji].filter(Boolean).join(' · ') || line.py || '',
+          vi: line.vi || ''
+        });
+        const norm = d => ({
+          id: d.id,
+          title: d.title,
+          scene: d.scene || `Tình huống giao tiếp cơ bản theo chủ đề "${d.title}".`,
+          roleA: d.roleA || { name: 'Người A', char: 'A', avatar: '' },
+          roleB: d.roleB || { name: 'Người B', char: 'B', avatar: '' },
+          sentences: (d.sentences || d.lines || []).map(toSent)
+        });
+        return [...jaTalk.map(norm), ...jaBase.map(norm)];
+      }
       if (this.lang === 'en') {
         const talkDiaEn = (typeof window !== 'undefined' && (window.TALK_DIALOGUES_EN || window.EN_TALK_DIALOGUES)) || [];
         const baseDiaEn = (typeof window !== 'undefined' && (window.EN_DIALOGUES || window.DIALOGUES_EN)) || [];

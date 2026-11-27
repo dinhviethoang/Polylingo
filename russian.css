@@ -1,0 +1,45 @@
+/* russian.css — phần riêng của mục tiếng Nga (russian.js). Khung chung dùng lớp .ja-* trong japanese.css; màu lấy từ chủ đề [data-lang="ru"] trong themes.css. */
+#tab-ru { --ru-font: "PT Serif", "Noto Serif", "Times New Roman", serif; }
+.ru-text { font-family: var(--ru-font); }
+.ru-hero::after { background: radial-gradient(circle, rgba(29, 78, 158, 0.18), transparent 70%); }
+.ru-seal { background: var(--accent); box-shadow: 0 6px 18px rgba(29, 78, 158, 0.28); font-size: 2.6rem; }
+.ru-choice { font-family: var(--ru-font); font-size: 1.15rem; }
+
+/* Bảng chữ */
+.ru-letter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); gap: 6px; }
+.ru-letter span { font-size: 1.45rem; }
+.ru-letter.is-vowel { background: var(--accent-light); }
+.ru-letter.is-sign { background-image: repeating-linear-gradient(135deg, transparent 0 6px, var(--accent-light) 6px 9px); }
+
+/* Bàn phím */
+.ru-kbd { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; align-items: center; }
+.ru-kbd-row { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
+.ru-key { min-width: 44px; min-height: 48px; padding: 4px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; font-family: var(--ru-font); font-size: 1.15rem; }
+.ru-key small { font-family: inherit; font-size: .68rem; color: var(--muted); }
+.ru-key:hover { border-color: var(--accent); background: var(--accent-light); }
+.ru-key:focus-visible { outline: 3px solid var(--accent-2); outline-offset: 2px; }
+.ru-key-wide { min-width: 96px; flex-direction: row; gap: 4px; font-family: inherit; font-size: .9rem; }
+.ru-kbd-mini .ru-key { min-width: 34px; min-height: 40px; font-size: 1rem; }
+.ru-kbd-toggle { margin-top: 12px; text-align: center; }
+.ru-kbd-toggle summary { cursor: pointer; color: var(--muted); font-size: .88rem; display: inline-flex; gap: 6px; align-items: center; min-height: 32px; }
+
+/* 6 cách */
+.ru-case-card h3 { margin-bottom: 2px; }
+.ru-table-wrap { overflow-x: auto; }
+.ru-table { width: 100%; border-collapse: collapse; font-size: .95rem; min-width: 640px; }
+.ru-table th, .ru-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+.ru-table thead th { color: var(--accent); font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; }
+.ru-table tbody th small { display: block; font-weight: 400; color: var(--muted); font-size: .75rem; }
+.ru-table tbody tr:hover { background: var(--accent-light); }
+
+/* Tập viết */
+.ru-write-stage { background-image: linear-gradient(var(--border) 1px, transparent 1px); background-size: 100% 25%; }
+.ru-write-guide { position: absolute; inset: 0; display: grid; place-items: center; font-size: 8.5rem; line-height: 1; color: var(--accent); opacity: .16; pointer-events: none; user-select: none; }
+
+@media (max-width: 560px) {
+  .ru-letter-grid { grid-template-columns: repeat(auto-fill, minmax(54px, 1fr)); }
+  .ru-key { min-width: 30px; min-height: 44px; font-size: 1rem; }
+  .ru-kbd-mini .ru-key { min-width: 26px; }
+  .ru-write-guide { font-size: 6.5rem; }
+}

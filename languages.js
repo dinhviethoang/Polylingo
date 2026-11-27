@@ -1,8 +1,7 @@
 /**
  * Danh sách 4 ngôn ngữ hỗ trợ trên nền tảng Polylingo
  * Thứ tự chuẩn: Anh (en), Trung (zh), Nhật (ja), Nga (ru)
- * zh: Sẵn sàng học (ready: true)
- * en, ja, ru: Đang biên soạn (ready: false) có chủ đề văn hóa riêng đầy đủ
+ * Cả 4 ngôn ngữ đã sẵn sàng học (ready: true). ja do japanese.js vẽ, ru do russian.js vẽ.
  */
 const LANGUAGES = [
   {
@@ -36,6 +35,8 @@ const LANGUAGES = [
       { id: 'speak', iconName: 'speak', label: 'Phát âm', desc: 'Luyện phát âm câu từ tiếng Anh chuẩn xác' },
       { id: 'talk', iconName: 'talk', label: 'Luyện nói', desc: 'Luyện nói phản xạ và đàm thoại nhập vai tình huống' },
       { id: 'dialogues', iconName: 'dialogues', label: 'Hội thoại', desc: 'Mẫu câu giao tiếp thực tế nơi công sở và đời sống' },
+      { id: 'reading', iconName: 'reading', label: 'Đọc và dịch', desc: 'Bài đọc ngắn, tự dịch từng câu có chấm theo ý chính' },
+      { id: 'dictation', iconName: 'dictation', label: 'Nghe gõ câu', desc: 'Nghe một câu rồi gõ lại cả câu, sửa chỗ sai tới khi đúng' },
       { id: 'videos', iconName: 'videos', label: 'Video giải trí', desc: 'Xem video phụ đề song ngữ, tra từ và nhại giọng' }
     ]
   },
@@ -58,13 +59,14 @@ const LANGUAGES = [
     tts: 'zh-CN',
     accentColor: '#B3261E',
     accentColor2: '#C9A227',
-    description: 'Phát âm Pinyin, 150 từ vựng HSK1 cốt lõi, tập viết chữ Hán và đàm thoại thực tế.',
+    description: 'Phát âm Pinyin, hơn 500 từ vựng HSK1, tập viết chữ Hán và đàm thoại thực tế.',
     totalWords: 521, // cập nhật tự động trong data/zh/vocab-merge.js
     sections: [
       { id: 'home', iconName: 'home', label: 'Tổng quan', desc: 'Bảng theo dõi tiến độ và lộ trình bài bản' },
       { id: 'learn', iconName: 'learn', label: 'Lộ trình', desc: 'Lộ trình bài học HSK 3.0 chuẩn hóa theo từng chặng' },
       { id: 'pinyin', iconName: 'phonics', label: 'Phát âm (Pinyin)', desc: '21 thanh mẫu, 36 vận mẫu và quy tắc biến điệu' },
       { id: 'typing', iconName: 'typing', label: 'Luyện gõ Pinyin', desc: 'Rèn phản xạ gõ pinyin kèm thanh điệu trên bàn phím' },
+      { id: 'dictation', iconName: 'dictation', label: 'Nghe gõ câu', desc: 'Nghe một câu rồi gõ lại cả câu bằng pinyin hoặc chữ Hán' },
       { id: 'speak', iconName: 'speak', label: 'Luyện phát âm', desc: 'Luyện đọc thanh điệu, cặp âm dễ nhầm và câu giao tiếp' },
       { id: 'talk', iconName: 'talk', label: 'Luyện nói', desc: 'Luyện nói từng từ và đàm thoại nhập vai tình huống thực tế' },
       { id: 'videos', iconName: 'videos', label: 'Video giải trí', desc: 'Xem video vừa học phụ đề song ngữ, tra từ và nói theo' },
@@ -73,7 +75,8 @@ const LANGUAGES = [
       { id: 'writing', iconName: 'writing', label: 'Chữ viết (Hán tự)', desc: 'Tập viết từng nét thuận bút chữ Hán chuẩn mực' },
       { id: 'quiz', iconName: 'quiz', label: 'Kiểm tra', desc: '10 câu trắc nghiệm ngẫu nhiên đánh giá phản xạ' },
       { id: 'games', iconName: 'games', label: 'Trò chơi', desc: 'Mini games ghép từ, lật thẻ rèn phản xạ ngôn ngữ' },
-      { id: 'dialogues', iconName: 'dialogues', label: 'Hội thoại', desc: 'Mẫu câu đàm thoại đời sống, nghe đọc mẫu và luyện theo' }
+      { id: 'dialogues', iconName: 'dialogues', label: 'Hội thoại', desc: 'Mẫu câu đàm thoại đời sống, nghe đọc mẫu và luyện theo' },
+      { id: 'reading', iconName: 'reading', label: 'Đọc và dịch', desc: 'Bài đọc ngắn HSK1, tự dịch từng câu có chấm theo ý chính' }
     ]
   },
   {
@@ -90,20 +93,25 @@ const LANGUAGES = [
       meaning: 'Xin chào (lời chào lịch sự ban ngày)'
     },
     watermark: '学ぶ',
-    ready: false,
+    ready: true,
     font: 'Shippori Mincho',
     tts: 'ja-JP',
     accentColor: '#1E3A5F',
     accentColor2: '#E59BB0',
-    description: 'Bảng chữ Hiragana & Katakana, chữ Kanji vỡ lòng và từ vựng sơ cấp JLPT N5.',
-    totalWords: 200,
+    description: 'Hiragana & Katakana, 703 từ vựng JLPT N5, 103 Kanji có âm Hán Việt và lộ trình 35 bài.',
+    totalWords: 703,
     sections: [
       { id: 'home', iconName: 'home', label: 'Tổng quan', desc: 'Lộ trình chinh phục tiếng Nhật sơ cấp từ con số 0' },
-      { id: 'kana', iconName: 'phonics', label: 'Bảng chữ Kana', desc: 'Nắm trọn bảng chữ mềm Hiragana và chữ cứng Katakana' },
-      { id: 'vocab', iconName: 'vocab', label: 'Từ vựng N5', desc: '200 từ vựng sơ cấp JLPT N5 thiết yếu nhất' },
+      { id: 'learn', iconName: 'learn', label: 'Lộ trình', desc: '35 bài: 6 bài Kana và 29 bài JLPT N5' },
+      { id: 'kana', iconName: 'kana', label: 'Bảng chữ Kana', desc: 'Hiragana, Katakana, âm đục, âm ghép và luyện nhận chữ' },
+      { id: 'vocab', iconName: 'vocab', label: 'Từ vựng N5', desc: '703 từ N5 có romaji, Hán Việt và câu ví dụ' },
+      { id: 'kanji', iconName: 'writing', label: 'Kanji', desc: '103 chữ Kanji N5 có âm Hán Việt, On, Kun' },
+      { id: 'writing', iconName: 'writing', label: 'Tập viết', desc: 'Thứ tự nét Kanji và Kana theo dữ liệu KanjiVG' },
+      { id: 'dialogues', iconName: 'dialogues', label: 'Hội thoại', desc: '10 hội thoại đời thường N5' },
       { id: 'flashcards', iconName: 'flashcards', label: 'Thẻ ghi nhớ', desc: 'Ôn tập ngắt quãng thông minh không lo quên chữ' },
-      { id: 'writing', iconName: 'writing', label: 'Tập viết Kanji', desc: 'Luyện từng nét thuận bút chữ Hán theo chuẩn Nhật' },
-      { id: 'quiz', iconName: 'quiz', label: 'Kiểm tra', desc: 'Trắc nghiệm nhận diện mặt chữ, Romaji và ý nghĩa' }
+      { id: 'quiz', iconName: 'quiz', label: 'Kiểm tra', desc: 'Trắc nghiệm nghĩa, cách đọc, nghe và Kanji' },
+      { id: 'typing', iconName: 'typing', label: 'Luyện gõ', desc: 'Gõ romaji ra kana, chia động từ' },
+      { id: 'talk', iconName: 'talk', label: 'Luyện nói', desc: 'Nói từng từ, nhập vai 8 tình huống, đóng vai A–B' }
     ]
   },
   {
@@ -120,20 +128,25 @@ const LANGUAGES = [
       meaning: 'Xin chào (lời chào thân mật phổ biến nhất)'
     },
     watermark: 'Учить',
-    ready: false,
+    ready: true,
     font: 'PT Serif',
     tts: 'ru-RU',
     accentColor: '#1D4E9E',
     accentColor2: '#C1272D',
-    description: 'Bảng chữ cái Kirin (Cyrillic), ngữ âm & trọng âm tiếng Nga, từ vựng cơ bản và mẫu câu hàng ngày.',
-    totalWords: 200,
+    description: 'Bảng chữ Kirin, trọng âm, 733 từ A1 có giống và câu ví dụ, 6 cách, lộ trình 35 bài theo khung ТРКИ A1.',
+    totalWords: 733,
     sections: [
-      { id: 'home', iconName: 'home', label: 'Tổng quan', desc: 'Lộ trình làm quen tiếng Nga toàn diện từ vỡ lòng' },
-      { id: 'cyrillic', iconName: 'phonics', label: 'Bảng chữ cái Cyrillic', desc: '33 ký tự chữ cái Kirin và quy tắc trọng âm đặc trưng' },
-      { id: 'vocab', iconName: 'vocab', label: 'Từ vựng căn bản', desc: '200 từ vựng cốt lõi thường nhật trong giao tiếp' },
-      { id: 'flashcards', iconName: 'flashcards', label: 'Thẻ ghi nhớ', desc: 'Thuật toán SM-2 hỗ trợ ghi nhớ từ vựng dài hạn' },
-      { id: 'quiz', iconName: 'quiz', label: 'Kiểm tra', desc: 'Luyện tập phản xạ nhận diện chữ cái và ngữ nghĩa' },
-      { id: 'dialogues', iconName: 'dialogues', label: 'Hội thoại', desc: 'Mẫu câu giao tiếp thường nhật với người bản xứ' }
+      { id: 'home', iconName: 'home', label: 'Tổng quan', desc: 'Lộ trình tiếng Nga từ bảng chữ đến A1' },
+      { id: 'learn', iconName: 'learn', label: 'Lộ trình', desc: '35 bài: 6 bài chữ cái và 29 bài A1' },
+      { id: 'cyrillic', iconName: 'phonics', label: 'Bảng chữ Kirin', desc: '33 chữ, "bạn giả", trọng âm, bàn phím' },
+      { id: 'vocab', iconName: 'vocab', label: 'Từ vựng A1', desc: '733 từ có trọng âm, giống, câu ví dụ' },
+      { id: 'cases', iconName: 'reading', label: '6 cách', desc: 'Bảng biến cách danh từ, đại từ, tính từ và luyện điền' },
+      { id: 'writing', iconName: 'writing', label: 'Tập viết', desc: 'Viết chữ Kirin in hoa, in thường' },
+      { id: 'dialogues', iconName: 'dialogues', label: 'Hội thoại', desc: '10 hội thoại đời thường A1' },
+      { id: 'flashcards', iconName: 'flashcards', label: 'Thẻ ghi nhớ', desc: 'Ôn ngắt quãng SM-2' },
+      { id: 'quiz', iconName: 'quiz', label: 'Kiểm tra', desc: 'Nghĩa, nghe, giống, trọng âm, 6 cách' },
+      { id: 'typing', iconName: 'typing', label: 'Luyện gõ', desc: 'Gõ phiên âm ra chữ Kirin, chia động từ' },
+      { id: 'talk', iconName: 'talk', label: 'Luyện nói', desc: 'Nói từng từ, nhập vai 8 tình huống, đóng vai A–B' }
     ]
   }
 ];
