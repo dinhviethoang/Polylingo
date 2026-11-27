@@ -1068,7 +1068,7 @@ class ChineseApp {
       const topicSelect = document.getElementById('fc-topic-select');
       if (topicSelect) {
         topicSelect.innerHTML = '<option value="">Tất cả chủ đề</option>' +
-          this.getCurrentTopics().map(t => `<option value="${t.id}">${t.icon || ''} ${t.name}</option>`).join('');
+          this.getCurrentTopics().map(t => `<option value="${t.id}">${t.name}</option>`).join('');
       }
       if (modeParam) {
         const modeSelect = document.getElementById('fc-mode-select');
@@ -1547,7 +1547,7 @@ class ChineseApp {
 
     if (filterSelect) {
       filterSelect.innerHTML = '<option value="">Tất cả chủ đề</option>' +
-        topics.map(t => `<option value="${t.id}">${t.icon || ''} ${t.name}</option>`).join('');
+        topics.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
 
       filterSelect.addEventListener('change', () => this.renderVocabList());
     }
@@ -1667,7 +1667,7 @@ class ChineseApp {
 
     if (topicSelect) {
       topicSelect.innerHTML = '<option value="">Tất cả chủ đề</option>' +
-        this.getCurrentTopics().map(t => `<option value="${t.id}">${t.icon || ''} ${t.name}</option>`).join('');
+        this.getCurrentTopics().map(t => `<option value="${t.id}">${t.name}</option>`).join('');
 
       topicSelect.addEventListener('change', () => this.startFlashcardSession());
     }

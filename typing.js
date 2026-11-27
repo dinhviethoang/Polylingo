@@ -455,7 +455,7 @@ const TypingPractice = {
 
     const topics = window.TOPICS || [];
     select.innerHTML = '<option value="all">Tất cả chủ đề</option>' +
-      topics.map(t => `<option value="${t.id}">${t.icon ? t.icon + ' ' : ''}${t.name}</option>`).join('');
+      topics.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
   },
 
   updateWrongWordsBadge() {
@@ -721,7 +721,7 @@ const TypingPractice = {
     if (badgeEl) {
       const topicObj = (window.TOPICS || []).find(t => t.id === item.topic);
       const fIcon = typingIc('folder', { size: 14 });
-      badgeEl.innerHTML = topicObj ? `${topicObj.icon ? topicObj.icon + ' ' : (fIcon ? fIcon + ' ' : '')}${topicObj.name}` : (item.topic || 'Từ vựng');
+      badgeEl.innerHTML = topicObj ? `${(fIcon ? fIcon + ' ' : '')}${topicObj.name}` : (item.topic || 'Từ vựng');
     }
 
     // Nội dung câu hỏi theo chế độ (a, b, c, d)
