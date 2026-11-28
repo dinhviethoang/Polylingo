@@ -357,6 +357,7 @@
             <label>Email<input name="email" type="email" autocomplete="email" required></label>
             <label>Mã khôi phục<input name="recoveryCode" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" required></label>
             <label>Mật khẩu mới (ít nhất 8 ký tự)<input name="newPassword" type="password" autocomplete="new-password" minlength="8" required></label>
+            <div class="acc-turnstile"></div>
             <p class="acc-error" role="alert" aria-live="assertive"></p>
             <button type="submit" class="acc-btn acc-primary acc-wide">Đặt lại mật khẩu</button>
             <p class="acc-muted acc-small">Mất cả mã khôi phục? Tiến độ trên máy này vẫn còn: hãy Xuất tiến độ, tạo tài khoản mới rồi Nhập lại.</p>
@@ -364,6 +365,7 @@
           </form>
           ${backupHtml}`;
         body.querySelector('form').addEventListener('submit', e => this.submitReset(e));
+        Turnstile.mount(body.querySelector('.acc-turnstile'));
       } else {
         const isRegister = mode === 'register';
         const formHtml = API_AVAILABLE ? `
@@ -508,7 +510,8 @@
       const body = {
         email: String(fd.get('email') || '').trim(),
         recoveryCode: String(fd.get('recoveryCode') || ''),
-        newPassword: String(fd.get('newPassword') || '')
+        newPassword: String(fd.get('newPassword') || ''),
+        turnstileToken: String(fd.get('cf-turnstile-response') || '')
       };
       err.textContent = '';
       if (body.newPassword.length < 8) { err.textContent = 'Mật khẩu mới cần ít nhất 8 ký tự.'; return; }
@@ -518,6 +521,7 @@
         await this.afterLogin(res.user, res.recoveryCode);
       } catch (ex) {
         err.textContent = ex.message;
+        Turnstile.reset();
       } finally {
         btn.disabled = false;
       }

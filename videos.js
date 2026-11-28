@@ -874,7 +874,7 @@
           <div class="video-card" data-id="${v.id}">
             <div class="video-thumb-wrap">
               ${thumbUrl ? `
-                <img class="video-thumb-img" src="${thumbUrl}" alt="${v.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                <img class="video-thumb-img" src="${escapeHtml(thumbUrl)}" alt="${escapeHtml(v.title)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                 <div class="video-thumb-placeholder" style="display:none;">
                   <span style="font-size:2rem;display:inline-flex;align-items:center;justify-content:center;">${ic('film', { size: 32 })}</span>
                   <span style="font-size:0.8rem">${v.isSample ? 'Video mẫu' : 'PolyLingo Video'}</span>
@@ -903,11 +903,11 @@
 
             <div class="video-card-body">
               <div class="video-card-tags">
-                <span class="video-tag">${v.level || 'HSK1'}</span>
-                ${v.topic ? `<span class="video-tag video-tag-topic">${v.topic}</span>` : ''}
+                <span class="video-tag">${escapeHtml(v.level || 'HSK1')}</span>
+                ${v.topic ? `<span class="video-tag video-tag-topic">${escapeHtml(v.topic)}</span>` : ''}
               </div>
-              <h3 class="video-card-title">${v.title}</h3>
-              <p class="video-card-desc">${v.desc || 'Xem video với phụ đề song ngữ và luyện phản xạ nói.'}</p>
+              <h3 class="video-card-title">${escapeHtml(v.title)}</h3>
+              <p class="video-card-desc">${escapeHtml(v.desc || 'Xem video với phụ đề song ngữ và luyện phản xạ nói.')}</p>
 
               ${prog.percent > 0 ? `
                 <div class="video-card-progress-bar">
@@ -986,9 +986,9 @@
                 Quay lại danh sách
               </button>
               <div class="video-watch-title-area">
-                <span class="video-tag">${v.level || 'HSK1'}</span>
-                ${v.topic ? `<span class="video-tag video-tag-topic">${v.topic}</span>` : ''}
-                <h2 class="video-watch-main-title">${v.title}</h2>
+                <span class="video-tag">${escapeHtml(v.level || 'HSK1')}</span>
+                ${v.topic ? `<span class="video-tag video-tag-topic">${escapeHtml(v.topic)}</span>` : ''}
+                <h2 class="video-watch-main-title">${escapeHtml(v.title)}</h2>
               </div>
               <div class="video-shortcuts-guide">
                 <span class="video-kbd">Space</span> Tạm dừng
