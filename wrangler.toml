@@ -9,3 +9,8 @@ binding = "DB"
 database_name = "polylingo-db"
 database_id = "18d7d596-dbad-423f-820c-d12135746125"   # D1 polylingo-db (tài khoản Cloudflare giữ polylingo.pages.dev)
 migrations_dir = "migrations"
+
+# Biến công khai (dashboard chỉ cho sửa Secret vì biến thường được quản lý ở file này).
+# TURNSTILE_SECRET_KEY là Secret, đặt trong Cloudflare: Workers & Pages → polylingo → Settings → Variables and secrets.
+[vars]
+TURNSTILE_SITE_KEY = "0x4AAAAAAGWmgjCvgFo3ENcl"

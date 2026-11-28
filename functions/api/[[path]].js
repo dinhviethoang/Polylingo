@@ -60,6 +60,8 @@ export async function onRequest(context) {
       default: return json({ error: 'Không tìm thấy.' }, 404);
     }
   } catch (e) {
+    // Ghi log để xem được trong Cloudflare (Pages → Functions → Real-time logs). Không ghi body vì có mật khẩu.
+    console.error('[api] lỗi', request.method, new URL(request.url).pathname, e && e.stack ? e.stack : e);
     return json({ error: 'Lỗi máy chủ. Vui lòng thử lại.' }, 500);
   }
 }
@@ -110,6 +112,9 @@ async function resetPassword(request, env) {
   const newPassword = typeof body.newPassword === 'string' ? body.newPassword : '';
   if (!email || !code) return json({ error: 'Email hoặc mã khôi phục chưa đúng.' }, 400);
   if (!validPassword(newPassword)) return json({ error: 'Mật khẩu mới cần từ 8 đến 200 ký tự.' }, 400);
+  if (!(await verifyTurnstile(request, env, body.turnstileToken))) {
+    return json({ error: 'Chưa qua bước kiểm tra chống máy tự động. Hãy thử lại.' }, 400);
+  }
 
   const now = Date.now();
   const ip = request.headers.get('CF-Connecting-IP') || '';

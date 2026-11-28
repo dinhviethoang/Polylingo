@@ -6,6 +6,8 @@
 
 /* --- Tải dữ liệu theo nhu cầu (giữ chạy được với file://: dùng thẻ script, không dùng fetch) --- */
 const ZH_HEAVY_DATA = ['data/zh/char-decomp.js', 'data/zh/examples-extra.js'];
+// Trò chơi Vườn Treo (~230KB) chỉ tải khi vào #farm (hoặc tải sẵn lúc máy rảnh).
+const FARM_DATA = ['game/farm.js'];
 const LAZY_DATA_SECTIONS = ['learn'];
 // Tiếng Nhật (~0,5MB) chỉ tải khi người dùng vào mục tiếng Nhật.
 const JA_DATA = ['data/ja/kana.js', 'data/ja/words-a.js', 'data/ja/words-b.js', 'data/ja/kanji.js', 'data/ja/curriculum.js',
@@ -40,7 +42,7 @@ function loadLazyScript(src) {
 function loadLazyData(list) {
   return Promise.all(list.map(loadLazyScript));
 }
-if (typeof window !== 'undefined') window.PolyLazy = { loadLazyData, ZH_HEAVY_DATA, JA_DATA, RU_DATA, DE_DATA };
+if (typeof window !== 'undefined') window.PolyLazy = { loadLazyData, ZH_HEAVY_DATA, FARM_DATA, JA_DATA, RU_DATA, DE_DATA };
 
 const ic = (n, opts) => (typeof window !== 'undefined' && window.PolyIcons ? window.PolyIcons.svg(n, opts) : (typeof PolyIcons !== 'undefined' ? PolyIcons.svg(n, opts) : ''));
 
@@ -933,6 +935,12 @@ class ChineseApp {
       if (rawHash === 'farm' || rawHash.startsWith('farm?') || rawHash.startsWith('farm/')) {
         const queryPart = rawHash.includes('?') ? rawHash.split('?')[1] : '';
         const params = new URLSearchParams(queryPart);
+        if (!window.Farm) {
+          const hashAtStart = window.location.hash;
+          const [ok] = await loadLazyData(FARM_DATA);
+          if (window.location.hash !== hashAtStart) return;
+          if (!ok) this.showToast('Không tải được Vườn Treo, hãy thử tải lại trang.', 'error');
+        }
         this.activateFarm(params);
         return;
       }
@@ -985,7 +993,11 @@ class ChineseApp {
     };
 
     // Tải sẵn dữ liệu nặng khi máy rảnh để lần sau mở Lộ trình không phải chờ.
-    const prefetch = () => loadLazyData(ZH_HEAVY_DATA).catch(() => {});
+    const prefetch = () => {
+      loadLazyData(ZH_HEAVY_DATA).catch(() => {});
+      // Có Vườn Treo rồi thì vẽ lại Trang chủ để hiện đúng số chậu cây đã chín.
+      loadLazyData(FARM_DATA).then(() => { if (this.currentTab === null && window.Farm) this.renderPortal(); }).catch(() => {});
+    };
     if ('requestIdleCallback' in window) window.requestIdleCallback(prefetch, { timeout: 8000 });
     else setTimeout(prefetch, 4000);
 
